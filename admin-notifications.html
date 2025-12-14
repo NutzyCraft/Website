@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Notifications | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;"> Nutzy Admin
+            </a>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="admin-dashboard.html" class="sidebar-link"><i
+                            class="fa-solid fa-gauge-high"></i> Overview</a></li>
+                <li class="sidebar-item"><a href="admin-users.html" class="sidebar-link"><i
+                            class="fa-solid fa-users-gear"></i> User Management</a></li>
+                <li class="sidebar-item"><a href="admin-jobs.html" class="sidebar-link"><i
+                            class="fa-solid fa-briefcase"></i> Job Tracking</a></li>
+                <li class="sidebar-item"><a href="admin-finance.html" class="sidebar-link"><i
+                            class="fa-solid fa-money-bill-trend-up"></i> Finance</a></li>
+                <li class="sidebar-item"><a href="admin-disputes.html" class="sidebar-link"><i
+                            class="fa-solid fa-shield-halved"></i> Disputes</a></li>
+                <li class="sidebar-item"><a href="admin-settings.html" class="sidebar-link"><i
+                            class="fa-solid fa-sliders"></i> Settings</a></li>
+            </ul>
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">System Notifications</h2>
+                    <p style="color: #666;">Alerts and system-wide updates.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-text" style="color: #666;">Mark all as read</button>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 0;">
+                <div class="notification-list">
+                    <!-- Notification Item 1: Dispute -->
+                    <div class="notification-item unread"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
+                        <div
+                            style="background: #FFEBEE; color: #D32F2F; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">New Dispute Raised
+                                <span
+                                    style="background: #D32F2F; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Job #8823</strong>
+                                has been flagged for non-payment.</p>
+                            <div style="font-size: 0.8rem; color: #999;">10 mins ago</div>
+                            <div style="margin-top: 10px;">
+                                <a href="admin-disputes.html" class="btn btn-primary"
+                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none; background: #D32F2F; border: none;">View
+                                    Dispute</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 2: User -->
+                    <div class="notification-item"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #E3F2FD; color: #1565C0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">High User Signup Rate
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>50+ new
+                                    users</strong> registered in the last hour.</p>
+                            <div style="font-size: 0.8rem; color: #999;">2 hours ago</div>
+                            <div style="margin-top: 10px;">
+                                <a href="admin-users.html" class="btn btn-outline"
+                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">View Users</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 3: System -->
+                    <div class="notification-item"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #E8F5E9; color: #2E7D32; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">System Backup
+                                Completed</div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Daily database backup was
+                                successful (Size: 250MB).</p>
+                            <div style="font-size: 0.8rem; color: #999;">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

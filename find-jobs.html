@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="jobs.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link active">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">3</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="earnings.html" class="sidebar-link">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Sayur Thejan</div>
+                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-topbar"
+                style="justify-content: space-between; align-items: center; gap: 20px; position: relative;">
+                <!-- Left: Toggle & Title -->
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                    <div>
+                        <h2 style="font-size: 1.5rem; margin: 0; line-height: 1.2;">Browse Jobs</h2>
+                        <p style="color: #666; font-size: 0.85rem; margin: 0;">45 new jobs for you</p>
+                    </div>
+                </div>
+
+                <!-- Center: Search Bar -->
+                <div class="search-bar-container" style="margin: 0; flex: 1; max-width: 500px;">
+                    <input type="text" class="search-input" placeholder="Search jobs..."
+                        style="padding: 12px 20px; padding-right: 120px; font-size: 1rem;">
+                    <button class="btn btn-primary search-btn"
+                        style="padding: 0 20px; top: 5px; right: 5px; bottom: 5px; font-size: 0.9rem;"><i
+                            class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
+
+                <!-- Right: Spacer/Actions (Optional, keeping empty for balance if needed, or removing if flex handles it) -->
+                <div style="width: 20px;"></div>
+            </div>
+
+            <div class="job-listings">
+                <!-- Job Card 1 -->
+                <div class="glass-card" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: start;">
+                    <div class="job-icon"
+                        style="background: #e0f2fe; color: var(--accent-blue); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h3 style="font-size: 1.2rem; margin: 0;">E-Commerce Website Development</h3>
+                            <span style="font-weight: 700; color: var(--primary);">$1,200 - $1,500</span>
+                        </div>
+                        <p style="color: #666; font-size: 0.95rem; margin-bottom: 12px;">Looking for an experienced
+                            full-stack developer to build a clothing store website using React and Node.js. Must
+                            have
+                            experience with Stripe integration.</p>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                            <span class="skill-tag"
+                                style="background: #f0f9ff; color: #0284c7; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">React</span>
+                            <span class="skill-tag"
+                                style="background: #f0fdf4; color: #16a34a; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Node.js</span>
+                            <span class="skill-tag"
+                                style="background: #fdf2f8; color: #db2777; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">MongoDB</span>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #888;">
+                            <span><i class="fa-regular fa-clock"></i> Posted 2 hours ago</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Remote (Sri Lanka)</span>
+                        </div>
+                    </div>
+                    <a href="freelancer-apply.html" class="btn btn-primary"
+                        style="padding: 8px 20px; height: fit-content; text-decoration: none;">Apply Now</a>
+                </div>
+
+                <!-- Job Card 2 -->
+                <div class="glass-card" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: start;">
+                    <div class="job-icon"
+                        style="background: #fdf4ff; color: #d946ef; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h3 style="font-size: 1.2rem; margin: 0;">Logo Design for Organic Cafe</h3>
+                            <span style="font-weight: 700; color: var(--primary);">$200 - $300</span>
+                        </div>
+                        <p style="color: #666; font-size: 0.95rem; margin-bottom: 12px;">We need a minimalist and
+                            earthy
+                            logo for our new cafe in Kandy. The design should reflect nature and sustainability.</p>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                            <span class="skill-tag"
+                                style="background: #fff7ed; color: #c2410c; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Graphic
+                                Design</span>
+                            <span class="skill-tag"
+                                style="background: #fefce8; color: #ca8a04; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Illustrator</span>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #888;">
+                            <span><i class="fa-regular fa-clock"></i> Posted 5 hours ago</span>
+                            <span><i class="fa-solid fa-location-dot"></i> Kandy, LK</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 8px 20px; height: fit-content;">Apply
+                        Now</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

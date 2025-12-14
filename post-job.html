@@ -10,102 +10,163 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="jobs.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <!-- jobs.css might conflict or be redundant with dashboard styles, carefully integrating -->
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-    <nav class="navbar glass-panel">
-        <div class="container nav-container">
-            <a href="index.html" class="logo">
-                <img src="logo.jpg" alt="Nutzy Craft Logo" class="logo-img">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
                 Nutzy Craft
             </a>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="services.html">Services</a>
-                <a href="portfolio.html">Portfolio</a>
-                <a href="how-it-works.html">How it Works</a>
-                <a href="about.html">About Us</a>
-                <a href="contact.html">Contact Us</a>
-            </div>
-            <div class="nav-actions">
-                <div class="profile-pill" style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-weight: 700; color: var(--primary);">Hi, Client!</span>
-                    <img src="https://ui-avatars.com/api/?name=Client&background=D4B69D&color=fff"
-                        style="width: 32px; height: 32px; border-radius: 50%;">
-                </div>
-            </div>
-            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
-        </div>
-    </nav>
 
-    <div class="page-header">
-        <div class="container">
-            <h1 class="hero-title" style="font-size: 3rem;">Post a New Project</h1>
-            <p class="hero-subtitle">Connect with top-tier talent in minutes.</p>
-        </div>
-    </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link active">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
 
-    <div class="container post-job-container">
-        <form class="glass-card" style="padding: 40px; margin-bottom: 80px;">
-            <div class="form-section">
-                <h3>1. Project Details</h3>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label class="form-label">Project Title</label>
-                    <input type="text" class="form-input" placeholder="e.g. Build a Nutzy Craft Website">
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select class="form-select">
-                        <option>Web Development</option>
-                        <option>Graphic Design</option>
-                        <option>Content Writing</option>
-                        <option>Digital Marketing</option>
-                    </select>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h1 class="dashboard-title" style="font-size: 1.8rem;">Post a New Project</h1>
+                    <p style="color: #666;">Connect with top-tier talent in minutes.</p>
                 </div>
             </div>
 
-            <div class="form-section">
-                <h3>2. Description</h3>
-                <div class="form-group">
-                    <label class="form-label">Describe your project</label>
-                    <textarea class="form-textarea" placeholder="Provide details about what you need..."></textarea>
-                </div>
-                <div class="form-group" style="margin-top: 20px;">
-                    <label class="form-label">Attachments</label>
-                    <div class="file-upload">
-                        <i class="fa-solid fa-cloud-arrow-up"
-                            style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                        <p>Drag & drop files or <span style="color: var(--primary); font-weight: 700;">Browse</span></p>
+            <div class="glass-card" style="padding: 40px; max-width: 900px; margin-bottom: 30px;">
+                <form>
+                    <div class="form-section">
+                        <h3
+                            style="font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                            1. Project Details</h3>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Project Title</label>
+                            <input type="text" class="form-input" placeholder="e.g. Build a Nutzy Craft Website"
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Category</label>
+                            <select class="form-select"
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; background: white;">
+                                <option>Web Development</option>
+                                <option>Graphic Design</option>
+                                <option>Content Writing</option>
+                                <option>Digital Marketing</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="form-section" style="margin-top: 30px;">
+                        <h3
+                            style="font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                            2. Description</h3>
+                        <div class="form-group">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Describe your
+                                project</label>
+                            <textarea class="form-textarea" placeholder="Provide details about what you need..."
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; min-height: 150px; font-family: inherit; resize: vertical;"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Attachments</label>
+                            <div class="file-upload"
+                                style="border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s;">
+                                <i class="fa-solid fa-cloud-arrow-up"
+                                    style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                <p>Drag & drop files or <span
+                                        style="color: var(--primary); font-weight: 700;">Browse</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="margin-top: 30px;">
+                        <h3
+                            style="font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                            3. Budget & Timeline</h3>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Estimated Budget
+                                ($)</label>
+                            <input type="number" class="form-input" placeholder="500"
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"
+                                style="display: block; font-weight: 700; margin-bottom: 8px;">Project Duration</label>
+                            <select class="form-select"
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; background: white;">
+                                <option>Less than 1 week</option>
+                                <option>1 to 4 weeks</option>
+                                <option>1 to 3 months</option>
+                                <option>More than 3 months</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 40px;">
+                        <button type="button" class="btn btn-outline"
+                            style="margin-right: 10px; padding: 10px 24px;">Save Draft</button>
+                        <button type="button" class="btn btn-primary" style="padding: 10px 24px;">Post Project
+                            Now</button>
+                    </div>
+                </form>
             </div>
 
-            <div class="form-section">
-                <h3>3. Budget & Timeline</h3>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label class="form-label">Estimated Budget ($)</label>
-                    <input type="number" class="form-input" placeholder="500">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Project Duration</label>
-                    <select class="form-select">
-                        <option>Less than 1 week</option>
-                        <option>1 to 4 weeks</option>
-                        <option>1 to 3 months</option>
-                        <option>More than 3 months</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="text-align: right; margin-top: 40px;">
-                <button type="button" class="btn btn-outline" style="margin-right: 10px;">Save Draft</button>
-                <button type="button" class="btn btn-primary">Post Project Now</button>
-            </div>
-        </form>
+        </main>
     </div>
 
-    <script src="script.js"></script>
 </body>
 
 </html>

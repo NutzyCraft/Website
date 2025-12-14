@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">3</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="earnings.html" class="sidebar-link">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Sayur Thejan</div>
+                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">Notifications</h2>
+                    <p style="color: #666;">Stay updated with your latest alerts.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-text" style="color: #666;">Mark all as read</button>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 0;">
+                <div class="notification-list">
+                    <!-- Notification Item 1 -->
+                    <div class="notification-item unread"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
+                        <div
+                            style="background: #E3F2FD; color: #1565C0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">New Job Invitation
+                                <span
+                                    style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>John Doe</strong>
+                                invited you to apply for "E-Commerce Website Development".</p>
+                            <div style="font-size: 0.8rem; color: #999;">10 mins ago</div>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem;">View
+                                    Job</button>
+                                <button class="btn btn-outline"
+                                    style="padding: 6px 15px; font-size: 0.8rem;">Decline</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 2 -->
+                    <div class="notification-item unread"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
+                        <div
+                            style="background: #E8F5E9; color: #2E7D32; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Payment Received
+                                <span
+                                    style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">You received
+                                <strong>$450.00</strong> for "Logo Design Project".</p>
+                            <div style="font-size: 0.8rem; color: #999;">2 hours ago</div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 3 -->
+                    <div class="notification-item"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #F3E5F5; color: #7B1FA2; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">New Review</div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Sarah Smith</strong>
+                                gave you a 5-star rating!</p>
+                            <div style="font-size: 0.8rem; color: #999;">Yesterday</div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 4 -->
+                    <div class="notification-item" style="padding: 20px; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #f5f5f5; color: #666; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Profile Completeness
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Add your portfolio skills to
+                                reach 100% profile strength.</p>
+                            <div style="font-size: 0.8rem; color: #999;">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

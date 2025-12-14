@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link active">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="dashboard-title">Welcome back, Client! 👋</h1>
+                <div class="topbar-actions">
+                    <a href="post-job.html" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i
+                            class="fa-solid fa-plus"></i> Post Job</a>
+                    <a href="client-notifications.html" class="icon-btn" style="text-decoration: none; color: inherit;">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Rows -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Active Jobs</h4>
+                        <div class="stat-value">3</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FFF3E0; color: #EF6C00;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Hires</h4>
+                        <div class="stat-value">12</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #F3E5F5; color: #7B1FA2;">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Spent</h4>
+                        <div class="stat-value">$4,250</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #E3F2FD; color: #1565C0;">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Job Views</h4>
+                        <div class="stat-value">310</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity / Active Jobs Preview -->
+            <div class="dashboard-split">
+                <div class="dashboard-table-card">
+                    <div class="table-header">
+                        <h3>Active Projects</h3>
+                        <a href="client-my-jobs.html"
+                            style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dashboard-table" style="vertical-align: middle;">
+                            <thead>
+                                <tr style="text-align: left;">
+                                    <th style="padding: 15px;">Project Title</th>
+                                    <th>Freelancer</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                    <td style="padding: 15px; font-weight: 600;">Website Redesign</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
+                                                style="width: 24px; border-radius: 50%;">
+                                            Sayur Thejan
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge status-active">In Progress</span></td>
+                                    <td>Oct 30, 2025</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; font-weight: 600;">Logo Design</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=random"
+                                                style="width: 24px; border-radius: 50%;">
+                                            Sarah Lee
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge status-pending">Review</span></td>
+                                    <td>Oct 25, 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Messages or Notifications -->
+                <div class="dashboard-table-card">
+                    <div class="table-header">
+                        <h3>Recent Messages</h3>
+                    </div>
+                    <div>
+                        <div class="message-item">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
+                                    class="message-avatar" style="width: 40px; height: 40px;">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.95rem;">Sayur Thejan</div>
+                                    <div
+                                        style="font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                        Okay, I will send the files...
+                                    </div>
+                                </div>
+                                <div style="margin-left: auto; font-size: 0.75rem; color: #999;">5m</div>
+                            </div>
+                        </div>
+                        <div class="message-item">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="https://ui-avatars.com/api/?name=Alex+F&background=random"
+                                    class="message-avatar" style="width: 40px; height: 40px;">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.95rem;">Alex F.</div>
+                                    <div
+                                        style="font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                                        Can we clarify the requirements?
+                                    </div>
+                                </div>
+                                <div style="margin-left: auto; font-size: 0.75rem; color: #999;">1h</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

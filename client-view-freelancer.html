@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="profile.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link active">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">Freelancer Profile</h2>
+                    <p style="color: #666;">View candidate details and portfolio.</p>
+                </div>
+                <div class="topbar-actions">
+                    <a href="javascript:history.back()" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i>
+                        Back</a>
+                </div>
+            </div>
+
+            <!-- Profile Content (Wrapped to fit dashboard) -->
+            <div class="profile-container" style="padding: 0; margin: 0; width: 100%;">
+
+                <!-- 1. Profile Header -->
+                <div class="glass-card profile-header-card">
+                    <div class="profile-banner"></div>
+                    <div class="profile-header-content">
+                        <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff&size=200"
+                            alt="Sayur" class="profile-avatar-large">
+                        <div class="profile-info">
+                            <div class="profile-name-row">
+                                <h1 class="profile-name">Sayur Thejan</h1>
+                                <div class="badge-verified"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                            <p class="profile-title">Full-Stack Developer | UI/UX Designer</p>
+                            <div class="profile-meta">
+                                <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Colombo, Sri Lanka</div>
+                                <div class="meta-item"><i class="fa-solid fa-clock"></i> 3:45 PM Local Time</div>
+                                <div class="status-badge"><span
+                                        style="width: 8px; height: 8px; background: #2e7d32; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
+                                    Available</div>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; align-items: center; gap: 15px;">
+                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$45<span
+                                        style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span></span>
+                                <div style="display: flex; color: #ffc107;">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <span
+                                        style="color: var(--text-muted); margin-left: 5px; font-weight: 600;">(5.0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-actions">
+                            <button class="btn btn-outline"><i class="fa-regular fa-heart"></i> Save</button>
+                            <button class="btn btn-primary" style="padding: 12px 30px;">Hire Me</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-grid-layout">
+                    <!-- Left Column: Main Content -->
+                    <div class="profile-main">
+
+                        <!-- 2. About Me -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title"><i class="fa-solid fa-user"></i> About Me</h3>
+                            <p style="color: var(--text-muted); line-height: 1.8;">
+                                Hi! I'm Sayur, a passionate developer with over 5 years of experience building scalable
+                                web
+                                applications and intuitive user interfaces. I specialize in the Java Spring Boot
+                                ecosystem for
+                                backends and modern JavaScript frameworks like React for frontends.
+                                <br><br>
+                                I love turning complex problems into simple, beautiful solutions. Whether you need a
+                                robust MVP,
+                                a complete platform overhaul, or a high-converting landing page, I deliver clean,
+                                maintainable
+                                code on time.
+                            </p>
+                            <div style="margin-top: 20px; display: flex; gap: 20px;">
+                                <div><strong>languages:</strong> English (Fluent), Sinhala (Native)</div>
+                                <div><strong>Work Style:</strong> Solo & Team</div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Portfolio -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Portfolio</h3>
+                            <div class="portfolio-grid">
+                                <div class="portfolio-card">
+                                    <img src="https://via.placeholder.com/300x180/D4B69D/ffffff?text=E-Commerce+App"
+                                        class="portfolio-img">
+                                    <div class="portfolio-content">
+                                        <h4 class="portfolio-title">Nutzy Craft Marketplace</h4>
+                                        <p style="font-size: 0.9rem; color: var(--text-muted);">Full-stack development
+                                            of a
+                                            freelance platform with Spring Boot.</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-company">Freelance</div>
+                                <p style="font-size: 0.95rem; color: #666;">Delivering custom web solutions for
+                                    international clients. Top Rated Plus on Nutzy Craft.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-date">2020 - 2023</div>
+                                <div class="timeline-role">Software Engineer</div>
+                                <div class="timeline-company">Tech Corp Lanka</div>
+                                <p style="font-size: 0.95rem; color: #666;">Led the backend migration to Microservices
+                                    architecture using Java and Spring Cloud.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Sidebar -->
+                    <div class="profile-sidebar">
+
+                        <!-- 8. Pricing -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title" style="font-size: 1.2rem;">Services & Pricing</h3>
+                            <div class="pricing-tabs">
+                                <div class="pricing-tab active">Basic</div>
+                                <div class="pricing-tab">Standard</div>
+                            </div>
+                            <div class="package-details">
+                                <div class="price-display">$500</div>
+                                <p style="font-weight: 700; margin-bottom: 10px;">Landing Page MVP</p>
+                                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">2-3 Section Landing
+                                    Page,
+                                    Responsive Design, Basic Contact Form.</p>
+                                <ul class="package-features">
+                                    <li><i class="fa-solid fa-check"></i> 5 Days Delivery</li>
+                                    <li><i class="fa-solid fa-check"></i> 2 Revisions</li>
+                                    <li><i class="fa-solid fa-check"></i> Source Code</li>
+                                </ul>
+                                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">Select
+                                    Package</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Skills -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title" style="font-size: 1.2rem;">Skills</h3>
+                            <div class="skills-tags">
+                                <span class="skill-tag">Java</span>
+                                <span class="skill-tag">Spring Boot</span>
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">PostgreSQL</span>
+                                <span class="skill-tag">AWS</span>
+                                <span class="skill-tag">Docker</span>
+                                <span class="skill-tag">Figma</span>
+                            </div>
+                        </div>
+
+                        <!-- 6. Education -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title" style="font-size: 1.2rem;">Education</h3>
+                            <div style="margin-bottom: 15px;">
+                                <div style="font-weight: 700;">BSc in Computer Science</div>
+                                <div style="font-size: 0.85rem; color: var(--secondary);">University of Colombo</div>
+                                <div style="font-size: 0.8rem; color: #666;">2016 - 2020</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 700;">AWS Certified Developer</div>
+                                <div style="font-size: 0.85rem; color: var(--secondary);">Amazon Web Services</div>
+                                <div style="font-size: 0.8rem; color: #666;">2022</div>
+                            </div>
+                        </div>
+
+                        <!-- 10. Trust & Verify -->
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title" style="font-size: 1.2rem;">Verifications</h3>
+                            <div class="trust-badge-row">
+                                <div class="trust-badge verified"><i class="fa-solid fa-shield-cat"></i> ID Verified
+                                </div>
+                                <div class="trust-badge verified"><i class="fa-solid fa-envelope-circle-check"></i>
+                                    Email
+                                    Verified</div>
+                                <div class="trust-badge verified"><i class="fa-solid fa-phone"></i> Phone Verified</div>
+                                <div class="trust-badge verified"><i class="fa-solid fa-code"></i> Java Skill Test</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

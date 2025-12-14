@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">3</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="earnings.html" class="sidebar-link active">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Sayur Thejan</div>
+                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 style="font-size: 1.5rem;">Earnings</h2>
+                    <p style="color: #666;">View your payments and transaction history.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw
+                        Funds</button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #ecfccb; color: #65a30d;">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Earnings</h3>
+                        <p class="stat-value">$12,450</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Available Balance</h3>
+                        <p class="stat-value">$2,800</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #fdf4ff; color: #db2777;">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Pending Clearance</h3>
+                        <p class="stat-value">$1,500</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <h3 style="font-size: 1.2rem; margin-bottom: 15px;">Transaction History</h3>
+            <div class="glass-card table-responsive" style="padding: 0;">
+                <table class="dashboard-table" style="vertical-align: middle;">
+                    <thead>
+                        <tr style="text-align: left;">
+                            <th style="padding: 15px;">Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">Oct 28, 2025</td>
+                            <td style="font-weight: 600;">E-Commerce Redesign Project</td>
+                            <td>Payment</td>
+                            <td style="color: #16a34a; font-weight: 700;">+$1,500.00</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">Oct 20, 2025</td>
+                            <td style="font-weight: 600;">Withdrawal to Bank Account (**** 1234)</td>
+                            <td>Withdrawal</td>
+                            <td style="color: #dc2626; font-weight: 700;">-$2,500.00</td>
+                            <td><span class="status-badge status-active">Completed</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">Oct 15, 2025</td>
+                            <td style="font-weight: 600;">Blog Writing Milestone 1</td>
+                            <td>Payment</td>
+                            <td style="color: #16a34a; font-weight: 700;">+$300.00</td>
+                            <td><span class="status-badge status-active">Cleared</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px;">Oct 10, 2025</td>
+                            <td style="font-weight: 600;">Mobile App UI Design</td>
+                            <td>Payment</td>
+                            <td style="color: #16a34a; font-weight: 700;">+$800.00</td>
+                            <td><span class="status-badge status-active">Cleared</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

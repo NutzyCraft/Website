@@ -10,153 +10,212 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="jobs.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-    <nav class="navbar glass-panel">
-        <div class="container nav-container">
-            <a href="index.html" class="logo">
-                <img src="logo.jpg" alt="Nutzy Craft Logo" class="logo-img">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
                 Nutzy Craft
             </a>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="services.html">Services</a>
-                <a href="portfolio.html">Portfolio</a>
-                <a href="how-it-works.html">How it Works</a>
-                <a href="about.html">About Us</a>
-                <a href="contact.html">Contact Us</a>
-            </div>
-            <div class="nav-actions">
-                <a href="login.html" class="btn btn-secondary">Log In</a>
-                <a href="register.html" class="btn btn-primary">Sign Up</a>
-            </div>
-            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
-        </div>
-    </nav>
 
-    <div class="page-header">
-        <div class="container">
-            <h1 class="hero-title">Hire Top Talent</h1>
-            <p class="hero-subtitle">Search for the perfect expert for your project.</p>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link active">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
 
-            <div class="search-bar-container">
-                <input type="text" class="search-input" placeholder="Try 'Logo Design' or 'Python Developer'">
-                <button class="btn btn-primary search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h1 class="dashboard-title" style="font-size: 1.8rem;">Hire Top Talent</h1>
+                    <p style="color: #666;">Search for the perfect expert for your project.</p>
+                </div>
+                <div class="topbar-actions">
+                    <div class="search-bar-container" style="margin: 0; min-width: 300px;">
+                        <input type="text" class="search-input" placeholder="Try 'Logo Design' or 'Python Developer'"
+                            style="padding: 10px 20px;">
+                        <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.9rem;"><i
+                                class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                </div>
             </div>
 
-            <div class="skills-tags" style="margin-top: 20px;">
-                <span class="skill-tag" style="background: white; border: 1px solid var(--primary);">Popular:</span>
-                <span class="skill-tag">Web Design</span>
-                <span class="skill-tag">Copywriting</span>
-                <span class="skill-tag">SEO</span>
-                <span class="skill-tag">Mobile Apps</span>
+            <!-- Wrapper specific for freelance finding content re-styled for dashboard -->
+            <div class="skills-tags" style="margin-bottom: 30px;">
+                <span style="font-weight: 700; margin-right: 10px;">Popular Skills:</span>
+                <span class="skill-tag"
+                    style="background: white; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-right: 5px;">Web
+                    Development</span>
+                <span class="skill-tag"
+                    style="background: white; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-right: 5px;">Logo
+                    Design</span>
+                <span class="skill-tag"
+                    style="background: white; border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-right: 5px;">React
+                    JS</span>
             </div>
-        </div>
+
+            <div class="jobs-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Freelancer Card 1 -->
+                <div class="glass-card job-card" style="padding: 20px;">
+                    <div class="job-header" style="justify-content: flex-start; gap: 15px;">
+                        <div style="position: relative;">
+                            <img src="https://ui-avatars.com/api/?name=Alex+M&background=random"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                            <span class="verified-badge"
+                                style="position: absolute; bottom: 0; right: 0; background: #2ecc71; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;"><i
+                                    class="fa-solid fa-check"></i></span>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Alex M.</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Senior Full-Stack Developer</p>
+                            <div style="display: flex; gap: 10px; font-size: 0.85rem; color: #888; margin-top: 5px;">
+                                <span><i class="fa-solid fa-star" style="color: #ffc107;"></i> 5.0 (24)</span>
+                                <span><i class="fa-solid fa-location-dot"></i> Colombo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="color: #555; font-size: 0.95rem; margin: 15px 0; line-height: 1.5;">Expert in React,
+                        Node.js, and Spring Boot. I build scalable web applications...</p>
+
+                    <div class="job-tags" style="margin-bottom: 20px;">
+                        <span class="tag">React</span>
+                        <span class="tag">Java</span>
+                        <span class="tag">AWS</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">$45/hr</span>
+                        <a href="client-view-freelancer.html" class="btn btn-primary"
+                            style="padding: 8px 16px; font-size: 0.9rem; text-decoration: none;">View Profile</a>
+                    </div>
+                </div>
+
+                <!-- Freelancer Card 2 -->
+                <div class="glass-card job-card" style="padding: 20px;">
+                    <div class="job-header" style="justify-content: flex-start; gap: 15px;">
+                        <div style="position: relative;">
+                            <img src="https://ui-avatars.com/api/?name=Sara+K&background=random"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                            <span class="verified-badge"
+                                style="position: absolute; bottom: 0; right: 0; background: #2ecc71; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;"><i
+                                    class="fa-solid fa-check"></i></span>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Sara K.</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Creative UI/UX Designer</p>
+                            <div style="display: flex; gap: 10px; font-size: 0.85rem; color: #888; margin-top: 5px;">
+                                <span><i class="fa-solid fa-star" style="color: #ffc107;"></i> 4.9 (56)</span>
+                                <span><i class="fa-solid fa-location-dot"></i> Kandy</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="color: #555; font-size: 0.95rem; margin: 15px 0; line-height: 1.5;">Passionate about
+                        creating intuitive user experiences. Specialized in mobile app design...</p>
+
+                    <div class="job-tags" style="margin-bottom: 20px;">
+                        <span class="tag">Figma</span>
+                        <span class="tag">Adobe XD</span>
+                        <span class="tag">Prototyping</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">$30/hr</span>
+                        <a href="client-view-freelancer.html" class="btn btn-primary"
+                            style="padding: 8px 16px; font-size: 0.9rem; text-decoration: none;">View
+                            Profile</a>
+                    </div>
+                </div>
+
+                <!-- Freelancer Card 3 -->
+                <div class="glass-card job-card" style="padding: 20px;">
+                    <div class="job-header" style="justify-content: flex-start; gap: 15px;">
+                        <div style="position: relative;">
+                            <img src="https://ui-avatars.com/api/?name=Kamal+P&background=random"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Kamal P.</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Digital Marketing Specialist</p>
+                            <div style="display: flex; gap: 10px; font-size: 0.85rem; color: #888; margin-top: 5px;">
+                                <span><i class="fa-solid fa-star" style="color: #ffc107;"></i> 4.8 (12)</span>
+                                <span><i class="fa-solid fa-location-dot"></i> Galle</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="color: #555; font-size: 0.95rem; margin: 15px 0; line-height: 1.5;">Helping brands grow
+                        their online presence through SEO, social media, and PPC campaigns.</p>
+
+                    <div class="job-tags" style="margin-bottom: 20px;">
+                        <span class="tag">SEO</span>
+                        <span class="tag">Social Media</span>
+                        <span class="tag">Google Ads</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">$25/hr</span>
+                        <a href="client-view-freelancer.html" class="btn btn-primary"
+                            style="padding: 8px 16px; font-size: 0.9rem; text-decoration: none;">View
+                            Profile</a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <div class="container">
-        <div class="freelancer-grid">
-            <!-- Freelancer 1 -->
-            <div class="glass-card freelancer-card">
-                <img src="https://ui-avatars.com/api/?name=Alice+Smith&background=D4B69D&color=fff"
-                    class="freelancer-avatar">
-                <h3 class="freelancer-name">Alice Smith</h3>
-                <p class="freelancer-title">Senior UI/UX Designer</p>
-                <div class="freelancer-rating">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <span>(4.9)</span>
-                </div>
-                <div class="skills-tags">
-                    <span class="skill-tag">Figma</span>
-                    <span class="skill-tag">Adobe XD</span>
-                    <span class="skill-tag">Prototyping</span>
-                </div>
-                <div class="freelancer-rate">$45 / hr</div>
-                <a href="freelancer-profile.html" class="btn btn-secondary" style="width: 100%;">View Profile</a>
-            </div>
-
-            <!-- Freelancer 2 -->
-            <div class="glass-card freelancer-card">
-                <img src="https://ui-avatars.com/api/?name=John+Doe&background=A8D0E6&color=fff"
-                    class="freelancer-avatar">
-                <h3 class="freelancer-name">John Doe</h3>
-                <p class="freelancer-title">Full Stack Developer</p>
-                <div class="freelancer-rating">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
-                    <span>(4.2)</span>
-                </div>
-                <div class="skills-tags">
-                    <span class="skill-tag">React</span>
-                    <span class="skill-tag">Node.js</span>
-                    <span class="skill-tag">MongoDB</span>
-                </div>
-                <div class="freelancer-rate">$60 / hr</div>
-                <button class="btn btn-secondary" style="width: 100%;">View Profile</button>
-            </div>
-
-            <!-- Freelancer 3 -->
-            <div class="glass-card freelancer-card">
-                <img src="https://ui-avatars.com/api/?name=Emma+W&background=B7D9AE&color=fff"
-                    class="freelancer-avatar">
-                <h3 class="freelancer-name">Emma Watson</h3>
-                <p class="freelancer-title">Content Writer</p>
-                <div class="freelancer-rating">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <span>(5.0)</span>
-                </div>
-                <div class="skills-tags">
-                    <span class="skill-tag">SEO</span>
-                    <span class="skill-tag">Blogs</span>
-                    <span class="skill-tag">Creative Writing</span>
-                </div>
-                <div class="freelancer-rate">$30 / hr</div>
-                <button class="btn btn-secondary" style="width: 100%;">View Profile</button>
-            </div>
-
-            <!-- Freelancer 4 -->
-            <div class="glass-card freelancer-card">
-                <img src="https://ui-avatars.com/api/?name=David+K&background=ffb7b2&color=fff"
-                    class="freelancer-avatar">
-                <h3 class="freelancer-name">David Kim</h3>
-                <p class="freelancer-title">Mobile App Dev</p>
-                <div class="freelancer-rating">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star-half-stroke"></i>
-                    <span>(4.7)</span>
-                </div>
-                <div class="skills-tags">
-                    <span class="skill-tag">Flutter</span>
-                    <span class="skill-tag">Swift</span>
-                    <span class="skill-tag">Kotlin</span>
-                </div>
-                <div class="freelancer-rate">$55 / hr</div>
-                <button class="btn btn-secondary" style="width: 100%;">View Profile</button>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 80px;">
-            <button class="btn btn-outline">Load More Talent</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
 </body>
 
 </html>

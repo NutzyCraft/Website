@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join as a Freelancer | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+    <nav class="navbar glass-panel">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo.jpg" alt="Nutzy Craft Logo" class="logo-img">
+                Nutzy Craft
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="services.html">Services</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="how-it-works.html">How it Works</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-secondary">Log In</a>
+                <a href="register.html" class="btn btn-primary">Join Now</a>
+            </div>
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <div class="auth-page">
+        <div class="glass-card auth-card">
+            <div class="auth-header">
+                <h2>Join as a Freelancer</h2>
+                <p>Start your journey and showcase your skills.</p>
+            </div>
+
+            <form class="auth-form">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Create a password">
+                </div>
+
+                <div class="auth-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox">
+                        <span class="custom-checkbox"></span>
+                        I agree to Terms & Privacy
+                    </label>
+                </div>
+
+                <button type="button" class="btn btn-primary"
+                    onclick="window.location.href='freelancer-dashboard.html'">Create Account</button>
+            </form>
+
+            <div class="social-login">
+                <p style="margin-bottom: 16px; font-size: 0.9rem;">Or sign up with</p>
+                <button class="social-btn">
+                    <i class="fa-brands fa-google google-icon"></i> Google
+                </button>
+            </div>
+
+            <p style="margin-top: 20px;">Already have an account? <a href="login.html"
+                    style="color: var(--primary); font-weight: 700;">Log In</a></p>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="index.html"
+                    style="color: var(--text-muted); font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-arrow-left"></i> Return to Home Page
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

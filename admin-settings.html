@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Nutzy Craft Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;"> Nutzy Admin
+            </a>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="admin-dashboard.html" class="sidebar-link"><i
+                            class="fa-solid fa-gauge-high"></i> Overview</a></li>
+                <li class="sidebar-item"><a href="admin-users.html" class="sidebar-link"><i
+                            class="fa-solid fa-users-gear"></i> User Management</a></li>
+                <li class="sidebar-item"><a href="admin-jobs.html" class="sidebar-link"><i
+                            class="fa-solid fa-briefcase"></i> Job Tracking</a></li>
+                <li class="sidebar-item"><a href="admin-finance.html" class="sidebar-link"><i
+                            class="fa-solid fa-money-bill-trend-up"></i> Finance</a></li>
+                <li class="sidebar-item"><a href="admin-disputes.html" class="sidebar-link"><i
+                            class="fa-solid fa-shield-halved"></i> Disputes</a></li>
+                <li class="sidebar-item"><a href="admin-settings.html" class="sidebar-link active"><i
+                            class="fa-solid fa-sliders"></i> Settings</a></li>
+            </ul>
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="dashboard-title">Platform Settings</h1>
+            </div>
+
+            <div class="glass-card" style="max-width: 800px; margin-bottom: 30px;">
+                <h3
+                    style="margin-bottom: 20px; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    General Configuration</h3>
+                <form>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Site Name</label>
+                            <input type="text" value="Nutzy Craft"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Support Email</label>
+                            <input type="email" value="support@nutzy.com"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Platform Fee (%)</label>
+                        <input type="number" value="10"
+                            style="width: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Maintenance Mode</label>
+                        <select style="width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                            <option value="off">Off (Live)</option>
+                            <option value="on">On (Under Maintenance)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" style="background: #1a237e;">Save Changes</button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

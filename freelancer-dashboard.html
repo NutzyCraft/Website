@@ -26,35 +26,40 @@
 
             <ul class="sidebar-menu">
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link active">
+                    <a href="freelancer-dashboard.html" class="sidebar-link active">
                         <i class="fa-solid fa-grid-2"></i> Dashboard
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="find-freelancer.html" class="sidebar-link">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link">
                         <i class="fa-solid fa-briefcase"></i> Browse Jobs
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="my-proposals.html" class="sidebar-link">
                         <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
                         <span
                             style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">3</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="earnings.html" class="sidebar-link">
                         <i class="fa-solid fa-wallet"></i> Earnings
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="freelancer-profile.html" class="sidebar-link">
-                        <i class="fa-solid fa-user"></i> My Profile
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
                     </a>
                 </li>
             </ul>
@@ -74,16 +79,18 @@
         <main class="dashboard-main">
             <!-- Topbar -->
             <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
                 <h1 class="dashboard-title">Good Morning, Sayur! ☀️</h1>
                 <div class="topbar-actions">
                     <div class="search-bar-container" style="margin: 0; width: 300px;">
                         <input type="text" class="search-input" placeholder="Search jobs..."
                             style="padding: 10px 20px; font-size: 0.9rem;">
                     </div>
-                    <button class="icon-btn">
+                    <a href="freelancer-notifications.html" class="icon-btn"
+                        style="text-decoration: none; color: inherit;">
                         <i class="fa-regular fa-bell"></i>
                         <span class="notification-dot"></span>
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -133,10 +140,10 @@
                     <h3>Active Orders</h3>
                     <a href="#" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">View All</a>
                 </div>
-                <table class="dashboard-table">
+                <table class="dashboard-table" style="vertical-align: middle;">
                     <thead>
-                        <tr>
-                            <th>Client</th>
+                        <tr style="text-align: left;">
+                            <th style="padding: 15px;">Client</th>
                             <th>Project</th>
                             <th>Deadline</th>
                             <th>Amount</th>
@@ -144,8 +151,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <img src="https://ui-avatars.com/api/?name=John+Doe&background=random"
                                         style="width: 30px; height: 30px; border-radius: 50%;">
@@ -155,10 +162,10 @@
                             <td>E-Commerce Redesign</td>
                             <td style="color: #FF5252;">Today</td>
                             <td>$1,200</td>
-                            <td><span class="status-badge-sm status-active">In Progress</span></td>
+                            <td><span class="status-badge status-active">In Progress</span></td>
                         </tr>
-                        <tr>
-                            <td>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <img src="https://ui-avatars.com/api/?name=Sarah+Smith&background=random"
                                         style="width: 30px; height: 30px; border-radius: 50%;">
@@ -168,10 +175,10 @@
                             <td>Mobile App MVP</td>
                             <td>Dec 20, 2025</td>
                             <td>$850</td>
-                            <td><span class="status-badge-sm status-pending">Review</span></td>
+                            <td><span class="status-badge status-pending">Review</span></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding: 15px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <img src="https://ui-avatars.com/api/?name=Mike+Ross&background=random"
                                         style="width: 30px; height: 30px; border-radius: 50%;">
@@ -181,7 +188,7 @@
                             <td>Landing Page</td>
                             <td>Dec 25, 2025</td>
                             <td>$400</td>
-                            <td><span class="status-badge-sm status-active">In Progress</span></td>
+                            <td><span class="status-badge status-active">In Progress</span></td>
                         </tr>
                     </tbody>
                 </table>

@@ -66,6 +66,38 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
+    // Dashboard Sidebar Toggle
+    const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
+    const dashboardSidebar = document.querySelector('.dashboard-sidebar');
+
+    if (sidebarToggleBtn && dashboardSidebar) {
+        sidebarToggleBtn.addEventListener('click', () => {
+            dashboardSidebar.classList.toggle('active');
+
+            // Create overlay if not exists
+            if (dashboardSidebar.classList.contains('active')) {
+                let overlay = document.querySelector('.sidebar-overlay');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'sidebar-overlay';
+                    overlay.style.position = 'fixed';
+                    overlay.style.top = '0';
+                    overlay.style.left = '0';
+                    overlay.style.width = '100vw';
+                    overlay.style.height = '100vh';
+                    overlay.style.background = 'rgba(0,0,0,0.5)';
+                    overlay.style.zIndex = '99';
+                    document.body.appendChild(overlay);
+
+                    overlay.addEventListener('click', () => {
+                        dashboardSidebar.classList.remove('active');
+                        overlay.remove();
+                    });
+                }
+            }
+        });
+    }
+
     // Smooth Scroll for Anchor Links (with offset for fixed header)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -86,4 +118,48 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+    // Image Preview Logic for Profile Page & Settings
+    const handleImagePreview = (inputId, imgId, backgroundTargetId = null) => {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        input.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (imgId) {
+                        const img = document.getElementById(imgId);
+                        if (img) {
+                            img.src = e.target.result;
+                            img.style.display = 'block'; // Ensure visible (for cover placeholder)
+                        }
+                    }
+                    if (backgroundTargetId) {
+                        const bgElement = document.getElementById(backgroundTargetId);
+                        if (bgElement) {
+                            bgElement.style.backgroundImage = `url('${e.target.result}')`;
+                            bgElement.style.backgroundSize = 'cover';
+                            bgElement.style.backgroundPosition = 'center';
+                        }
+                    }
+
+                    // Hide placeholder if exists
+                    if (inputId === 'settings-cover-upload') {
+                        const placeholder = document.getElementById('settings-cover-placeholder');
+                        if (placeholder) placeholder.style.display = 'none';
+                    }
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    };
+
+    // Initialize for My Profile Page
+    handleImagePreview('avatar-upload', 'profile-avatar');
+    handleImagePreview('banner-upload', null, 'banner-container');
+
+    // Initialize for Settings Page
+    handleImagePreview('settings-avatar-upload', 'settings-avatar-preview');
+    handleImagePreview('settings-cover-upload', 'settings-cover-preview');
+
 });

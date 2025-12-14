@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* Admin Specific Overrides */
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Admin
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="admin-dashboard.html" class="sidebar-link active">
+                        <i class="fa-solid fa-gauge-high"></i> Overview
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-users.html" class="sidebar-link">
+                        <i class="fa-solid fa-users-gear"></i> User Management
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Job Tracking
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-finance.html" class="sidebar-link">
+                        <i class="fa-solid fa-money-bill-trend-up"></i> Finance
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-disputes.html" class="sidebar-link">
+                        <i class="fa-solid fa-shield-halved"></i> Disputes
+                        <span
+                            style="margin-left: auto; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">1</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-sliders"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="dashboard-title">Platform Overview</h1>
+                <div class="topbar-actions">
+                    <div style="font-size: 0.9rem; color: #666; margin-right: 15px;">Server Status: <span
+                            style="color: #4caf50; font-weight: 700;">Online</span></div>
+                    <a href="admin-notifications.html" class="icon-btn"
+                        style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                        <i class="fa-regular fa-bell"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Rows -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #E3F2FD; color: #1565C0;">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Users</h4>
+                        <div class="stat-value">1,245</div>
+                        <div style="font-size: 0.8rem; color: #4caf50;"><i class="fa-solid fa-arrow-up"></i> 12% this
+                            week</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Active Jobs</h4>
+                        <div class="stat-value">85</div>
+                        <div style="font-size: 0.8rem; color: #4caf50;"><i class="fa-solid fa-arrow-up"></i> 5 new today
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FFF3E0; color: #EF6C00;">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Revenue (Net)</h4>
+                        <div class="stat-value">$15,400</div>
+                        <div style="font-size: 0.8rem; color: #666;">This Month</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FFEBEE; color: #D32F2F;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Disputes</h4>
+                        <div class="stat-value">3</div>
+                        <div style="font-size: 0.8rem; color: #D32F2F;">Action Required</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-split">
+                <!-- Recent Signups -->
+                <div class="dashboard-table-card">
+                    <div class="table-header" style="padding-left: 15px;">
+                        <h3>New Registrations</h3>
+                        <a href="admin-users.html" style="color: #1a237e; font-weight: 600;">View All</a>
+                    </div>
+                    <table class="dashboard-table" style="vertical-align: middle;">
+                        <thead>
+                            <tr style="text-align: left;">
+                                <th style="padding: 15px;">User</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="https://ui-avatars.com/api/?name=Alice+Wonder&background=random"
+                                            style="width: 24px; border-radius: 50%;">
+                                        Alice Wonder
+                                    </div>
+                                </td>
+                                <td>Client</td>
+                                <td>Just Now</td>
+                                <td><span class="status-badge status-active">Verified</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="https://ui-avatars.com/api/?name=Bob+Builder&background=random"
+                                            style="width: 24px; border-radius: 50%;">
+                                        Bob Builder
+                                    </div>
+                                </td>
+                                <td>Freelancer</td>
+                                <td>15m ago</td>
+                                <td><span class="status-badge" style="background: #eee; color: #666;">Pending</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <img src="https://ui-avatars.com/api/?name=Charlie+Day&background=random"
+                                            style="width: 24px; border-radius: 50%;">
+                                        Charlie Day
+                                    </div>
+                                </td>
+                                <td>Freelancer</td>
+                                <td>1h ago</td>
+                                <td><span class="status-badge status-active">Verified</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Live Feed -->
+                <div class="dashboard-table-card">
+                    <div class="table-header">
+                        <h3>Live Activity Feed</h3>
+                    </div>
+                    <div class="message-list">
+                        <div class="message-item">
+                            <div style="background: #E8F5E9; color: #2E7D32; padding: 8px; border-radius: 50%;"><i
+                                    class="fa-solid fa-money-bill"></i></div>
+                            <div>
+                                <div style="font-size: 0.9rem;"><strong>Job Payment Released</strong></div>
+                                <div style="font-size: 0.8rem; color: #666;">Order #4421 - $500.00 processed.</div>
+                            </div>
+                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">2m</div>
+                        </div>
+                        <div class="message-item">
+                            <div style="background: #E3F2FD; color: #1565C0; padding: 8px; border-radius: 50%;"><i
+                                    class="fa-solid fa-plus"></i></div>
+                            <div>
+                                <div style="font-size: 0.9rem;"><strong>New Job Posted</strong></div>
+                                <div style="font-size: 0.8rem; color: #666;">"Corporate Logo Design" by Tesla Corp.
+                                </div>
+                            </div>
+                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">5m</div>
+                        </div>
+                        <div class="message-item">
+                            <div style="background: #FFEBEE; color: #D32F2F; padding: 8px; border-radius: 50%;"><i
+                                    class="fa-solid fa-circle-exclamation"></i></div>
+                            <div>
+                                <div style="font-size: 0.9rem;"><strong>Report Filed</strong></div>
+                                <div style="font-size: 0.8rem; color: #666;">User #882 flagged for spam.</div>
+                            </div>
+                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">1h</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

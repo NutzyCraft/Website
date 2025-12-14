@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link active">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">My Job Postings</h2>
+                    <p style="color: #666;">Manage your job listings and view proposals.</p>
+                </div>
+                <div class="topbar-actions">
+                    <a href="post-job.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Post New Job</a>
+                </div>
+            </div>
+
+            <div class="glass-card table-responsive" style="padding: 0;">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Posted Date</th>
+                            <th>Proposals</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Full Stack Website Development</td>
+                            <td>Oct 24, 2025</td>
+                            <td>12</td>
+                            <td><span class="status-badge status-active">Open</span></td>
+                            <td>
+                                <a href="client-job-proposals.html" class="btn btn-outline"
+                                    style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none;">View
+                                    Proposals</a>
+                                <button class="btn btn-text" style="color: #999;"><i
+                                        class="fa-solid fa-ellipsis-vertical"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Modern Logo Design for Startup</td>
+                            <td>Oct 20, 2025</td>
+                            <td>45</td>
+                            <td><span class="status-badge" style="background: #e3f2fd; color: #1565c0;">Hired</span>
+                            </td>
+                            <td>
+                                <a href="client-track-job.html" class="btn btn-outline"
+                                    style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none;">Track
+                                    Progress</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">SEO Content Writing (5 Articles)</td>
+                            <td>Oct 15, 2025</td>
+                            <td>8</td>
+                            <td><span class="status-badge status-completed">Closed</span></td>
+                            <td>
+                                <button class="btn btn-outline"
+                                    style="padding: 4px 12px; font-size: 0.8rem;">Repost</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

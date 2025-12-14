@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="client-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="post-job.html" class="sidebar-link">
+                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-my-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-freelancer.html" class="sidebar-link">
+                        <i class="fa-solid fa-users"></i> Find Freelancers
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="client-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
+                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">Notifications</h2>
+                    <p style="color: #666;">Updates on your projects and hires.</p>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn btn-text" style="color: #666;">Mark all as read</button>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 0;">
+                <div class="notification-list">
+                    <!-- Notification Item 1 -->
+                    <div class="notification-item unread"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
+                        <div
+                            style="background: #E3F2FD; color: #1565C0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">New Proposal <span
+                                    style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Sayur Thejan</strong>
+                                submitted a proposal for "React Developer Needed".</p>
+                            <div style="font-size: 0.8rem; color: #999;">5 mins ago</div>
+                            <div style="margin-top: 10px;">
+                                <a href="client-job-proposals.html" class="btn btn-primary"
+                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">View
+                                    Proposal</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 2 -->
+                    <div class="notification-item"
+                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #E8F5E9; color: #2E7D32; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Milestone Completed
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Sarah Lee</strong>
+                                completed the "Logo Sketches" milestone.</p>
+                            <div style="font-size: 0.8rem; color: #999;">3 hours ago</div>
+                            <div style="margin-top: 10px;">
+                                <a href="client-track-job.html" class="btn btn-outline"
+                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">Review Work</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Item 3 -->
+                    <div class="notification-item" style="padding: 20px; display: flex; gap: 15px; align-items: start;">
+                        <div
+                            style="background: #F3E5F5; color: #7B1FA2; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Job Post Expiring
+                            </div>
+                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Your job "Mobile App MVP"
+                                will expire in 24 hours.</p>
+                            <div style="font-size: 0.8rem; color: #999;">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logged Out | Nutzy Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <style>
+        body {
+            background: #FFF9F5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%);
+            z-index: -1;
+        }
+
+        .dc-1 {
+            width: 600px;
+            height: 600px;
+            top: -200px;
+            right: -200px;
+        }
+
+        .dc-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            left: -100px;
+        }
+
+        .logout-card {
+            background: white;
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            border-top: 5px solid #1a237e;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logout-icon {
+            font-size: 3rem;
+            color: #1a237e;
+            margin-bottom: 25px;
+            display: inline-block;
+            background: #e8eaf6;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="decorative-circle dc-1"></div>
+    <div class="decorative-circle dc-2"></div>
+
+    <div class="logout-card">
+        <div class="logout-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h2 style="font-size: 1.8rem; color: #333; margin-bottom: 10px; font-weight: 800;">Securely Logged Out</h2>
+        <p style="color: #666; margin-bottom: 30px; line-height: 1.6;">
+            Your admin session has been terminated safely. Thank you for your hard work!
+        </p>
+
+        <a href="index.html" class="btn btn-primary"
+            style="background: #1a237e; width: 100%; display: block; padding: 14px; font-size: 1.1rem; border-radius: 12px;">
+            Return to Guest Homepage
+        </a>
+
+        <div style="margin-top: 20px;">
+            <a href="admin-dashboard.html"
+                style="color: #888; text-decoration: none; font-size: 0.9rem; font-weight: 600;">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Clear any local storage or session tokens here
+        localStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminSession');
+        console.log("Admin session cleared.");
+    </script>
+
+</body>
+
+</html>

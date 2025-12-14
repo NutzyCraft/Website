@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link active">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                        <span
+                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">3</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="earnings.html" class="sidebar-link">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Freelancer&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Sayur Thejan</div>
+                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">Submit Proposal</h2>
+                    <p style="color: #666;">Apply specifically for "E-Commerce Website Development"</p>
+                </div>
+            </div>
+
+            <div class="glass-card" style="max-width: 900px; padding: 30px;">
+
+                <!-- Job Summary -->
+                <div
+                    style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #eee;">
+                    <h3 style="margin-bottom: 10px;">Job Details</h3>
+                    <p style="color: #555; margin-bottom: 10px;">Looking for an experienced full-stack developer to
+                        build a clothing store website using React and Node.js.</p>
+                    <div style="display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600;">
+                        <span><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Budget: $1,200 -
+                            $1,500</span>
+                        <span><i class="fa-solid fa-code" style="color: var(--primary);"></i> Skills: React,
+                            Node.js</span>
+                    </div>
+                </div>
+
+                <form>
+                    <div class="form-section">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 20px;">1. Terms</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display: block; font-weight: 700; margin-bottom: 8px;">Bid Amount ($)</label>
+                                <input type="number" class="form-input" placeholder="1200"
+                                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px;">
+                                <small style="display: block; margin-top: 5px; color: #888;">Customer's budget: $1200 -
+                                    $1500</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display: block; font-weight: 700; margin-bottom: 8px;">Delivery Time</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" class="form-input" placeholder="7"
+                                        style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 12px;">
+                                    <select class="form-select"
+                                        style="width: 100px; padding: 12px; border: 1px solid #ddd; border-radius: 12px; background: white;">
+                                        <option>Days</option>
+                                        <option>Weeks</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="margin-top: 30px;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 20px;">2. Cover Letter</h3>
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-weight: 700; margin-bottom: 8px;">Why
+                                are you the best fit?</label>
+                            <textarea class="form-textarea"
+                                placeholder="Describe your relevant experience, approach to this project, and why the client should hire you..."
+                                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; min-height: 200px; resize: vertical; font-family: inherit;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" style="margin-top: 30px; margin-bottom: 40px;">
+                        <h3 style="font-size: 1.2rem; margin-bottom: 20px;">3. Attachments</h3>
+                        <div class="file-upload"
+                            style="border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 12px; cursor: pointer;">
+                            <i class="fa-solid fa-paperclip"
+                                style="font-size: 1.5rem; color: #888; margin-bottom: 10px;"></i>
+                            <p style="color: #666;">Attach portfolio samples or resume</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 15px;">
+                        <a href="find-jobs.html" class="btn btn-outline" style="padding: 12px 24px;">Cancel</a>
+                        <button type="button" class="btn btn-primary" style="padding: 12px 30px;">Submit
+                            Proposal</button>
+                    </div>
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>

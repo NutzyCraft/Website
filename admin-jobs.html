@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Tracking | Nutzy Craft Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;"> Nutzy Admin
+            </a>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="admin-dashboard.html" class="sidebar-link"><i
+                            class="fa-solid fa-gauge-high"></i> Overview</a></li>
+                <li class="sidebar-item"><a href="admin-users.html" class="sidebar-link"><i
+                            class="fa-solid fa-users-gear"></i> User Management</a></li>
+                <li class="sidebar-item"><a href="admin-jobs.html" class="sidebar-link active"><i
+                            class="fa-solid fa-briefcase"></i> Job Tracking</a></li>
+                <li class="sidebar-item"><a href="admin-finance.html" class="sidebar-link"><i
+                            class="fa-solid fa-money-bill-trend-up"></i> Finance</a></li>
+                <li class="sidebar-item"><a href="admin-disputes.html" class="sidebar-link"><i
+                            class="fa-solid fa-shield-halved"></i> Disputes</a></li>
+                <li class="sidebar-item"><a href="admin-settings.html" class="sidebar-link"><i
+                            class="fa-solid fa-sliders"></i> Settings</a></li>
+            </ul>
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="dashboard-title">Global Job Tracking</h1>
+                <div class="topbar-actions">
+                    <div class="search-bar-container" style="margin: 0; width: 300px;">
+                        <input type="text" class="search-input" placeholder="Search Job ID or Title..."
+                            style="padding: 10px 20px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-table-card">
+                <table class="dashboard-table" style="vertical-align: middle;">
+                    <thead>
+                        <tr style="text-align: left;">
+                            <th style="width: 10%;">Job ID</th>
+                            <th style="width: 25%;">Title</th>
+                            <th style="width: 15%;">Client</th>
+                            <th style="width: 15%;">Freelancer</th>
+                            <th style="width: 10%;">Value</th>
+                            <th style="width: 10%;">Stage</th>
+                            <th style="width: 15%; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">#JOB-8821</td>
+                            <td style="font-weight: 600;">E-Commerce Platform</td>
+                            <td>Client User</td>
+                            <td>Sayur Thejan</td>
+                            <td>$1,500</td>
+                            <td><span class="status-badge status-active">In Progress</span></td>
+                            <td style="text-align: center;">
+                                <a href="client-track-job.html" class="btn btn-outline"
+                                    style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none; display: inline-block;">View
+                                    Tracking</a>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td>#JOB-8822</td>
+                            <td style="font-weight: 600;">Logo Design</td>
+                            <td>Alice Wonder</td>
+                            <td>Sarah Lee</td>
+                            <td>$450</td>
+                            <td><span class="status-badge" style="background: #e3f2fd; color: #1565c0;">Hired</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="client-track-job.html" class="btn btn-outline"
+                                    style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none; display: inline-block;">View
+                                    Tracking</a>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td>#JOB-8823</td>
+                            <td style="font-weight: 600;">Mobile App UI</td>
+                            <td>Mike Ross</td>
+                            <td><span style="color: #999;">--</span></td>
+                            <td>$800</td>
+                            <td><span class="status-badge" style="background: #fff3e0; color: #e65100;">Hiring</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <button class="btn btn-text"
+                                    style="background: #f5f5f5; padding: 6px 12px; border-radius: 4px; color: #666;">Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#JOB-8820</td>
+                            <td style="font-weight: 600;">SEO Optimization</td>
+                            <td>Client User</td>
+                            <td>Sayur Thejan</td>
+                            <td>$200</td>
+                            <td><span class="status-badge" style="background: #e8f5e9; color: #2e7d32;">Completed</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <button class="btn btn-text"
+                                    style="background: #f5f5f5; padding: 6px 12px; border-radius: 4px; color: #666;">Invoice</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>

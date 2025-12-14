@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management | Nutzy Craft Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;"> Nutzy Admin
+            </a>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item"><a href="admin-dashboard.html" class="sidebar-link"><i
+                            class="fa-solid fa-gauge-high"></i> Overview</a></li>
+                <li class="sidebar-item"><a href="admin-users.html" class="sidebar-link active"><i
+                            class="fa-solid fa-users-gear"></i> User Management</a></li>
+                <li class="sidebar-item"><a href="admin-jobs.html" class="sidebar-link"><i
+                            class="fa-solid fa-briefcase"></i> Job Tracking</a></li>
+                <li class="sidebar-item"><a href="admin-finance.html" class="sidebar-link"><i
+                            class="fa-solid fa-money-bill-trend-up"></i> Finance</a></li>
+                <li class="sidebar-item"><a href="admin-disputes.html" class="sidebar-link"><i
+                            class="fa-solid fa-shield-halved"></i> Disputes</a></li>
+                <li class="sidebar-item"><a href="admin-settings.html" class="sidebar-link"><i
+                            class="fa-solid fa-sliders"></i> Settings</a></li>
+            </ul>
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="dashboard-title">User Management</h1>
+                <div class="topbar-actions">
+                    <div class="search-bar-container" style="margin: 0; width: 300px;">
+                        <input type="text" class="search-input" placeholder="Search by name, email..."
+                            style="padding: 10px 20px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-table-card">
+                <table class="dashboard-table" style="vertical-align: middle;">
+                    <thead>
+                        <tr style="text-align: left;">
+                            <th style="padding: 15px;">User ID</th>
+                            <th>Name / Email</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">#USR-1001</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
+                                        style="width: 32px; border-radius: 50%;">
+                                    <div>
+                                        <div style="font-weight: 600;">Sayur Thejan</div>
+                                        <div style="font-size: 0.8rem; color: #888;">sayur@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="skill-tag">Freelancer</span></td>
+                            <td>Oct 12, 2024</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 4px 10px;">Edit</button>
+                                <button class="btn btn-text" style="color: #d32f2f;">Ban</button>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f0f0f0;">
+                            <td style="padding: 15px;">#USR-1002</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://ui-avatars.com/api/?name=Client+User&background=random"
+                                        style="width: 32px; border-radius: 50%;">
+                                    <div>
+                                        <div style="font-weight: 600;">Client User</div>
+                                        <div style="font-size: 0.8rem; color: #888;">client@example.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="skill-tag status-blue">Client</span></td>
+                            <td>Nov 05, 2024</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 4px 10px;">Edit</button>
+                                <button class="btn btn-text" style="color: #d32f2f;">Ban</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px;">#USR-1003</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://ui-avatars.com/api/?name=Sus+Guy&background=random"
+                                        style="width: 32px; border-radius: 50%;">
+                                    <div>
+                                        <div style="font-weight: 600;">Spam Bot</div>
+                                        <div style="font-size: 0.8rem; color: #888;">bot@spam.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="skill-tag">Freelancer</span></td>
+                            <td>Today</td>
+                            <td><span class="status-badge status-error">Suspended</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 4px 10px;">Unban</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>
