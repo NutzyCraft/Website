@@ -14,6 +14,56 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="content.css">
     <link rel="stylesheet" href="auth.css"> <!-- Reusing form styles -->
+    <style>
+        /* Accordion Styles */
+        .accordion-item {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #f8f9fa;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: var(--primary);
+        }
+
+        .accordion-icon {
+            transition: 0.3s;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 
 <body>
@@ -45,8 +95,8 @@
         <div class="hero-glow glow-1"></div>
         <div class="hero-glow glow-2"></div>
         <div class="container">
-            <h1 class="page-title">Get in <span class="gradient-text">Touch</span></h1>
-            <p class="page-subtitle">Have a question or a project in mind? We'd love to hear from you.</p>
+            <h1 class="page-title">Help & <span class="gradient-text">Support</span></h1>
+            <p class="page-subtitle">For guests, potential clients, and freelancers. We are here to help.</p>
         </div>
     </header>
 
@@ -55,18 +105,40 @@
             <div class="contact-grid">
                 <!-- Contact Form -->
                 <div class="glass-card">
-                    <form class="auth-form">
+                    <form class="auth-form"
+                        onsubmit="event.preventDefault(); alert('We have received your request. A support agent will contact you shortly.');">
+                        <h3 style="margin-bottom: 20px; color: var(--primary);">Submit a Request</h3>
+
+                        <div class="form-group">
+                            <label class="form-label">I am a...</label>
+                            <select class="form-input" style="background: white;" required>
+                                <option value="" disabled selected>Select your role</option>
+                                <option value="client">Client / Business</option>
+                                <option value="freelancer">Freelancer / Talent</option>
+                                <option value="guest">Guest / Other</option>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label">Name</label>
-                            <input type="text" class="form-input" placeholder="Your Name">
+                            <input type="text" class="form-input" placeholder="Your Name" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-input" placeholder="your@email.com">
+                            <input type="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject Category</label>
+                            <select class="form-input" style="background: white;" required>
+                                <option value="general">General Inquiry</option>
+                                <option value="billing">Billing / Payments</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="account">Account Access</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Message</label>
-                            <textarea class="form-textarea" placeholder="How can we help you?"></textarea>
+                            <textarea class="form-textarea" placeholder="How can we help you?" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
                     </form>
@@ -74,6 +146,45 @@
 
                 <!-- Contact Info -->
                 <div class="contact-info-box">
+                    <div style="margin-bottom: 30px;">
+                        <h3>Frequently Asked Questions</h3>
+                        <p class="text-muted" style="margin-bottom: 20px;">Quick answers to common questions.</p>
+
+                        <!-- FAQ Accordion -->
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span>How do I join as a Freelancer?</span>
+                                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                Click "Join Now" and select "Freelancer". Complete your profile, upload your portfolio,
+                                and verify your identity to start bidding.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span>Is it free to post a job?</span>
+                                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                Yes! Posting a job is completely free for clients. You only pay when you hire a
+                                freelancer.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span>What payment methods are supported?</span>
+                                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="accordion-content">
+                                We support major credit cards (Visa, MasterCard) and PayPal for secure transactions.
+                            </div>
+                        </div>
+
+                    </div>
+
                     <div class="contact-method">
                         <i class="fa-solid fa-envelope"></i>
                         <div>
@@ -81,20 +192,7 @@
                             <p class="text-muted">nutzycraft@gmail.com</p>
                         </div>
                     </div>
-                    <div class="contact-method">
-                        <i class="fa-solid fa-phone"></i>
-                        <div>
-                            <strong>Call Us</strong>
-                            <p class="text-muted">+94 78 212 7717</p>
-                        </div>
-                    </div>
-                    <div class="contact-method">
-                        <i class="fa-brands fa-whatsapp"></i>
-                        <div>
-                            <strong>WhatsApp</strong>
-                            <p class="text-muted">Available 9am - 6pm</p>
-                        </div>
-                    </div>
+
                     <div class="contact-method">
                         <i class="fa-solid fa-clock"></i>
                         <div>
@@ -103,18 +201,11 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 40px;">
-                        <h3>Follow Us</h3>
-                        <div
-                            style="display: flex; flex-direction: row; gap: 15px; width: fit-content; margin-top: 15px;">
-                            <a href="https://www.facebook.com/share/1ZJZodYPV1/?mibextid=wwXIfr" target="_blank"
-                                class="contact-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                            <a href="https://www.instagram.com/nutzycraft?igsh=eXg3YWRmdWplMTcw&utm_source=qr"
-                                target="_blank" class="contact-icon"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="https://www.linkedin.com/company/nutzycraft/" target="_blank"
-                                class="contact-icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                        </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                        <a href="admin-login.html" style="color: #666; font-size: 0.85rem; text-decoration: none;"><i
+                                class="fa-solid fa-lock"></i> Staff Login</a>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -200,6 +291,16 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    </script>
 </body>
 
 </html>

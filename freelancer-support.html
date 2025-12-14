@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | Nutzy Craft</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+    <style>
+        .accordion-item {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #f8f9fa;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: var(--primary);
+        }
+
+        .accordion-icon {
+            transition: 0.3s;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .support-card {
+            background: var(--primary);
+            color: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Craft
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-grid-2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="find-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="messages.html" class="sidebar-link">
+                        <i class="fa-solid fa-message"></i> Messages
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="earnings.html" class="sidebar-link">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i> Settings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="freelancer-support.html" class="sidebar-link active">
+                        <i class="fa-solid fa-headset"></i> Support
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff"
+                    style="width: 40px; height: 40px; border-radius: 50%;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Sayur Thejan</div>
+                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                </div>
+                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;">Help & Support</h2>
+                    <p style="color: #666;">We are here to help you succeed.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-split" style="gap: 30px;">
+                <!-- Left: FAQ -->
+                <div style="flex: 1.5;">
+                    <h3 style="margin-bottom: 20px;">Frequently Asked Questions</h3>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span>How do I get paid?</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            Once a client approves your milestone, the funds are released to your Nutzy Wallet. You can
+                            withdraw to your bank account or PayPal from the "Earnings" page.
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span>How can I improve my proposal ranking?</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            Complete your profile 100%, verify your identity, and maintan a high job success score.
+                            Tailoring your cover letters to the specific job description also helps significantly.
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span>What happens if a client doesn't respond?</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            If you have submitted work and the client is unresponsive for 14 days, the funds for that
+                            milestone will be automatically released to you.
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <span>How do I verify my identity?</span>
+                            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                        </div>
+                        <div class="accordion-content">
+                            Go to Settings > Identity Verification and upload a government-issued ID. This adds a
+                            "Verified" badge to your profile and increases client trust.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Contact Form -->
+                <div style="flex: 1;">
+                    <div class="support-card">
+                        <h3 style="margin-bottom: 10px;">Need Urgent Help?</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 20px; opacity: 0.9;">Our support team is available
+                            24/7 to assist you.</p>
+                        <a href="mailto:support@nutzy.com" class="btn"
+                            style="background: white; color: var(--primary); width: 100%; display: block; text-align: center; font-weight: 700;">Email
+                            Support</a>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3 style="margin-bottom: 20px;">Contact Us</h3>
+                        <form onsubmit="event.preventDefault(); alert('Message sent! We will reply shortly.');">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: 700; margin-bottom: 8px;">Subject</label>
+                                <input type="text"
+                                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                                    placeholder="e.g. Withdrawal Issue">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; font-weight: 700; margin-bottom: 8px;">Message</label>
+                                <textarea
+                                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; min-height: 100px;"
+                                    placeholder="Describe your issue..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+
+</body>
+
+</html>
