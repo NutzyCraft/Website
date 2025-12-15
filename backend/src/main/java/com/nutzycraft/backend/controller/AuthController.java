@@ -27,6 +27,16 @@ public class AuthController {
         return authService.registerFreelancer(request);
     }
 
+    @PostMapping("/verify")
+    public org.springframework.http.ResponseEntity<?> verifyUser(@RequestBody com.nutzycraft.backend.dto.VerifyRequest request) {
+        boolean verified = authService.verifyUser(request.getEmail(), request.getCode());
+        if (verified) {
+            return org.springframework.http.ResponseEntity.ok("User verified successfully");
+        } else {
+            return org.springframework.http.ResponseEntity.badRequest().body("Invalid verification code");
+        }
+    }
+
     @PostMapping("/login")
     public String login(@RequestBody User user) {
         // Mock Login Logic

@@ -65,9 +65,40 @@
                     </label>
                 </div>
 
-                <button type="button" class="btn btn-primary"
-                    onclick="window.location.href='freelancer-dashboard.html'">Create Account</button>
+                <button type="button" class="btn btn-primary" id="register-btn">Create Account</button>
             </form>
+
+            <script>
+                document.getElementById('register-btn').addEventListener('click', async () => {
+                    const inputs = document.querySelectorAll('.form-input');
+                    const fullName = inputs[0].value;
+                    const email = inputs[1].value;
+                    const password = inputs[2].value;
+
+                    if (!fullName || !email || !password) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('http://localhost:8080/api/auth/register-freelancer', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ fullName, email, password })
+                        });
+
+                        if (response.ok) {
+                            localStorage.setItem('pendingEmail', email);
+                            window.location.href = 'verify-email.html';
+                        } else {
+                            alert('Registration failed');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Something went wrong');
+                    }
+                });
+            </script>
 
             <div class="social-login">
                 <p style="margin-bottom: 16px; font-size: 0.9rem;">Or sign up with</p>

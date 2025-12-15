@@ -138,18 +138,36 @@
             });
         });
 
-        // Demo Verification Logic
-        document.getElementById('verify-form').addEventListener('submit', function (e) {
+        // Verification Logic
+        document.getElementById('verify-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             let code = '';
             inputs.forEach(input => code += input.value);
 
-            if (code === '1234') { // Demo code
-                alert('Email Verified Successfully!');
-                // Logic to redirect based on user type (simplified for demo)
-                window.location.href = 'freelancer-dashboard.html';
-            } else {
-                alert('Invalid Code! Try 1234');
+            const email = localStorage.getItem('pendingEmail');
+            if (!email) {
+                alert("No email found to verify. Please register again.");
+                window.location.href = "register.html";
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
+                });
+
+                if (response.ok) {
+                    alert('Email Verified Successfully!');
+                    localStorage.removeItem('pendingEmail'); // Cleanup
+                    window.location.href = 'freelancer-dashboard.html';
+                } else {
+                    alert('Invalid Verification Code');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Verification failed. Check console.');
             }
         });
     </script>

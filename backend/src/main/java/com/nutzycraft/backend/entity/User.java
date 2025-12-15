@@ -22,6 +22,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String verificationCode;
+    
+    private boolean isVerified = false;
+
     public enum Role {
         CLIENT, FREELANCER, ADMIN
     }
