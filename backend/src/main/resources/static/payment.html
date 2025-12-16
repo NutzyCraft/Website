@@ -147,41 +147,16 @@
             </div>
 
             <form id="payment-form">
-                <div class="form-group">
-                    <label>Cardholder Name</label>
-                    <input type="text" class="form-input" placeholder="John Doe" required>
+                <div id="payment-element">
+                    <!-- Stripe Elements will be inserted here -->
                 </div>
 
-                <div class="form-group">
-                    <label>Card Number</label>
-                    <div style="position: relative;">
-                        <input type="text" class="form-input" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                        <i class="fa-brands fa-cc-visa"
-                            style="position: absolute; right: 15px; top: 15px; font-size: 1.5rem; color: #1a237e;"></i>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label>Expiry Date</label>
-                        <input type="text" class="form-input" placeholder="MM/YY" maxlength="5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>CVV</label>
-                        <input type="password" class="form-input" placeholder="123" maxlength="3" required>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="checkbox" id="save-card" style="margin-top: 4px;">
-                    <label for="save-card" style="font-weight: 400; color: #666; font-size: 0.9rem;">Save card securely
-                        for future payments</label>
-                </div>
-
-                <button type="submit" class="btn btn-primary"
-                    style="width: 100%; padding: 15px; background: #1a237e; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: white; border: none; cursor: pointer;">
-                    Pay Now <span id="pay-btn-amount">$1,260.00</span>
+                <button type="submit" class="btn btn-primary" id="submit"
+                    style="width: 100%; padding: 15px; background: #1a237e; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: white; border: none; cursor: pointer; margin-top: 20px;">
+                    <div class="spinner hidden" id="spinner"></div>
+                    <span id="button-text">Pay Now $1,260.00</span>
                 </button>
+                <div id="payment-message" class="hidden" style="margin-top: 10px; color: #D32F2F;"></div>
 
                 <div class="secure-badge">
                     <i class="fa-solid fa-shield-cat"></i> 256-bit SSL Encrypted Payment
@@ -229,20 +204,63 @@
         </div>
     </div>
 
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
-        document.getElementById('payment-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Fetch Publishable Key
+            const { publishableKey } = await fetch('/api/payment/config').then(r => r.json());
+            const stripe = Stripe(publishableKey);
 
-            // Loading State
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-            btn.style.opacity = '0.8';
+            // 2. Create Payment Intent
+            const { clientSecret } = await fetch('/api/payment/create-payment-intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: 126000, currency: 'usd' }) // 1260.00 cents
+            }).then(r => r.json());
 
-            setTimeout(() => {
-                alert('Payment Successful! The project has started.');
-                window.location.href = 'client-track-job.html';
-            }, 2000);
+            // 3. Mount Stripe Element
+            const elements = stripe.elements({ clientSecret });
+            const paymentElement = elements.create('payment');
+            paymentElement.mount('#payment-element');
+
+            // 4. Handle Submit
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setLoading(true);
+
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        // Redirect to track job page after payment
+                        return_url: window.location.origin + '/client-track-job.html',
+                    },
+                });
+
+                if (error.type === "card_error" || error.type === "validation_error") {
+                    showMessage(error.message);
+                } else {
+                    showMessage("An unexpected error occurred.");
+                }
+                setLoading(false);
+            });
+
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    document.querySelector("#submit").disabled = true;
+                    document.querySelector("#button-text").textContent = "Processing...";
+                } else {
+                    document.querySelector("#submit").disabled = false;
+                    document.querySelector("#button-text").textContent = "Pay Now $1,260.00";
+                }
+            }
+
+            function showMessage(messageText) {
+                const messageContainer = document.querySelector("#payment-message");
+                messageContainer.textContent = messageText;
+                messageContainer.classList.remove("hidden");
+                setTimeout(() => messageContainer.classList.add("hidden"), 4000);
+            }
         });
     </script>
 </body>

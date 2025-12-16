@@ -61,15 +61,11 @@
                 <li class="sidebar-item">
                     <a href="admin-disputes.html" class="sidebar-link">
                         <i class="fa-solid fa-shield-halved"></i> Disputes
-                        <span
-                            style="margin-left: auto; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">1</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="admin-support.html" class="sidebar-link">
                         <i class="fa-solid fa-envelope-open-text"></i> Support Messages
-                        <span
-                            style="font-size: 0.75rem; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; margin-left: auto;">3</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -169,44 +165,8 @@
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Alice+Wonder&background=random"
-                                            style="width: 24px; border-radius: 50%;">
-                                        Alice Wonder
-                                    </div>
-                                </td>
-                                <td>Client</td>
-                                <td>Just Now</td>
-                                <td><span class="status-badge status-active">Verified</span></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Bob+Builder&background=random"
-                                            style="width: 24px; border-radius: 50%;">
-                                        Bob Builder
-                                    </div>
-                                </td>
-                                <td>Freelancer</td>
-                                <td>15m ago</td>
-                                <td><span class="status-badge" style="background: #eee; color: #666;">Pending</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Charlie+Day&background=random"
-                                            style="width: 24px; border-radius: 50%;">
-                                        Charlie Day
-                                    </div>
-                                </td>
-                                <td>Freelancer</td>
-                                <td>1h ago</td>
-                                <td><span class="status-badge status-active">Verified</span></td>
-                            </tr>
+                        <tbody id="new-registrations-body">
+                            <!-- Loaded via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -216,35 +176,8 @@
                     <div class="table-header">
                         <h3>Live Activity Feed</h3>
                     </div>
-                    <div class="message-list">
-                        <div class="message-item">
-                            <div style="background: #E8F5E9; color: #2E7D32; padding: 8px; border-radius: 50%;"><i
-                                    class="fa-solid fa-money-bill"></i></div>
-                            <div>
-                                <div style="font-size: 0.9rem;"><strong>Job Payment Released</strong></div>
-                                <div style="font-size: 0.8rem; color: #666;">Order #4421 - $500.00 processed.</div>
-                            </div>
-                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">2m</div>
-                        </div>
-                        <div class="message-item">
-                            <div style="background: #E3F2FD; color: #1565C0; padding: 8px; border-radius: 50%;"><i
-                                    class="fa-solid fa-plus"></i></div>
-                            <div>
-                                <div style="font-size: 0.9rem;"><strong>New Job Posted</strong></div>
-                                <div style="font-size: 0.8rem; color: #666;">"Corporate Logo Design" by Tesla Corp.
-                                </div>
-                            </div>
-                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">5m</div>
-                        </div>
-                        <div class="message-item">
-                            <div style="background: #FFEBEE; color: #D32F2F; padding: 8px; border-radius: 50%;"><i
-                                    class="fa-solid fa-circle-exclamation"></i></div>
-                            <div>
-                                <div style="font-size: 0.9rem;"><strong>Report Filed</strong></div>
-                                <div style="font-size: 0.8rem; color: #666;">User #882 flagged for spam.</div>
-                            </div>
-                            <div style="margin-left: auto; font-size: 0.75rem; color: #999;">1h</div>
-                        </div>
+                    <div class="message-list" id="activity-feed">
+                        <div style="padding: 20px; text-align: center; color: #666;">Waiting for new activity...</div>
                     </div>
                 </div>
             </div>

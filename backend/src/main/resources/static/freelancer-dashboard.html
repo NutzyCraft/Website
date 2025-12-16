@@ -272,6 +272,51 @@
         </main>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            if (email) {
+                try {
+                    // Fetch Profile
+                    const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                    if (profileRes.ok) {
+                        const profile = await profileRes.json();
+                        const titleEl = document.querySelector('.dashboard-title');
+                        if (titleEl) titleEl.innerText = `Good Morning, ${profile.fullName.split(' ')[0]}! ☀️`;
+
+                        const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
+                        if (sidebarUserEl) {
+                            sidebarUserEl.innerHTML = `
+                                <div style="font-weight: 700; font-size: 0.9rem;">${profile.fullName}</div>
+                                <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                            `;
+                        }
+
+                        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=D4B69D&color=fff`;
+                        const sidebarImg = document.querySelector('.sidebar-user img');
+                        if (sidebarImg) sidebarImg.src = avatarUrl;
+                    }
+
+                    // Fetch Stats
+                    const statsRes = await fetch(`/api/dashboard/freelancer?email=${email}`);
+                    if (statsRes.ok) {
+                        const stats = await statsRes.json();
+                        // Update Stat Cards (order: Total Earnings, Completed Jobs, Active Jobs, Rating)
+                        const statValues = document.querySelectorAll('.stat-value');
+                        if (statValues.length >= 4) {
+                            statValues[0].innerText = `$${stats.totalEarnings}`;
+                            statValues[1].innerText = stats.completedJobs;
+                            statValues[2].innerText = stats.activeJobs;
+                            statValues[3].innerText = stats.rating;
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Failed to load dashboard data:', error);
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

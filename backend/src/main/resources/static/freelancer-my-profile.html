@@ -300,6 +300,46 @@
         </main>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const email = localStorage.getItem('userEmail') || 'testfreelancer@example.com';
+
+            fetch(`http://localhost:8080/api/freelancers/me?email=${email}`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Freelancer not found");
+                    return res.json();
+                })
+                .then(freelancer => {
+                    const user = freelancer.user || {};
+
+                    document.querySelector('.profile-name').innerHTML = `${user.fullName || 'Unknown'} <i class="fa-solid fa-pen" style="font-size: 0.9rem; color: #ccc; cursor: pointer;" onclick="window.location.href='settings.html'"></i>`;
+                    document.querySelector('.profile-title').innerHTML = `${freelancer.title || 'Freelancer'} <i class="fa-solid fa-pen" style="font-size: 0.8rem; color: #ccc; cursor: pointer;" onclick="window.location.href='settings.html'"></i>`;
+
+                    // Simple logic to find specific elements or update by class since IDs are reused/missing in original template
+                    // Ideally, I should have added IDs to the HTML elements first, but I can use querySelector for unique-ish structure
+
+                    const rateEl = document.querySelector('.profile-info .profile-actions') ? null : document.querySelector('.profile-info span[style*="font-size: 1.5rem"]');
+                    if (rateEl) rateEl.innerHTML = `$${freelancer.hourlyRate || 0}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span>`;
+
+                    document.querySelector('.profile-avatar-large').src = `https://ui-avatars.com/api/?name=${user.fullName}&background=random&size=200`;
+
+                    // About Me - assuming it's the first paragraph in profile-main
+                    const aboutSection = document.querySelector('.profile-main .profile-section:nth-child(1) p');
+                    if (aboutSection) aboutSection.innerText = freelancer.bio || 'No bio provided.';
+
+                    // Skills
+                    const skillsContainer = document.querySelector('.skills-tags');
+                    if (skillsContainer) {
+                        skillsContainer.innerHTML = '';
+                        (freelancer.skills || []).forEach(skill => {
+                            skillsContainer.innerHTML += `<span class="skill-tag">${skill} <i class="fa-solid fa-xmark" style="font-size: 0.7rem; margin-left: 5px; cursor: pointer;"></i></span>`;
+                        });
+                        skillsContainer.innerHTML += `<span class="skill-tag" style="border: 1px dashed #ccc; background: white; color: #888; cursor: pointer;" onclick="window.location.href='settings.html'">+ Add Skill</span>`;
+                    }
+                })
+                .catch(err => console.error(err));
+        });
+    </script>
 </body>
 
 </html>

@@ -148,7 +148,7 @@
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #333;">Email
                         Address</label>
-                    <input type="email" id="email" required placeholder="admin@nutzy.com"
+                    <input type="email" id="email" required placeholder="nutzycraft@gmail.com"
                         style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 12px; font-size: 1rem; transition: 0.3s;">
                 </div>
 
@@ -187,15 +187,35 @@
 
     <!-- Simple Script for Demo Auth -->
     <script>
-        document.getElementById('admin-login-form').addEventListener('submit', function (e) {
+        document.getElementById('admin-login-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            if (email === 'admin@nutzy.com' && password === 'admin123') {
-                window.location.href = 'admin-verify.html';
-            } else {
-                alert('Invalid Admin Credentials! Try admin@nutzy.com / admin123');
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    if (user.role === 'ADMIN') {
+                        // Store user session if needed, e.g. localStorage.setItem('user', JSON.stringify(user));
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        alert('Access Denied: You do not have administrator privileges.');
+                    }
+                } else {
+                    const errorMsg = await response.text();
+                    alert('Login Failed: ' + (errorMsg || 'Invalid credentials'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred during login. Please try again.');
             }
         });
     </script>

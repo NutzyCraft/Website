@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <script src="script.js" defer></script>
+    <script src="admin-finance.js" defer></script>
     <style>
         .sidebar-link.active {
             background: #1a237e;
@@ -46,8 +47,6 @@
                 <li class="sidebar-item">
                     <a href="admin-support.html" class="sidebar-link">
                         <i class="fa-solid fa-envelope-open-text"></i> Support Messages
-                        <span
-                            style="font-size: 0.75rem; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; margin-left: auto;">3</span>
                     </a>
                 </li>
                 <li class="sidebar-item"><a href="admin-settings.html" class="sidebar-link"><i
@@ -70,7 +69,8 @@
                 <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
                 <h1 class="dashboard-title">Financial Overview</h1>
                 <div class="topbar-actions">
-                    <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Export Report</button>
+                    <button id="export-report-btn" class="btn btn-outline"><i class="fa-solid fa-download"></i> Export
+                        Report</button>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
                     </div>
                     <div class="stat-info">
                         <h4>Total Revenue</h4>
-                        <div class="stat-value">$125,400</div>
+                        <div class="stat-value" id="total-revenue">...</div>
                         <div style="font-size: 0.8rem; color: #4caf50;">+5% vs last month</div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                     </div>
                     <div class="stat-info">
                         <h4>Pending Payouts</h4>
-                        <div class="stat-value">$8,250</div>
+                        <div class="stat-value" id="pending-payouts">...</div>
                         <div style="font-size: 0.8rem; color: #666;">24 Processed Today</div>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                     </div>
                     <div class="stat-info">
                         <h4>Comm. Earnings</h4>
-                        <div class="stat-value">$12,540</div>
+                        <div class="stat-value" id="net-profit">...</div>
                         <div style="font-size: 0.8rem; color: #666;">10% Platform Fee</div>
                     </div>
                 </div>
@@ -123,37 +123,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 15px;">#TRX-9921</td>
-                            <td>
-                                <div style="font-weight: 600;">Monthly Freelancer Payout</div>
-                                <div style="font-size: 0.8rem; color: #888;">To: Sayur Thejan</div>
-                            </td>
-                            <td>Oct 20, 2025</td>
-                            <td style="color: #d32f2f;">-$450.00</td>
-                            <td><span class="status-badge">Processed</span></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 15px;">#TRX-9922</td>
-                            <td>
-                                <div style="font-weight: 600;">Job Payment</div>
-                                <div style="font-size: 0.8rem; color: #888;">From: Alice Wonder</div>
-                            </td>
-                            <td>Oct 20, 2025</td>
-                            <td style="color: #2e7d32;">+$500.00</td>
-                            <td><span class="status-badge status-active">Received</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 15px;">#TRX-9923</td>
-                            <td>
-                                <div style="font-weight: 600;">Refund Processing</div>
-                                <div style="font-size: 0.8rem; color: #888;">Order #4412 Dispute</div>
-                            </td>
-                            <td>Oct 19, 2025</td>
-                            <td style="color: #666;">-$200.00</td>
-                            <td><span class="status-badge status-error">Pending</span>
-                            </td>
-                        </tr>
+                        <!-- Loaded via JS -->
                     </tbody>
                 </table>
             </div>

@@ -18,6 +18,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         // In a real app, hash the password!
         return userRepository.save(user);
     }

@@ -162,6 +162,9 @@
 
                 if (response.ok) {
                     alert('Email Verified Successfully!');
+                    // Save verified email for session
+                    localStorage.setItem('loggedInEmail', email);
+
                     localStorage.removeItem('pendingEmail'); // Cleanup
                     const redirect = localStorage.getItem('redirectAfterVerify') || 'freelancer-dashboard.html';
                     localStorage.removeItem('redirectAfterVerify');

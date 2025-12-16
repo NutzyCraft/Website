@@ -66,10 +66,31 @@
             </form>
 
             <script>
+                // Auto-login check
+                window.addEventListener('DOMContentLoaded', async () => {
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+                    if (email) {
+                        try {
+                            const response = await fetch(`/api/users/profile?email=${email}`);
+                            if (response.ok) {
+                                const user = await response.json();
+                                if (user.role === 'FREELANCER') {
+                                    window.location.href = "freelancer-dashboard.html";
+                                } else {
+                                    window.location.href = "client-dashboard.html";
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Auto-login failed", e);
+                        }
+                    }
+                });
+
                 document.getElementById('login-btn').addEventListener('click', async () => {
                     const inputs = document.querySelectorAll('.form-input');
                     const email = inputs[0].value;
                     const password = inputs[1].value;
+                    const rememberMe = document.querySelector('.checkbox-container input[type="checkbox"]').checked;
 
                     if (!email || !password) {
                         alert('Please enter email and password');
@@ -85,6 +106,16 @@
 
                         if (response.ok) {
                             const user = await response.json();
+
+                            // Save email based on Remember Me
+                            if (rememberMe) {
+                                localStorage.setItem('loggedInEmail', email);
+                                sessionStorage.removeItem('loggedInEmail'); // Clear session to avoid conflicts
+                            } else {
+                                sessionStorage.setItem('loggedInEmail', email);
+                                localStorage.removeItem('loggedInEmail'); // Clear local to avoid persistence
+                            }
+
                             // Redirect based on role
                             if (user.role === 'FREELANCER') {
                                 window.location.href = "freelancer-dashboard.html";
@@ -109,23 +140,31 @@
 
             <script>
                 function handleCredentialResponse(response) {
-                    // Start with generic role, backend will find existing user
-                    const role = "CLIENT";
+                    // For login, we don't send a role. The backend should identify the existing user.
                     fetch("http://localhost:8080/api/auth/google", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ token: response.credential, role: role })
+                        body: JSON.stringify({ token: response.credential, role: null })
                     })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) return res.json().then(err => { throw new Error(err.message || "Login failed") });
+                            return res.json();
+                        })
                         .then(data => {
-                            // Redirect based on role
+                            localStorage.setItem('loggedInEmail', data.email);
+                            sessionStorage.removeItem('loggedInEmail'); // Clean session if using local
+
                             if (data.role === 'FREELANCER') {
                                 window.location.href = "freelancer-dashboard.html";
                             } else {
                                 window.location.href = "client-dashboard.html";
                             }
                         })
-                        .catch(console.error);
+                        .catch(err => {
+                            console.error(err);
+                            // If user not found (backend might throw 500 or 400 depending on impl, currently 500/RuntimeException usually), we should tell them to register.
+                            alert("Login failed. If you haven't registered yet, please Sign Up first.");
+                        });
                 }
             </script>
             <script src="https://accounts.google.com/gsi/client" async defer></script>

@@ -92,18 +92,14 @@
             </div>
 
             <div class="glass-card" style="max-width: 900px; padding: 30px;">
-
                 <!-- Job Summary -->
                 <div
                     style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #eee;">
-                    <h3 style="margin-bottom: 10px;">Job Details</h3>
-                    <p style="color: #555; margin-bottom: 10px;">Looking for an experienced full-stack developer to
-                        build a clothing store website using React and Node.js.</p>
+                    <h3 style="margin-bottom: 10px;" id="job-summary-title">Job Details</h3>
+                    <p style="color: #555; margin-bottom: 10px;" id="job-summary-description">Loading job details...</p>
                     <div style="display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600;">
-                        <span><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Budget: $1,200 -
-                            $1,500</span>
-                        <span><i class="fa-solid fa-code" style="color: var(--primary);"></i> Skills: React,
-                            Node.js</span>
+                        <span><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Budget: $<span
+                                id="job-summary-budget">...</span></span>
                     </div>
                 </div>
 
@@ -114,18 +110,16 @@
                             <div class="form-group">
                                 <label class="form-label"
                                     style="display: block; font-weight: 700; margin-bottom: 8px;">Bid Amount ($)</label>
-                                <input type="number" class="form-input" placeholder="1200"
+                                <input type="number" id="bid-amount" class="form-input" placeholder="1200"
                                     style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px;">
-                                <small style="display: block; margin-top: 5px; color: #888;">Customer's budget: $1200 -
-                                    $1500</small>
                             </div>
                             <div class="form-group">
                                 <label class="form-label"
                                     style="display: block; font-weight: 700; margin-bottom: 8px;">Delivery Time</label>
                                 <div style="display: flex; gap: 10px;">
-                                    <input type="number" class="form-input" placeholder="7"
+                                    <input type="number" id="delivery-time" class="form-input" placeholder="7"
                                         style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 12px;">
-                                    <select class="form-select"
+                                    <select id="delivery-unit" class="form-select"
                                         style="width: 100px; padding: 12px; border: 1px solid #ddd; border-radius: 12px; background: white;">
                                         <option>Days</option>
                                         <option>Weeks</option>
@@ -140,7 +134,7 @@
                         <div class="form-group">
                             <label class="form-label" style="display: block; font-weight: 700; margin-bottom: 8px;">Why
                                 are you the best fit?</label>
-                            <textarea class="form-textarea"
+                            <textarea id="cover-letter" class="form-textarea"
                                 placeholder="Describe your relevant experience, approach to this project, and why the client should hire you..."
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; min-height: 200px; resize: vertical; font-family: inherit;"></textarea>
                         </div>
@@ -158,11 +152,85 @@
 
                     <div style="display: flex; justify-content: flex-end; gap: 15px;">
                         <a href="find-jobs.html" class="btn btn-outline" style="padding: 12px 24px;">Cancel</a>
-                        <button type="button" class="btn btn-primary" style="padding: 12px 30px;">Submit
+                        <button type="button" id="submit-proposal-btn" class="btn btn-primary"
+                            style="padding: 12px 30px;">Submit
                             Proposal</button>
                     </div>
                 </form>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const jobId = urlParams.get('jobId');
+
+                    if (jobId) {
+                        // Fetch job details to populate summary
+                        try {
+                            // Ideally we have an endpoint for single job, or iterate getAll (inefficient but works for now as I didn't add findById endpoint explicitly in controller but Repo has it). 
+                            // Wait, JobController only has getAll and create. I should add findById or just fetch all and find in JS. Fetching all is easier for now without changing backend again, though less performant.
+                            // Actually, let's just create a quick endpoint in JobController? No, let's stick to plan. I'll fetch all and filter client side for now, or just assume the user came from find-jobs.
+                            // Better: I'll use the existing getAllJobs and filter.
+                            const response = await fetch('/api/jobs');
+                            if (response.ok) {
+                                const jobs = await response.json();
+                                const job = jobs.find(j => j.id == jobId);
+                                if (job) {
+                                    document.getElementById('job-summary-title').textContent = job.title;
+                                    document.getElementById('job-summary-description').textContent = job.description;
+                                    document.getElementById('job-summary-budget').textContent = job.budget;
+                                }
+                            }
+                        } catch (e) { console.error(e); }
+                    }
+
+                    document.getElementById('submit-proposal-btn').addEventListener('click', async () => {
+                        const bidAmount = document.getElementById('bid-amount').value;
+                        const deliveryTime = document.getElementById('delivery-time').value;
+                        const deliveryUnit = document.getElementById('delivery-unit').value;
+                        const coverLetter = document.getElementById('cover-letter').value;
+                        const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+
+                        if (!bidAmount || !deliveryTime || !coverLetter) {
+                            alert('Please fill in all required fields');
+                            return;
+                        }
+                        if (!email) {
+                            alert('Please login first');
+                            return;
+                        }
+                        if (!jobId) {
+                            alert('Invalid job');
+                            return;
+                        }
+
+                        const proposalData = {
+                            email: email,
+                            jobId: parseInt(jobId),
+                            bidAmount: parseFloat(bidAmount),
+                            deliveryTime: `${deliveryTime} ${deliveryUnit}`,
+                            coverLetter: coverLetter
+                        };
+
+                        try {
+                            const res = await fetch('/api/proposals', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(proposalData)
+                            });
+                            if (res.ok) {
+                                alert('Proposal submitted successfully!');
+                                window.location.href = 'my-proposals.html';
+                            } else {
+                                alert('Failed to submit proposal');
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            alert('Error submitting proposal');
+                        }
+                    });
+                });
+            </script>
 
         </main>
     </div>

@@ -90,23 +90,29 @@
                 <h3
                     style="margin-bottom: 20px; font-size: 1.2rem; border-bottom: 1px solid #eee; padding-bottom: 10px;">
                     Company / Profile Info</h3>
-                <form>
+                <form id="settingsForm">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label style="display: block; font-weight: 700; margin-bottom: 8px;">Company Name</label>
-                            <input type="text" value="Acme Corp"
+                            <input type="text" id="companyName" placeholder="Acme Corp"
                                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                         </div>
                         <div class="form-group" style="margin-bottom: 15px;">
                             <label style="display: block; font-weight: 700; margin-bottom: 8px;">Contact Person</label>
-                            <input type="text" value="Client User"
+                            <input type="text" id="contactPerson" placeholder="Full Name"
                                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                         </div>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="display: block; font-weight: 700; margin-bottom: 8px;">Billing Address</label>
-                        <input type="text" value="123 Business Rd, Tech City"
+                        <input type="text" id="billingAddress" placeholder="123 Business Rd, Tech City"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Website</label>
+                        <input type="text" id="website" placeholder="https://example.com"
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                     </div>
 
@@ -121,9 +127,54 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const email = localStorage.getItem('userEmail') || 'testclient@example.com';
+
+                    // Populate Form
+                    fetch(`http://localhost:8080/api/clients/me?email=${email}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data) {
+                                document.getElementById('companyName').value = data.companyName || '';
+                                document.getElementById('contactPerson').value = data.contactPerson || '';
+                                document.getElementById('billingAddress').value = data.billingAddress || '';
+                                document.getElementById('website').value = data.website || '';
+                            }
+                        })
+                        .catch(err => console.error(err));
+
+                    // Handle Submit
+                    document.getElementById('settingsForm').addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        const formData = {
+                            companyName: document.getElementById('companyName').value,
+                            contactPerson: document.getElementById('contactPerson').value,
+                            billingAddress: document.getElementById('billingAddress').value,
+                            website: document.getElementById('website').value
+                        };
+
+                        fetch(`http://localhost:8080/api/clients/me?email=${email}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                alert("Settings updated successfully!");
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert("Failed to update settings.");
+                            });
+                    });
+                });
+            </script>
 
         </main>
     </div>

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AuthService.class);
+
 
     @Autowired
     private UserRepository userRepository;
@@ -168,8 +168,22 @@ public class AuthService {
             return userOpt.get();
         }
 
+        // New User Registration
+        if (roleStr == null || roleStr.isEmpty()) {
+            throw new RuntimeException("Role is required for new user registration");
+        }
+
+        User.Role role;
+        try {
+            role = User.Role.valueOf(roleStr.toUpperCase());
+            if (role == User.Role.ADMIN) {
+                throw new RuntimeException("Cannot register as ADMIN");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role specified");
+        }
+
         // Auto-register
-        User.Role role = User.Role.valueOf(roleStr);
         User user = new User();
         user.setEmail(email);
         user.setFullName(name);
@@ -198,5 +212,25 @@ public class AuthService {
             }
             sendVerification(user);
         });
+    }
+
+    public com.nutzycraft.backend.dto.UserProfileDTO getUserProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        com.nutzycraft.backend.dto.UserProfileDTO dto = new com.nutzycraft.backend.dto.UserProfileDTO();
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole().name());
+
+        if (user.getRole() == User.Role.CLIENT) {
+            clientRepository.findByUser(user).ifPresent(client -> {
+                dto.setCompanyName(client.getCompanyName());
+                dto.setIndustry(client.getIndustry());
+            });
+        }
+        // Add freelancer logic if needed
+
+        return dto;
     }
 }

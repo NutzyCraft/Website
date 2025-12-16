@@ -93,42 +93,36 @@
 
             <!-- Profile Content (Wrapped to fit dashboard) -->
             <div class="profile-container" style="padding: 0; margin: 0; width: 100%;">
-
                 <!-- 1. Profile Header -->
                 <div class="glass-card profile-header-card">
                     <div class="profile-banner"></div>
                     <div class="profile-header-content">
-                        <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=D4B69D&color=fff&size=200"
-                            alt="Sayur" class="profile-avatar-large">
+                        <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff&size=200"
+                            alt="Avatar" class="profile-avatar-large" id="profileAvatar">
                         <div class="profile-info">
                             <div class="profile-name-row">
-                                <h1 class="profile-name">Sayur Thejan</h1>
+                                <h1 class="profile-name" id="profileName">Loading...</h1>
                                 <div class="badge-verified"><i class="fa-solid fa-check"></i></div>
                             </div>
-                            <p class="profile-title">Full-Stack Developer | UI/UX Designer</p>
+                            <p class="profile-title" id="profileTitle">Freelancer</p>
                             <div class="profile-meta">
-                                <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Colombo, Sri Lanka</div>
-                                <div class="meta-item"><i class="fa-solid fa-clock"></i> 3:45 PM Local Time</div>
+                                <div class="meta-item"><i class="fa-solid fa-location-dot"></i> Remote</div>
                                 <div class="status-badge"><span
                                         style="width: 8px; height: 8px; background: #2e7d32; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
                                     Available</div>
                             </div>
                             <div style="margin-top: 15px; display: flex; align-items: center; gap: 15px;">
-                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$45<span
+                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$<span
+                                        id="profileRate">0</span><span
                                         style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span></span>
                                 <div style="display: flex; color: #ffc107;">
                                     <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <span
-                                        style="color: var(--text-muted); margin-left: 5px; font-weight: 600;">(5.0)</span>
+                                    <span style="color: var(--text-muted); margin-left: 5px; font-weight: 600;"
+                                        id="profileRating">(0.0)</span>
                                 </div>
                             </div>
                         </div>
                         <div class="profile-actions">
-                            <button class="btn btn-outline"><i class="fa-regular fa-heart"></i> Save</button>
                             <button class="btn btn-primary" style="padding: 12px 30px;">Hire Me</button>
                         </div>
                     </div>
@@ -137,131 +131,72 @@
                 <div class="profile-grid-layout">
                     <!-- Left Column: Main Content -->
                     <div class="profile-main">
-
                         <!-- 2. About Me -->
                         <div class="glass-card profile-section">
                             <h3 class="section-title"><i class="fa-solid fa-user"></i> About Me</h3>
-                            <p style="color: var(--text-muted); line-height: 1.8;">
-                                Hi! I'm Sayur, a passionate developer with over 5 years of experience building scalable
-                                web
-                                applications and intuitive user interfaces. I specialize in the Java Spring Boot
-                                ecosystem for
-                                backends and modern JavaScript frameworks like React for frontends.
-                                <br><br>
-                                I love turning complex problems into simple, beautiful solutions. Whether you need a
-                                robust MVP,
-                                a complete platform overhaul, or a high-converting landing page, I deliver clean,
-                                maintainable
-                                code on time.
+                            <p style="color: var(--text-muted); line-height: 1.8;" id="profileBio">
+                                Loading...
                             </p>
-                            <div style="margin-top: 20px; display: flex; gap: 20px;">
-                                <div><strong>languages:</strong> English (Fluent), Sinhala (Native)</div>
-                                <div><strong>Work Style:</strong> Solo & Team</div>
-                            </div>
-                        </div>
-
-                        <!-- 4. Portfolio -->
-                        <div class="glass-card profile-section">
-                            <h3 class="section-title"><i class="fa-solid fa-briefcase"></i> Portfolio</h3>
-                            <div class="portfolio-grid">
-                                <div class="portfolio-card">
-                                    <img src="https://via.placeholder.com/300x180/D4B69D/ffffff?text=E-Commerce+App"
-                                        class="portfolio-img">
-                                    <div class="portfolio-content">
-                                        <h4 class="portfolio-title">Nutzy Craft Marketplace</h4>
-                                        <p style="font-size: 0.9rem; color: var(--text-muted);">Full-stack development
-                                            of a
-                                            freelance platform with Spring Boot.</p>
-                                    </div>
-                                </div>
-
-                                <div class="timeline-company">Freelance</div>
-                                <p style="font-size: 0.95rem; color: #666;">Delivering custom web solutions for
-                                    international clients. Top Rated Plus on Nutzy Craft.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-date">2020 - 2023</div>
-                                <div class="timeline-role">Software Engineer</div>
-                                <div class="timeline-company">Tech Corp Lanka</div>
-                                <p style="font-size: 0.95rem; color: #666;">Led the backend migration to Microservices
-                                    architecture using Java and Spring Cloud.</p>
-                            </div>
                         </div>
                     </div>
 
                     <!-- Right Column: Sidebar -->
                     <div class="profile-sidebar">
-
-                        <!-- 8. Pricing -->
-                        <div class="glass-card profile-section">
-                            <h3 class="section-title" style="font-size: 1.2rem;">Services & Pricing</h3>
-                            <div class="pricing-tabs">
-                                <div class="pricing-tab active">Basic</div>
-                                <div class="pricing-tab">Standard</div>
-                            </div>
-                            <div class="package-details">
-                                <div class="price-display">$500</div>
-                                <p style="font-weight: 700; margin-bottom: 10px;">Landing Page MVP</p>
-                                <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">2-3 Section Landing
-                                    Page,
-                                    Responsive Design, Basic Contact Form.</p>
-                                <ul class="package-features">
-                                    <li><i class="fa-solid fa-check"></i> 5 Days Delivery</li>
-                                    <li><i class="fa-solid fa-check"></i> 2 Revisions</li>
-                                    <li><i class="fa-solid fa-check"></i> Source Code</li>
-                                </ul>
-                                <button class="btn btn-primary" style="width: 100%; margin-top: 15px;">Select
-                                    Package</button>
-                            </div>
-                        </div>
-
                         <!-- 3. Skills -->
                         <div class="glass-card profile-section">
                             <h3 class="section-title" style="font-size: 1.2rem;">Skills</h3>
-                            <div class="skills-tags">
-                                <span class="skill-tag">Java</span>
-                                <span class="skill-tag">Spring Boot</span>
-                                <span class="skill-tag">React</span>
-                                <span class="skill-tag">PostgreSQL</span>
-                                <span class="skill-tag">AWS</span>
-                                <span class="skill-tag">Docker</span>
-                                <span class="skill-tag">Figma</span>
+                            <div class="skills-tags" id="profileSkills">
+                                <!-- Dynamic Skills -->
                             </div>
                         </div>
-
-                        <!-- 6. Education -->
-                        <div class="glass-card profile-section">
-                            <h3 class="section-title" style="font-size: 1.2rem;">Education</h3>
-                            <div style="margin-bottom: 15px;">
-                                <div style="font-weight: 700;">BSc in Computer Science</div>
-                                <div style="font-size: 0.85rem; color: var(--secondary);">University of Colombo</div>
-                                <div style="font-size: 0.8rem; color: #666;">2016 - 2020</div>
-                            </div>
-                            <div>
-                                <div style="font-weight: 700;">AWS Certified Developer</div>
-                                <div style="font-size: 0.85rem; color: var(--secondary);">Amazon Web Services</div>
-                                <div style="font-size: 0.8rem; color: #666;">2022</div>
-                            </div>
-                        </div>
-
-                        <!-- 10. Trust & Verify -->
-                        <div class="glass-card profile-section">
-                            <h3 class="section-title" style="font-size: 1.2rem;">Verifications</h3>
-                            <div class="trust-badge-row">
-                                <div class="trust-badge verified"><i class="fa-solid fa-shield-cat"></i> ID Verified
-                                </div>
-                                <div class="trust-badge verified"><i class="fa-solid fa-envelope-circle-check"></i>
-                                    Email
-                                    Verified</div>
-                                <div class="trust-badge verified"><i class="fa-solid fa-phone"></i> Phone Verified</div>
-                                <div class="trust-badge verified"><i class="fa-solid fa-code"></i> Java Skill Test</div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const params = new URLSearchParams(window.location.search);
+                    const id = params.get('id');
+
+                    if (!id) {
+                        document.querySelector('.profile-container').innerHTML = '<p class="text-center">No freelancer ID provided.</p>';
+                        return;
+                    }
+
+                    fetch(`http://localhost:8080/api/freelancers/${id}`)
+                        .then(res => {
+                            if (!res.ok) throw new Error("Freelancer not found");
+                            return res.json();
+                        })
+                        .then(freelancer => {
+                            const user = freelancer.user || {};
+
+                            document.getElementById('profileName').textContent = user.fullName || 'Unknown';
+                            document.getElementById('profileTitle').textContent = freelancer.title || 'Freelancer';
+                            document.getElementById('profileBio').textContent = freelancer.bio || 'No bio provided.';
+                            document.getElementById('profileRate').textContent = freelancer.hourlyRate || 0;
+                            document.getElementById('profileRating').textContent = `(${freelancer.rating || 0.0})`;
+                            document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${user.fullName}&background=random&size=200`;
+
+                            const skillsContainer = document.getElementById('profileSkills');
+                            skillsContainer.innerHTML = '';
+                            if (freelancer.skills && freelancer.skills.length > 0) {
+                                freelancer.skills.forEach(skill => {
+                                    const span = document.createElement('span');
+                                    span.className = 'skill-tag';
+                                    span.textContent = skill;
+                                    skillsContainer.appendChild(span);
+                                });
+                            } else {
+                                skillsContainer.innerHTML = '<span style="color:#888;">No skills listed.</span>';
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            document.querySelector('.profile-container').innerHTML = '<p class="text-center">Failed to load profile.</p>';
+                        });
+                });
+            </script>
 
         </main>
     </div>

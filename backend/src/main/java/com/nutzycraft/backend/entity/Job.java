@@ -26,6 +26,10 @@ public class Job {
     @JoinColumn(name = "client_id")
     private User client;
 
+    @ManyToOne
+    @JoinColumn(name = "freelancer_id")
+    private User freelancer;
+
     private LocalDateTime postedAt = LocalDateTime.now();
 
     // Status: OPEN, IN_PROGRESS, COMPLETED

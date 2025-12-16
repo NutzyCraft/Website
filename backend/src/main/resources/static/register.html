@@ -114,15 +114,30 @@
                     }
 
                     try {
-                        const response = await fetch('/api/auth/register-client', {
+                        let endpoint;
+                        let bodyData;
+                        let redirectUrl;
+                        const role = document.getElementById('roleSelect').value;
+
+                        if (role === 'client') {
+                            endpoint = '/api/auth/register-client';
+                            bodyData = { fullName, email, password, companyName, industry };
+                            redirectUrl = 'client-dashboard.html';
+                        } else {
+                            endpoint = '/api/auth/register-freelancer';
+                            bodyData = { fullName, email, password };
+                            redirectUrl = 'freelancer-dashboard.html';
+                        }
+
+                        const response = await fetch(endpoint, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ fullName, email, password, companyName, industry })
+                            body: JSON.stringify(bodyData)
                         });
 
                         if (response.ok) {
                             localStorage.setItem('pendingEmail', email);
-                            localStorage.setItem('redirectAfterVerify', 'client-dashboard.html');
+                            localStorage.setItem('redirectAfterVerify', redirectUrl);
                             window.location.href = '/verify-email';
                         } else {
                             const errorData = await response.json();
@@ -144,17 +159,30 @@
 
                 <script>
                     function handleCredentialResponse(response) {
-                        const role = "CLIENT"; // Default to Client or detect based on dropdown in real app
+                        const roleSelect = document.getElementById('roleSelect');
+                        const role = roleSelect ? roleSelect.value.toUpperCase() : null;
+
                         fetch("http://localhost:8080/api/auth/google", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ token: response.credential, role: role })
                         })
-                            .then(res => res.json())
-                            .then(data => {
-                                window.location.href = "client-dashboard.html"; // Or relevant dashboard
+                            .then(res => {
+                                if (!res.ok) return res.json().then(err => { throw new Error(err.message || "Registration failed") });
+                                return res.json();
                             })
-                            .catch(console.error);
+                            .then(data => {
+                                localStorage.setItem('loggedInEmail', data.email);
+                                if (data.role === 'FREELANCER') {
+                                    window.location.href = "freelancer-dashboard.html";
+                                } else {
+                                    window.location.href = "client-dashboard.html";
+                                }
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert("Google Sign-In Failed: " + err.message);
+                            });
                     }
                 </script>
                 <script src="https://accounts.google.com/gsi/client" async defer></script>

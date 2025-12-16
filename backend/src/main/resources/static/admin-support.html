@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <script src="script.js" defer></script>
+    <script src="admin-support.js" defer></script>
     <style>
         /* Admin Specific Overrides */
         .sidebar-link.active {
@@ -65,8 +66,6 @@
                 <li class="sidebar-item">
                     <a href="admin-support.html" class="sidebar-link active">
                         <i class="fa-solid fa-envelope-open-text"></i> Support Messages
-                        <span
-                            style="font-size: 0.75rem; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; margin-left: auto;">3</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -115,7 +114,6 @@
             <div class="dashboard-table-card">
                 <div class="table-header">
                     <h3>Recent Tickets</h3>
-                    <div style="color: #666; font-size: 0.9rem;">Showing 5 of 12</div>
                 </div>
                 <div class="table-responsive">
                     <table class="dashboard-table" style="vertical-align: middle;">
@@ -130,72 +128,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=random"
-                                            style="width: 32px; height: 32px; border-radius: 50%;">
-                                        <div style="font-weight: 600;">John Doe</div>
-                                    </div>
-                                </td>
-                                <td><span class="skill-tag" style="background: #e3f2fd; color: #1565c0;">Client</span>
-                                </td>
-                                <td style="font-weight: 600; color: #333;">Payment Failed for Order #442</td>
-                                <td>Today, 10:30 AM</td>
-                                <td><span class="status-badge" style="background: #ffecb3; color: #ff8f00;">Open</span>
-                                </td>
-                                <td><button class="btn btn-outline"
-                                        style="padding: 5px 10px; font-size: 0.8rem;">View</button></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
-                                            style="width: 32px; height: 32px; border-radius: 50%;">
-                                        <div style="font-weight: 600;">Sayur Thejan</div>
-                                    </div>
-                                </td>
-                                <td><span class="skill-tag"
-                                        style="background: #e8f5e9; color: #2e7d32;">Freelancer</span></td>
-                                <td style="font-weight: 600; color: #333;">Withdrawal Issue - PayPal</td>
-                                <td>Yesterday, 4:15 PM</td>
-                                <td><span class="status-badge" style="background: #ffecb3; color: #ff8f00;">Open</span>
-                                </td>
-                                <td><button class="btn btn-outline"
-                                        style="padding: 5px 10px; font-size: 0.8rem;">View</button></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Smith&background=random"
-                                            style="width: 32px; height: 32px; border-radius: 50%;">
-                                        <div style="font-weight: 600;">Sarah Smith</div>
-                                    </div>
-                                </td>
-                                <td><span class="skill-tag" style="background: #e3f2fd; color: #1565c0;">Client</span>
-                                </td>
-                                <td style="font-weight: 600; color: #333;">How to change password?</td>
-                                <td>Dec 12, 2025</td>
-                                <td><span class="status-badge status-active">Resolved</span></td>
-                                <td><button class="btn btn-outline"
-                                        style="padding: 5px 10px; font-size: 0.8rem;">View</button></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 15px;">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <img src="https://ui-avatars.com/api/?name=Mike+Ross&background=random"
-                                            style="width: 32px; height: 32px; border-radius: 50%;">
-                                        <div style="font-weight: 600;">Mike Ross</div>
-                                    </div>
-                                </td>
-                                <td><span class="skill-tag"
-                                        style="background: #e8f5e9; color: #2e7d32;">Freelancer</span></td>
-                                <td style="font-weight: 600; color: #333;">Profile Verification Pending</td>
-                                <td>Dec 10, 2025</td>
-                                <td><span class="status-badge status-active">Resolved</span></td>
-                                <td><button class="btn btn-outline"
-                                        style="padding: 5px 10px; font-size: 0.8rem;">View</button></td>
-                            </tr>
+                            <!-- Loaded via JS -->
                         </tbody>
                     </table>
                 </div>

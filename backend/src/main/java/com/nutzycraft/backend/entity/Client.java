@@ -19,6 +19,9 @@ public class Client {
     private String industry;
     private String website;
 
+    private String contactPerson;
+    private String billingAddress;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 }

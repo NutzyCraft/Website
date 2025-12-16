@@ -100,45 +100,53 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td style="font-weight: 600;">Full Stack Website Development</td>
-                            <td>Oct 24, 2025</td>
-                            <td>12</td>
-                            <td><span class="status-badge status-active">Open</span></td>
-                            <td>
-                                <a href="client-job-proposals.html" class="btn btn-outline"
-                                    style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none;">View
-                                    Proposals</a>
-                                <button class="btn btn-text" style="color: #999;"><i
-                                        class="fa-solid fa-ellipsis-vertical"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600;">Modern Logo Design for Startup</td>
-                            <td>Oct 20, 2025</td>
-                            <td>45</td>
-                            <td><span class="status-badge" style="background: #e3f2fd; color: #1565c0;">Hired</span>
-                            </td>
-                            <td>
-                                <a href="client-track-job.html" class="btn btn-outline"
-                                    style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none;">Track
-                                    Progress</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight: 600;">SEO Content Writing (5 Articles)</td>
-                            <td>Oct 15, 2025</td>
-                            <td>8</td>
-                            <td><span class="status-badge status-completed">Closed</span></td>
-                            <td>
-                                <button class="btn btn-outline"
-                                    style="padding: 4px 12px; font-size: 0.8rem;">Repost</button>
-                            </td>
-                        </tr>
+                    <tbody id="jobs-table-body">
+                        <!-- Jobs will be loaded here -->
                     </tbody>
                 </table>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+                    const tbody = document.getElementById('jobs-table-body');
+
+                    if (!email) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Please login to view your jobs.</td></tr>';
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/jobs/my-jobs?email=${encodeURIComponent(email)}`);
+                        if (response.ok) {
+                            const jobs = await response.json();
+
+                            if (jobs.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">No jobs posted yet.</td></tr>';
+                                return;
+                            }
+
+                            tbody.innerHTML = jobs.map(job => `
+                                <tr>
+                                    <td style="font-weight: 600;">${job.title}</td>
+                                    <td>${new Date(job.postedAt).toLocaleDateString()}</td>
+                                    <td>0</td> <!-- Placeholder for proposals count -->
+                                    <td><span class="status-badge status-active">${job.status || 'OPEN'}</span></td>
+                                    <td>
+                                        <a href="client-job-proposals.html?jobId=${job.id}" class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem; text-decoration: none; display: inline-block;">View Proposals</a>
+                                    </td>
+                                </tr>
+                            `).join('');
+                        } else {
+                            console.error('Failed to fetch jobs');
+                            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Failed to load jobs.</td></tr>';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">An error occurred.</td></tr>';
+                    }
+                });
+            </script>
 
         </main>
     </div>

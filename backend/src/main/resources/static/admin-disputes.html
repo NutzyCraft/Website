@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <script src="script.js" defer></script>
+    <script src="admin-disputes.js" defer></script>
     <style>
         .sidebar-link.active {
             background: #1a237e;
@@ -46,8 +47,6 @@
                 <li class="sidebar-item">
                     <a href="admin-support.html" class="sidebar-link">
                         <i class="fa-solid fa-envelope-open-text"></i> Support Messages
-                        <span
-                            style="font-size: 0.75rem; background: #f44336; color: white; padding: 2px 6px; border-radius: 6px; margin-left: auto;">3</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -90,33 +89,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 15px;">#CASE-201</td>
-                            <td>
-                                <div><strong>Client:</strong> John Doe</div>
-                                <div><strong>Freelancer:</strong> Bad Actor</div>
-                            </td>
-                            <td>Non-delivery of work</td>
-                            <td>Oct 18, 2025</td>
-                            <td><span class="status-badge status-error">Open</span></td>
-                            <td>
-                                <button class="btn btn-primary"
-                                    style="padding: 6px 15px; font-size: 0.8rem; background: #1a237e;">Review</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 15px;">#CASE-198</td>
-                            <td>
-                                <div><strong>Client:</strong> Sarah Smith</div>
-                                <div><strong>Freelancer:</strong> Good Guy</div>
-                            </td>
-                            <td>Payment dispute</td>
-                            <td>Oct 10, 2025</td>
-                            <td><span class="status-badge status-active">Resolved</span></td>
-                            <td>
-                                <button class="btn btn-text">Details</button>
-                            </td>
-                        </tr>
+                        <!-- Loaded via JS -->
                     </tbody>
                 </table>
             </div>

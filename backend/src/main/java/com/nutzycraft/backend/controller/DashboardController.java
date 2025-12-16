@@ -1,34 +1,74 @@
 package com.nutzycraft.backend.controller;
 
-import com.nutzycraft.backend.dto.DashboardStatsDTO;
+import com.nutzycraft.backend.entity.Job;
+import com.nutzycraft.backend.entity.Proposal;
 import com.nutzycraft.backend.repository.JobRepository;
-import com.nutzycraft.backend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.nutzycraft.backend.repository.ProposalRepository;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
-@CrossOrigin(origins = "*") // Allow all for development simplicity
-@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class DashboardController {
 
-    private final UserRepository userRepository;
-    private final JobRepository jobRepository;
+    @Autowired
+    private JobRepository jobRepository;
 
-    @GetMapping("/stats")
-    public ResponseEntity<DashboardStatsDTO> getDashboardStats() {
-        long totalUsers = userRepository.count();
-        long activeJobs = jobRepository.countByStatus("OPEN"); // Assuming 'OPEN' means active
+    @Autowired
+    private ProposalRepository proposalRepository;
 
-        // Mocking revenue and disputes for now as per plan
-        double revenue = 15400.00;
-        long openDisputes = 3;
+    @GetMapping("/client")
+    public ClientStatsDTO getClientStats(@RequestParam String email) {
+        // Fetch jobs for client
+        List<Job> jobs = jobRepository.findByClient_Email(email);
 
-        DashboardStatsDTO stats = new DashboardStatsDTO(totalUsers, activeJobs, revenue, openDisputes);
-        return ResponseEntity.ok(stats);
+        long activeJobs = jobs.stream().filter(j -> "OPEN".equalsIgnoreCase(j.getStatus())).count();
+        long totalHires = jobs.stream().filter(j -> "COMPLETED".equalsIgnoreCase(j.getStatus())).count(); // Simplification
+        long jobViews = jobs.size() * 10L; // Mock data
+        double totalSpent = totalHires * 500.0; // Mock data
+
+        ClientStatsDTO stats = new ClientStatsDTO();
+        stats.setActiveJobs(activeJobs);
+        stats.setTotalHires(totalHires);
+        stats.setTotalSpent(totalSpent);
+        stats.setJobViews(jobViews);
+        return stats;
+    }
+
+    @GetMapping("/freelancer")
+    public FreelancerStatsDTO getFreelancerStats(@RequestParam String email) {
+        // Fetch proposals for freelancer (as proxy for activity)
+        List<Proposal> proposals = proposalRepository.findByFreelancerEmail(email);
+
+        long activeJobs = proposals.stream().filter(p -> "ACCEPTED".equalsIgnoreCase(p.getStatus())).count();
+        long completedJobs = 0; // Need 'completed' status in Proposal or Job linkage
+        double totalEarnings = activeJobs * 500.0; // Mock
+
+        FreelancerStatsDTO stats = new FreelancerStatsDTO();
+        stats.setActiveJobs(activeJobs);
+        stats.setCompletedJobs(completedJobs);
+        stats.setTotalEarnings(totalEarnings);
+        stats.setRating(5.0); // Mock
+        return stats;
+    }
+
+    @Data
+    public static class ClientStatsDTO {
+        private long activeJobs;
+        private long totalHires;
+        private double totalSpent;
+        private long jobViews;
+    }
+
+    @Data
+    public static class FreelancerStatsDTO {
+        private double totalEarnings;
+        private long completedJobs;
+        private long activeJobs;
+        private double rating;
     }
 }

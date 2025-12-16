@@ -102,57 +102,58 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 15px; font-weight: 600;">E-Commerce Redesign</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="https://ui-avatars.com/api/?name=Tech+Corp&background=random"
-                                        style="width: 30px; border-radius: 50%;">
-                                    Tech Corp
-                                </div>
-                            </td>
-                            <td>Oct 24, 2025</td>
-                            <td>$1,500</td>
-                            <td><span class="status-badge status-active">Active</span></td>
-                            <td><button class="btn btn-outline"
-                                    style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #f0f0f0;">
-                            <td style="padding: 15px; font-weight: 600;">Mobile App UI</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="https://ui-avatars.com/api/?name=Start+Up&background=random"
-                                        style="width: 30px; border-radius: 50%;">
-                                    StartUp Inc
-                                </div>
-                            </td>
-                            <td>Oct 20, 2025</td>
-                            <td>$800</td>
-                            <td><span class="status-badge status-error">Declined</span>
-                            </td>
-                            <td><button class="btn btn-outline"
-                                    style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 15px; font-weight: 600;">Blog Writing (10 Posts)</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="https://ui-avatars.com/api/?name=Media+House&background=random"
-                                        style="width: 30px; border-radius: 50%;">
-                                    Media House
-                                </div>
-                            </td>
-                            <td>Oct 15, 2025</td>
-                            <td>$300</td>
-                            <td><span class="status-badge status-active">Accepted</span></td>
-                            <td><button class="btn btn-primary"
-                                    style="padding: 4px 12px; font-size: 0.8rem;">Chat</button></td>
-                        </tr>
+                    <tbody id="proposals-table-body">
+                        <!-- Proposals loaded here -->
                     </tbody>
                 </table>
             </div>
-        </main>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const tbody = document.getElementById('proposals-table-body');
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+
+                    if (!email) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Please login to view proposals.</td></tr>';
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/proposals/my-proposals?email=${encodeURIComponent(email)}`);
+                        if (response.ok) {
+                            const proposals = await response.json();
+
+                            if (proposals.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No proposals sent yet.</td></tr>';
+                                return;
+                            }
+
+                            tbody.innerHTML = proposals.map(p => `
+                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                    <td style="padding: 15px; font-weight: 600;">${p.job.title}</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <span style="font-size: 0.9rem;">Client #${p.job.client.id}</span>
+                                        </div>
+                                    </td>
+                                    <td>${new Date(p.createdAt).toLocaleDateString()}</td>
+                                    <td>$${p.bidAmount}</td>
+                                    <td><span class="status-badge status-${p.status === 'PENDING' ? 'active' : (p.status === 'ACCEPTED' ? 'success' : 'error')}">${p.status}</span></td>
+                                    <td><button class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
+                                </tr>
+                            `).join('');
+                        } else {
+                            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Failed to load proposals.</td></tr>';
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">An error occurred.</td></tr>';
+                    }
+                });
+            </script>
+            </table>
+    </div>
+    </main>
     </div>
 
 </body>

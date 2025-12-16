@@ -96,13 +96,14 @@
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Project Title</label>
-                            <input type="text" class="form-input" placeholder="e.g. Build a Nutzy Craft Website"
+                            <input type="text" id="job-title" class="form-input"
+                                placeholder="e.g. Build a Nutzy Craft Website"
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit;">
                         </div>
                         <div class="form-group">
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Category</label>
-                            <select class="form-select"
+                            <select id="job-category" class="form-select"
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; background: white;">
                                 <option>Web Development</option>
                                 <option>Graphic Design</option>
@@ -120,7 +121,8 @@
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Describe your
                                 project</label>
-                            <textarea class="form-textarea" placeholder="Provide details about what you need..."
+                            <textarea id="job-description" class="form-textarea"
+                                placeholder="Provide details about what you need..."
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; min-height: 150px; font-family: inherit; resize: vertical;"></textarea>
                         </div>
                         <div class="form-group" style="margin-top: 20px;">
@@ -144,13 +146,13 @@
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Estimated Budget
                                 ($)</label>
-                            <input type="number" class="form-input" placeholder="500"
+                            <input type="number" id="job-budget" class="form-input" placeholder="500"
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit;">
                         </div>
                         <div class="form-group">
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Project Duration</label>
-                            <select class="form-select"
+                            <select id="job-duration" class="form-select"
                                 style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; background: white;">
                                 <option>Less than 1 week</option>
                                 <option>1 to 4 weeks</option>
@@ -163,13 +165,66 @@
                     <div style="text-align: right; margin-top: 40px;">
                         <button type="button" class="btn btn-outline"
                             style="margin-right: 10px; padding: 10px 24px;">Save Draft</button>
-                        <button type="button" class="btn btn-primary" style="padding: 10px 24px;">Post Project
+                        <button type="button" id="post-job-btn" class="btn btn-primary" style="padding: 10px 24px;">Post
+                            Project
                             Now</button>
                     </div>
                 </form>
             </div>
 
-        </main>
+            <script>
+                document.getElementById('post-job-btn').addEventListener('click', async () => {
+                    const title = document.getElementById('job-title').value;
+                    const category = document.getElementById('job-category').value;
+                    const description = document.getElementById('job-description').value;
+                    const budget = document.getElementById('job-budget').value;
+                    const duration = document.getElementById('job-duration').value;
+
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+
+                    if (!title || !description || !budget) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+
+                    if (!email) {
+                        alert('You must be logged in to post a job');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const jobData = {
+                        title,
+                        description,
+                        category,
+                        budget: parseFloat(budget),
+                        duration
+                    };
+
+                    try {
+                        const response = await fetch(`/api/jobs?clientEmail=${encodeURIComponent(email)}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(jobData)
+                        });
+
+                        if (response.ok) {
+                            alert('Job posted successfully!');
+                            window.location.href = 'client-my-jobs.html';
+                        } else {
+                            alert('Failed to post job');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred');
+                    }
+                });
+            </script>
+    </div>
+
+    </main>
     </div>
 
 </body>

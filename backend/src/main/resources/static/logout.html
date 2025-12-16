@@ -25,6 +25,13 @@
             <a href="index.html" class="btn btn-outline" style="border: none;">Return Home</a>
         </div>
     </div>
+    <script>
+        // Clear all authentication data
+        localStorage.removeItem('loggedInEmail');
+        sessionStorage.removeItem('loggedInEmail');
+        // Clear any other potential keys just in case
+        localStorage.removeItem('pendingEmail');
+    </script>
 </body>
 
 </html>
