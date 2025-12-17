@@ -8,4 +8,6 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     List<Proposal> findByFreelancerEmail(String email);
 
     List<Proposal> findByJobId(Long jobId);
+
+    long countByJobId(Long jobId);
 }

@@ -31,6 +31,11 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="client-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="post-job.html" class="sidebar-link">
                         <i class="fa-solid fa-plus-circle"></i> Post a Job
                     </a>
@@ -48,8 +53,6 @@
                 <li class="sidebar-item">
                     <a href="client-messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
-                        <span
-                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -65,11 +68,11 @@
             </ul>
 
             <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
                     style="width: 40px; height: 40px; border-radius: 50%;">
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
-                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;">&nbsp;</div>
+                    <div style="font-size: 0.8rem; color: #888;">&nbsp;</div>
                 </div>
                 <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
             </div>
@@ -90,65 +93,71 @@
             </div>
 
             <div class="glass-card" style="padding: 0;">
-                <div class="notification-list">
-                    <!-- Notification Item 1 -->
-                    <div class="notification-item unread"
-                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
-                        <div
-                            style="background: #E3F2FD; color: #1565C0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-file-invoice"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">New Proposal <span
-                                    style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
-                            </div>
-                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Sayur Thejan</strong>
-                                submitted a proposal for "React Developer Needed".</p>
-                            <div style="font-size: 0.8rem; color: #999;">5 mins ago</div>
-                            <div style="margin-top: 10px;">
-                                <a href="client-job-proposals.html" class="btn btn-primary"
-                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">View
-                                    Proposal</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Notification Item 2 -->
-                    <div class="notification-item"
-                        style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start;">
-                        <div
-                            style="background: #E8F5E9; color: #2E7D32; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-check-double"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Milestone Completed
-                            </div>
-                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;"><strong>Sarah Lee</strong>
-                                completed the "Logo Sketches" milestone.</p>
-                            <div style="font-size: 0.8rem; color: #999;">3 hours ago</div>
-                            <div style="margin-top: 10px;">
-                                <a href="client-track-job.html" class="btn btn-outline"
-                                    style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">Review Work</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Notification Item 3 -->
-                    <div class="notification-item" style="padding: 20px; display: flex; gap: 15px; align-items: start;">
-                        <div
-                            style="background: #F3E5F5; color: #7B1FA2; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fa-solid fa-bullhorn"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">Job Post Expiring
-                            </div>
-                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Your job "Mobile App MVP"
-                                will expire in 24 hours.</p>
-                            <div style="font-size: 0.8rem; color: #999;">Yesterday</div>
-                        </div>
-                    </div>
+                <div class="notification-list" id="notification-list">
+                    <div style="padding: 20px; text-align: center; color: #888;">Loading notifications...</div>
                 </div>
             </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+                    const container = document.getElementById('notification-list');
+
+                    if (!email) {
+                        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Please login to view notifications.</div>';
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch(`/api/notifications?email=${email}`);
+                        if (res.ok) {
+                            const notifications = await res.json();
+                            if (notifications.length === 0) {
+                                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No new notifications.</div>';
+                            } else {
+                                container.innerHTML = notifications.map(n => {
+                                    let icon = 'fa-bell';
+                                    let colorBg = '#E3F2FD';
+                                    let colorIcon = '#1565C0';
+
+                                    if (n.type === 'proposal') {
+                                        icon = 'fa-file-invoice';
+                                        colorBg = '#E3F2FD';
+                                        colorIcon = '#1565C0';
+                                    } else if (n.type === 'job_accepted') {
+                                        icon = 'fa-check-double';
+                                        colorBg = '#E8F5E9';
+                                        colorIcon = '#2E7D32';
+                                    }
+
+                                    const timeAgo = new Date(n.timestamp).toLocaleString();
+
+                                    return `
+                                    <div class="notification-item unread" style="padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;">
+                                        <div style="background: ${colorBg}; color: ${colorIcon}; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fa-solid ${icon}"></i>
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">${n.title} <span style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span></div>
+                                            <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">${n.message}</p>
+                                            <div style="font-size: 0.8rem; color: #999;">${timeAgo}</div>
+                                            <div style="margin-top: 10px;">
+                                                <a href="${n.actionLink}" class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">View Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `;
+                                }).join('');
+                            }
+                        } else {
+                            container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Failed to load notifications.</div>';
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Error loading notifications.</div>';
+                    }
+                });
+            </script>
 
         </main>
     </div>

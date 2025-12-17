@@ -31,6 +31,11 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="client-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="post-job.html" class="sidebar-link">
                         <i class="fa-solid fa-plus-circle"></i> Post a Job
                     </a>
@@ -46,10 +51,8 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="client-messages.html" class="sidebar-link active">
+                    <a href="client-messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
-                        <span
-                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -65,11 +68,11 @@
             </ul>
 
             <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
                     style="width: 40px; height: 40px; border-radius: 50%;">
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
-                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;">&nbsp;</div>
+                    <div style="font-size: 0.8rem; color: #888;">&nbsp;</div>
                 </div>
                 <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
             </div>
@@ -91,37 +94,8 @@
                         <input type="text" placeholder="Search chats..."
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
                     </div>
-                    <div style="overflow-y: auto; flex: 1;">
-                        <!-- Chat Item 1 -->
-                        <div
-                            style="padding: 15px 20px; display: flex; gap: 15px; cursor: pointer; background: #f9fafb; border-bottom: 1px solid #f0f0f0;">
-                            <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="font-weight: 700; font-size: 0.95rem;">Sayur Thejan</span>
-                                    <span style="font-size: 0.8rem; color: #888;">2m</span>
-                                </div>
-                                <p
-                                    style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    Okay, I will send the files...</p>
-                            </div>
-                        </div>
-                        <!-- Chat Item 2 -->
-                        <div
-                            style="padding: 15px 20px; display: flex; gap: 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0;">
-                            <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=random"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="font-weight: 700; font-size: 0.95rem;">Sarah Lee</span>
-                                    <span style="font-size: 0.8rem; color: #888;">1d</span>
-                                </div>
-                                <p
-                                    style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    Thanks for the opportunity!</p>
-                            </div>
-                        </div>
+                    <div style="overflow-y: auto; flex: 1;" id="conversations-list">
+                        <div style="padding: 20px; text-align: center; color: #888;">Loading chats...</div>
                     </div>
                 </div>
 
@@ -129,32 +103,12 @@
                 <div style="flex: 1; display: flex; flex-direction: column;">
                     <div
                         style="padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px;">
-                        <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
-                            style="width: 40px; height: 40px; border-radius: 50%;">
-                        <div>
-                            <div style="font-weight: 700;">Sayur Thejan</div>
-                            <div style="font-size: 0.8rem; color: #22c55e;">Online</div>
-                        </div>
+                        <div>Select a conversation</div>
                     </div>
 
-                    <div style="flex: 1; padding: 20px; overflow-y: auto; background: #fcfcfc;">
-                        <!-- Messages -->
-                        <div style="display: flex; margin-bottom: 20px;">
-                            <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
-                                style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-                            <div
-                                style="background: white; padding: 12px 18px; border-radius: 0 20px 20px 20px; border: 1px solid #eee; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">Hello! I have completed the first milestone for the
-                                    Website Redesign. Please check the attachment.</p>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-                            <div
-                                style="background: var(--primary); color: white; padding: 12px 18px; border-radius: 20px 0 20px 20px; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">Great, checking it now!</p>
-                            </div>
-                        </div>
+                    <div style="flex: 1; padding: 20px; overflow-y: auto; background: #fcfcfc;" id="messages-area">
+                        <div style="text-align: center; color: #888; margin-top: 50px;">Select a conversation to start
+                            messaging</div>
                     </div>
 
                     <div style="padding: 20px; border-top: 1px solid #eee; background: white;">
@@ -180,11 +134,21 @@
             }
 
             let currentChatUserId = null;
+            let currentChatUserName = null;
+
+            // Elements
+            const conversationsList = document.getElementById('conversations-list');
+            const chatHeader = document.querySelector('.glass-card > div:last-child > div:first-child'); // Keep or add ID? Let's add ID "chat-header" if possible, but for now selector is okay-ish if we keep HTML structure. Better to be safe.
+            // Actually, let's use the explicit IDs I saw in the HTML or add them? 
+            // In the viewing of client-messages.html earlier, I saw id="conversations-list" (line 97) and id="messages-area" (line 109).  
+            const messagesArea = document.getElementById('messages-area');
+            const messageInput = document.querySelector('input[placeholder="Type a message..."]');
+            const sendBtn = document.querySelector('.glass-card .btn-primary');
 
             // Fetch Conversations
-            async function loadConversations() {
+            async function loadConversations(autoSelect = true) {
                 try {
-                    const res = await fetch(`/api/messages?email=${email}`);
+                    const res = await fetch(`/api/messages?email=${encodeURIComponent(email)}`);
                     if (!res.ok) throw new Error('Failed to load conversations');
                     const conversations = await res.json();
                     renderConversations(conversations);
@@ -194,8 +158,11 @@
             }
 
             function renderConversations(conversations) {
-                const listContainer = document.querySelector('.glass-card > div:first-child > div:last-child');
-                listContainer.innerHTML = '';
+                conversationsList.innerHTML = '';
+                if (conversations.length === 0) {
+                    conversationsList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No messages yet.</div>';
+                    return;
+                }
 
                 conversations.forEach(conv => {
                     const div = document.createElement('div');
@@ -204,9 +171,11 @@
                     div.style.gap = '15px';
                     div.style.cursor = 'pointer';
                     div.style.borderBottom = '1px solid #f0f0f0';
+                    div.style.background = (currentChatUserId == conv.userId) ? '#f0f9ff' : 'transparent';
+
                     div.innerHTML = `
                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(conv.name)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
-                        <div style="flex: 1;">
+                        <div style="flex: 1; overflow: hidden;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                 <span style="font-weight: 700; font-size: 0.95rem;">${conv.name}</span>
                                 <span style="font-size: 0.8rem; color: #888;">${new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -215,16 +184,17 @@
                         </div>
                     `;
                     div.onclick = () => loadChatHistory(conv.userId, conv.name);
-                    listContainer.appendChild(div);
+                    conversationsList.appendChild(div);
                 });
             }
 
             // Load Chat History
             async function loadChatHistory(userId, userName) {
                 currentChatUserId = userId;
+                currentChatUserName = userName;
+
                 // Update header
-                const header = document.querySelector('.glass-card > div:last-child > div:first-child');
-                header.innerHTML = `
+                chatHeader.innerHTML = `
                     <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
                     <div>
                         <div style="font-weight: 700;">${userName}</div>
@@ -233,23 +203,23 @@
                 `;
 
                 try {
-                    const res = await fetch(`/api/messages/${userId}?email=${email}`);
+                    const res = await fetch(`/api/messages/${userId}?email=${encodeURIComponent(email)}`);
                     if (!res.ok) throw new Error('Failed to load chat');
                     const messages = await res.json();
                     renderMessages(messages);
                 } catch (err) {
                     console.error(err);
                 }
+
+                // Highlight active
+                loadConversations(false);
             }
 
             function renderMessages(messages) {
-                const chatContainer = document.querySelector('.glass-card > div:last-child > div:nth-child(2)');
-                chatContainer.innerHTML = '';
+                messagesArea.innerHTML = '';
 
                 messages.forEach(msg => {
-                    const isMe = msg.sender.email === email; // backend must return sender email
-                    // Note: Message entity sender is User object, hopefully JSON serialization includes email.
-                    // If strict JSON, we might need DTO or check structure. Assuming User object has email.
+                    const isMe = msg.sender.email === email;
 
                     const div = document.createElement('div');
                     div.style.display = 'flex';
@@ -262,17 +232,14 @@
                             <p style="font-size: 0.95rem;">${msg.content}</p>
                         </div>
                     `;
-                    chatContainer.appendChild(div);
+                    messagesArea.appendChild(div);
                 });
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+                messagesArea.scrollTop = messagesArea.scrollHeight;
             }
 
             // Send Message
-            const sendBtn = document.querySelector('.glass-card .btn-primary');
-            const input = document.querySelector('.glass-card input[type="text"]');
-
             async function sendMessage() {
-                if (!currentChatUserId || !input.value.trim()) return;
+                if (!currentChatUserId || !messageInput.value.trim()) return;
 
                 try {
                     const res = await fetch('/api/messages', {
@@ -281,26 +248,39 @@
                         body: JSON.stringify({
                             senderEmail: email,
                             receiverId: currentChatUserId,
-                            content: input.value
+                            content: messageInput.value
                         })
                     });
 
                     if (res.ok) {
-                        input.value = '';
-                        loadChatHistory(currentChatUserId, document.querySelector('.glass-card > div:last-child > div:first-child div[style="font-weight: 700;"]').innerText);
-                        loadConversations(); // refresh list
+                        messageInput.value = '';
+                        loadChatHistory(currentChatUserId, currentChatUserName);
+                    } else {
+                        const errorData = await res.json();
+                        alert("Failed to send message: " + (errorData.message || "Unknown error"));
                     }
                 } catch (err) {
                     console.error(err);
+                    alert("Error sending message");
                 }
             }
 
             sendBtn.onclick = sendMessage;
-            input.addEventListener('keypress', (e) => {
+            messageInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage();
             });
 
-            loadConversations();
+            // Handle URL params for starting a new chat
+            const params = new URLSearchParams(window.location.search);
+            const targetUserId = params.get('userId');
+            const targetUserName = params.get('name');
+
+            if (targetUserId && targetUserName) {
+                loadChatHistory(targetUserId, decodeURIComponent(targetUserName));
+            }
+
+            // Always load list
+            loadConversations(false);
         });
     </script>
 </body>

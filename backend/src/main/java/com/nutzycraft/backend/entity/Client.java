@@ -24,4 +24,10 @@ public class Client {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String profileImage;
+
+    @Column(columnDefinition = "TEXT")
+    private String bannerImage;
 }

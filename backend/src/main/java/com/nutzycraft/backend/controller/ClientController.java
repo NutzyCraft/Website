@@ -14,9 +14,17 @@ public class ClientController {
     private ClientRepository clientRepository;
 
     @GetMapping("/me")
-    public Client getMyProfile(@RequestParam String email) {
-        return clientRepository.findByUser_Email(email)
-                .orElseThrow(() -> new RuntimeException("Client profile not found"));
+    public org.springframework.http.ResponseEntity<?> getMyProfile(@RequestParam String email) {
+        try {
+            System.out.println("Fetching profile for: " + email);
+            Client client = clientRepository.findByUser_Email(email)
+                    .orElseThrow(() -> new RuntimeException("Client profile not found"));
+            return org.springframework.http.ResponseEntity.ok(client);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return org.springframework.http.ResponseEntity.status(500)
+                    .body(java.util.Collections.singletonMap("message", "Error fetching profile: " + e.getMessage()));
+        }
     }
 
     @PutMapping("/me")
@@ -34,6 +42,8 @@ public class ClientController {
         existing.setIndustry(updatedClient.getIndustry());
         existing.setContactPerson(updatedClient.getContactPerson());
         existing.setBillingAddress(updatedClient.getBillingAddress());
+        existing.setProfileImage(updatedClient.getProfileImage());
+        existing.setBannerImage(updatedClient.getBannerImage());
 
         return clientRepository.save(existing);
     }

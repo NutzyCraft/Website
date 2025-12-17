@@ -33,4 +33,6 @@ public class Proposal {
     private String status = "PENDING"; // PENDING, ACCEPTED, DECLINED
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private boolean isRead = false;
 }
