@@ -158,8 +158,44 @@ document.addEventListener('DOMContentLoaded', () => {
     handleImagePreview('avatar-upload', 'profile-avatar');
     handleImagePreview('banner-upload', null, 'banner-container');
 
+
     // Initialize for Settings Page
     handleImagePreview('settings-avatar-upload', 'settings-avatar-preview');
     handleImagePreview('settings-cover-upload', 'settings-cover-preview');
+
+    // Protected Route Interception
+    document.addEventListener('click', function(e) {
+        // Find the closest anchor tag
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        // List of protected paths that require login
+        // Add more paths here as needed
+        const protectedPaths = [
+            '/post-job', 'post-job.html', '/post-job.html',
+            '/client-dashboard', 'client-dashboard.html', '/client-dashboard.html',
+            '/freelancer-dashboard', 'freelancer-dashboard.html', '/freelancer-dashboard.html',
+            '/client-settings', 'client-settings.html', '/client-settings.html',
+            '/freelancer-profile', 'freelancer-profile.html', '/freelancer-profile.html'
+        ];
+
+        // Check if the link is protected
+        const isProtected = protectedPaths.some(path => href.includes(path));
+
+        if (isProtected) {
+            // Check authentication status
+            const isLoggedIn = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+
+            if (!isLoggedIn) {
+                e.preventDefault();
+                // Optional: Add a query param to know where to redirect back after registration/login?
+                // For now, simple redirect to register as requested
+                window.location.href = '/register.html';
+            }
+        }
+    });
 
 });

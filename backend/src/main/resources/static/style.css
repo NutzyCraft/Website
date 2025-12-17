@@ -405,9 +405,15 @@ ul {
 }
 
 .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
+}
+
+.services-grid .service-card {
+    flex: 1 1 300px;
+    max-width: 400px;
 }
 
 .card-icon {
@@ -612,14 +618,17 @@ ul {
 }
 
 .why-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
 }
 
 .why-card {
     text-align: center;
     padding: 30px;
+    flex: 1 1 280px;
+    max-width: 400px;
 }
 
 .icon-why {

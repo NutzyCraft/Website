@@ -64,8 +64,9 @@
 
 /* Service Detail Cards */
 .service-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
     margin-top: 40px;
 }
@@ -75,6 +76,8 @@
     padding: 30px;
     border-radius: 24px;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    flex: 1 1 280px;
+    max-width: 400px;
     transition: transform 0.3s;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
