@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleImagePreview('settings-cover-upload', 'settings-cover-preview');
 
     // Protected Route Interception
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         // Find the closest anchor tag
         const link = e.target.closest('a');
         if (!link) return;
@@ -174,12 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // List of protected paths that require login
         // Add more paths here as needed
+        // List of protected paths that require login
+        // Add more paths here as needed
         const protectedPaths = [
             '/post-job', 'post-job.html', '/post-job.html',
             '/client-dashboard', 'client-dashboard.html', '/client-dashboard.html',
             '/freelancer-dashboard', 'freelancer-dashboard.html', '/freelancer-dashboard.html',
             '/client-settings', 'client-settings.html', '/client-settings.html',
-            '/freelancer-profile', 'freelancer-profile.html', '/freelancer-profile.html'
+            '/freelancer-my-profile', 'freelancer-my-profile.html', '/freelancer-my-profile.html',
+            '/settings', 'settings.html', '/settings.html',
+            '/my-proposals', 'my-proposals.html', '/my-proposals.html',
+            '/messages', 'messages.html', '/messages.html',
+            '/earnings', 'earnings.html', '/earnings.html'
         ];
 
         // Check if the link is protected
@@ -192,10 +198,43 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isLoggedIn) {
                 e.preventDefault();
                 // Optional: Add a query param to know where to redirect back after registration/login?
-                // For now, simple redirect to register as requested
-                window.location.href = '/register.html';
+                // For now, simple redirect to login as requested
+                window.location.href = '/login.html';
             }
         }
     });
 
+    // Global User Profile Sync
+    const updateSidebarProfile = async () => {
+        const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+        if (!email) return;
+
+        try {
+            const res = await fetch(`/api/users/profile?email=${email}`);
+            if (res.ok) {
+                const profile = await res.json();
+
+                // Update Sidebar User Info
+                const sidebarUserContainer = document.querySelector('.sidebar-user');
+                if (sidebarUserContainer) {
+                    const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
+                    const roleEl = sidebarUserContainer.querySelector('div > div:last-child');
+                    const imgEl = sidebarUserContainer.querySelector('img');
+
+                    if (nameEl) nameEl.textContent = profile.fullName;
+                    if (roleEl) {
+                        let displayRole = profile.companyName;
+                        // Filter out the accidental default value
+                        if (displayRole === 'Freelancer Inc') displayRole = null;
+                        roleEl.textContent = displayRole || profile.role || 'User';
+                    }
+                    if (imgEl) imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=D4B69D&color=fff`;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to sync profile:', err);
+        }
+    };
+
+    updateSidebarProfile();
 });

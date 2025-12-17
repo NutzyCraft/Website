@@ -31,6 +31,11 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="client-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="post-job.html" class="sidebar-link">
                         <i class="fa-solid fa-plus-circle"></i> Post a Job
                     </a>
@@ -48,8 +53,6 @@
                 <li class="sidebar-item">
                     <a href="client-messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
-                        <span
-                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -65,11 +68,11 @@
             </ul>
 
             <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
                     style="width: 40px; height: 40px; border-radius: 50%;">
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
-                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;">&nbsp;</div>
+                    <div style="font-size: 0.8rem; color: #888;">&nbsp;</div>
                 </div>
                 <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
             </div>
@@ -116,14 +119,52 @@
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                     </div>
 
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g. Technology, Healthcare"
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Company Description</label>
+                        <textarea id="description" rows="4" placeholder="Tell us about your company..."
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Profile Picture</label>
+                            <input type="file" id="profileUpload" accept="image/*"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px;">
+                            <input type="hidden" id="profilePictureUrl">
+                            <div id="profilePreview"
+                                style="width: 60px; height: 60px; background: #eee; border-radius: 50%; background-size: cover; background-position: center; border: 1px solid #ddd; display: none;">
+                            </div>
+                            <button type="button" id="removeProfile" class="btn btn-outline"
+                                style="margin-top: 5px; font-size: 0.8rem; padding: 4px 10px; display: none; color: #e74c3c; border-color: #e74c3c;"><i
+                                    class="fa-solid fa-trash"></i> Remove</button>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Banner Image</label>
+                            <input type="file" id="backgroundUpload" accept="image/*"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px;">
+                            <input type="hidden" id="backgroundPictureUrl">
+                            <div id="backgroundPreview"
+                                style="width: 100%; height: 60px; background: #eee; border-radius: 8px; background-size: cover; background-position: center; border: 1px solid #ddd; display: none;">
+                            </div>
+                            <button type="button" id="removeBackground" class="btn btn-outline"
+                                style="margin-top: 5px; font-size: 0.8rem; padding: 4px 10px; display: none; color: #e74c3c; border-color: #e74c3c;"><i
+                                    class="fa-solid fa-trash"></i> Remove</button>
+                        </div>
+                    </div>
+
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label style="display: block; font-weight: 700; margin-bottom: 8px;">Payment Method</label>
-                        <div
+                        <div id="payment-method-container"
                             style="display: flex; gap: 10px; align-items: center; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                            <i class="fa-brands fa-cc-visa" style="font-size: 1.5rem; color: #1a1f71;"></i>
-                            <span>Visa ending in 4242</span>
+                            <span style="color: #888; font-size: 0.9rem;">No payment method added.</span>
                             <button type="button" class="btn btn-outline"
-                                style="margin-left: auto; font-size: 0.8rem; padding: 4px 10px;">Change</button>
+                                style="margin-left: auto; font-size: 0.8rem; padding: 4px 10px;">Add</button>
                         </div>
                     </div>
 
@@ -133,20 +174,93 @@
 
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    const email = localStorage.getItem('userEmail') || 'testclient@example.com';
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
 
                     // Populate Form
                     fetch(`http://localhost:8080/api/clients/me?email=${email}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error(`HTTP error! status: ${res.status}`);
+                            }
+                            return res.json();
+                        })
                         .then(data => {
-                            if (data) {
-                                document.getElementById('companyName').value = data.companyName || '';
-                                document.getElementById('contactPerson').value = data.contactPerson || '';
-                                document.getElementById('billingAddress').value = data.billingAddress || '';
-                                document.getElementById('website').value = data.website || '';
+                            // Populate form with checks for nulls, inheriting User data if Client data is missing
+                            const userName = (data.user && data.user.fullName) ? data.user.fullName : '';
+
+                            document.getElementById('companyName').value = data.companyName || userName;
+                            document.getElementById('contactPerson').value = data.contactPerson || userName;
+                            document.getElementById('billingAddress').value = data.billingAddress || '';
+                            document.getElementById('website').value = data.website || '';
+                            document.getElementById('industry').value = data.industry || '';
+                            document.getElementById('description').value = data.description || '';
+
+                            document.getElementById('profilePictureUrl').value = data.profileImage || '';
+                            if (data.profileImage) {
+                                const preview = document.getElementById('profilePreview');
+                                preview.style.backgroundImage = `url('${data.profileImage}')`;
+                                preview.style.display = 'block';
+                                document.getElementById('removeProfile').style.display = 'inline-block';
+                            }
+
+                            document.getElementById('backgroundPictureUrl').value = data.bannerImage || '';
+                            if (data.bannerImage) {
+                                const preview = document.getElementById('backgroundPreview');
+                                preview.style.backgroundImage = `url('${data.bannerImage}')`;
+                                preview.style.display = 'block';
+                                document.getElementById('removeBackground').style.display = 'inline-block';
                             }
                         })
                         .catch(err => console.error(err));
+
+                    // File Conversion Logic
+                    const convertToBase64 = (file, callback) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => callback(reader.result);
+                        reader.onerror = error => console.error('Error: ', error);
+                    };
+
+                    document.getElementById('profileUpload').addEventListener('change', function (e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            convertToBase64(file, (base64) => {
+                                document.getElementById('profilePictureUrl').value = base64;
+                                const preview = document.getElementById('profilePreview');
+                                preview.style.backgroundImage = `url('${base64}')`;
+                                preview.style.display = 'block';
+                                document.getElementById('removeProfile').style.display = 'inline-block';
+                            });
+                        }
+                    });
+
+                    document.getElementById('backgroundUpload').addEventListener('change', function (e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            convertToBase64(file, (base64) => {
+                                document.getElementById('backgroundPictureUrl').value = base64;
+                                const preview = document.getElementById('backgroundPreview');
+                                preview.style.backgroundImage = `url('${base64}')`;
+                                preview.style.display = 'block';
+                                document.getElementById('removeBackground').style.display = 'inline-block';
+                            });
+                        }
+                    });
+
+                    // Remove Handlers
+                    document.getElementById('removeProfile').addEventListener('click', function () {
+                        document.getElementById('profilePictureUrl').value = '';
+                        document.getElementById('profileUpload').value = ''; // Reset file input
+                        document.getElementById('profilePreview').style.display = 'none';
+                        this.style.display = 'none';
+                    });
+
+                    document.getElementById('removeBackground').addEventListener('click', function () {
+                        document.getElementById('backgroundPictureUrl').value = '';
+                        document.getElementById('backgroundUpload').value = ''; // Reset file input
+                        document.getElementById('backgroundPreview').style.display = 'none';
+                        this.style.display = 'none';
+                    });
 
                     // Handle Submit
                     document.getElementById('settingsForm').addEventListener('submit', function (e) {
@@ -156,7 +270,11 @@
                             companyName: document.getElementById('companyName').value,
                             contactPerson: document.getElementById('contactPerson').value,
                             billingAddress: document.getElementById('billingAddress').value,
-                            website: document.getElementById('website').value
+                            website: document.getElementById('website').value,
+                            industry: document.getElementById('industry').value,
+                            description: document.getElementById('description').value,
+                            profileImage: document.getElementById('profilePictureUrl').value,
+                            bannerImage: document.getElementById('backgroundPictureUrl').value
                         };
 
                         fetch(`http://localhost:8080/api/clients/me?email=${email}`, {

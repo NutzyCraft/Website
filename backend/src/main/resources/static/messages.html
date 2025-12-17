@@ -96,77 +96,29 @@
                         <input type="text" placeholder="Search chats..."
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
                     </div>
-                    <div style="overflow-y: auto; flex: 1;">
-                        <!-- Chat Item 1 -->
-                        <div
-                            style="padding: 15px 20px; display: flex; gap: 15px; cursor: pointer; background: #f9fafb; border-bottom: 1px solid #f0f0f0;">
-                            <img src="https://ui-avatars.com/api/?name=Tech+Corp&background=random"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="font-weight: 700; font-size: 0.95rem;">Tech Corp</span>
-                                    <span style="font-size: 0.8rem; color: #888;">2m</span>
-                                </div>
-                                <p
-                                    style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    Can you send the final files?</p>
-                            </div>
-                        </div>
-                        <!-- Chat Item 2 -->
-                        <div
-                            style="padding: 15px 20px; display: flex; gap: 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0;">
-                            <img src="https://ui-avatars.com/api/?name=Media+House&background=random"
-                                style="width: 40px; height: 40px; border-radius: 50%;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="font-weight: 700; font-size: 0.95rem;">Media House</span>
-                                    <span style="font-size: 0.8rem; color: #888;">1d</span>
-                                </div>
-                                <p
-                                    style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    Great work on the article!</p>
-                            </div>
-                        </div>
+                    <div id="conversations-list" style="overflow-y: auto; flex: 1;">
+                        <!-- Dynamic Conversations -->
+                        <div style="padding: 20px; text-align: center; color: #888;">Loading chats...</div>
                     </div>
                 </div>
 
                 <!-- Chat Area -->
                 <div style="flex: 1; display: flex; flex-direction: column;">
-                    <div
+                    <div id="chat-header"
                         style="padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px;">
-                        <img src="https://ui-avatars.com/api/?name=Tech+Corp&background=random"
-                            style="width: 40px; height: 40px; border-radius: 50%;">
-                        <div>
-                            <div style="font-weight: 700;">Tech Corp</div>
-                            <div style="font-size: 0.8rem; color: #22c55e;">Online</div>
-                        </div>
+                        <!-- Dynamic Header -->
+                        <div style="color: #888;">Select a chat to start messaging</div>
                     </div>
 
-                    <div style="flex: 1; padding: 20px; overflow-y: auto; background: #fcfcfc;">
-                        <!-- Messages -->
-                        <div style="display: flex; margin-bottom: 20px;">
-                            <img src="https://ui-avatars.com/api/?name=Tech+Corp&background=random"
-                                style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-                            <div
-                                style="background: white; padding: 12px 18px; border-radius: 0 20px 20px 20px; border: 1px solid #eee; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">Hi Sayur, checking in on the dashboard milestones.</p>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-                            <div
-                                style="background: var(--primary); color: white; padding: 12px 18px; border-radius: 20px 0 20px 20px; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">Hello! Yes, the frontend is almost done. I will push the
-                                    updates tonight.</p>
-                            </div>
-                        </div>
+                    <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; background: #fcfcfc;">
+                        <!-- Dynamic Messages -->
                     </div>
 
                     <div style="padding: 20px; border-top: 1px solid #eee; background: white;">
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" placeholder="Type a message..."
+                            <input type="text" id="message-input" placeholder="Type a message..."
                                 style="flex: 1; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; outline: none;">
-                            <button class="btn btn-primary"
+                            <button id="send-btn" class="btn btn-primary"
                                 style="border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center;"><i
                                     class="fa-solid fa-paper-plane"></i></button>
                         </div>
@@ -176,6 +128,181 @@
         </main>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            if (!email) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            let currentChatUserId = null;
+            let currentChatUserName = null;
+
+            // Load Conversations
+            async function loadConversations() {
+                try {
+                    const res = await fetch(`/api/messages?email=${encodeURIComponent(email)}`);
+                    if (res.ok) {
+                        const conversations = await res.json();
+                        renderConversations(conversations);
+
+                        // Check URL params for auto-open
+                        const params = new URLSearchParams(window.location.search);
+                        if (params.get('userId')) {
+                            loadChatHistory(params.get('userId'), params.get('name') || 'User');
+                        } else if (conversations.length > 0 && !currentChatUserId) {
+                            // Optional: Auto open first chat?
+                        }
+
+                    } else {
+                        console.error("Failed to load conversations");
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            function renderConversations(conversations) {
+                const list = document.getElementById('conversations-list');
+                list.innerHTML = '';
+                if (conversations.length === 0) {
+                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No messages yet.</div>';
+                    return;
+                }
+
+                conversations.forEach(c => {
+                    const div = document.createElement('div');
+                    div.style.padding = '15px 20px';
+                    div.style.display = 'flex';
+                    div.style.gap = '15px';
+                    div.style.cursor = 'pointer';
+                    div.style.borderBottom = '1px solid #f0f0f0';
+                    div.style.background = (currentChatUserId == c.userId) ? '#f0f9ff' : 'transparent';
+
+                    div.onclick = () => loadChatHistory(c.userId, c.name);
+
+                    div.innerHTML = `
+                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <div style="flex: 1; overflow: hidden;">
+                             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: 700; font-size: 0.95rem;">${c.name}</span>
+                                <span style="font-size: 0.8rem; color: #888;">${new Date(c.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.lastMessage}</p>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+
+            // Load Chat History
+            window.loadChatHistory = async function (userId, name) {
+                currentChatUserId = userId;
+                currentChatUserName = name;
+
+                // Update Header
+                const header = document.getElementById('chat-header');
+                header.innerHTML = `
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
+                    <div>
+                        <div style="font-weight: 700;">${name}</div>
+                    </div>
+                `;
+
+                // Fetch Messages
+                try {
+                    const res = await fetch(`/api/messages/${userId}?email=${encodeURIComponent(email)}`);
+                    if (res.ok) {
+                        const messages = await res.json();
+                        renderMessages(messages, userId);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+
+                // Refresh list highlight
+                loadConversations();
+            }
+
+            function renderMessages(messages, otherUserId) {
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+
+                messages.forEach(msg => {
+                    const isMe = (msg.sender.id != otherUserId); // Logic depends on how fetch returns? 
+                    // Actually api/messages/{id} returns list of Message.
+                    // We need to check sender vs current user. 
+                    // But we don't have current user ID easily unless we fetch profile.
+                    // Easier: check distinct sender ID.
+                    // Or simpler: The controller returns all messages. 
+
+                    // We can assume if sender.email == email, it's Me.
+                    const isMyMsg = (msg.sender.email === email);
+
+                    const div = document.createElement('div');
+                    div.style.display = 'flex';
+                    div.style.marginBottom = '20px';
+                    div.style.justifyContent = isMyMsg ? 'flex-end' : 'flex-start';
+
+                    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
+
+                    if (isMyMsg) {
+                        div.innerHTML = `
+                            <div style="background: var(--primary); color: white; padding: 12px 18px; border-radius: 20px 0 20px 20px; max-width: 70%;">
+                                <p style="font-size: 0.95rem;">${msg.content}</p>
+                            </div>
+                        `;
+                    } else {
+                        div.innerHTML = `
+                            <img src="${avatar}" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                            <div style="background: white; padding: 12px 18px; border-radius: 0 20px 20px 20px; border: 1px solid #eee; max-width: 70%;">
+                                <p style="font-size: 0.95rem;">${msg.content}</p>
+                            </div>
+                        `;
+                    }
+                    container.appendChild(div);
+                });
+                container.scrollTop = container.scrollHeight;
+            }
+
+            // Send Message
+            const input = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+
+            async function sendMessage() {
+                if (!currentChatUserId || !input.value.trim()) return;
+
+                try {
+                    const res = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            senderEmail: email,
+                            receiverId: currentChatUserId,
+                            content: input.value
+                        })
+                    });
+
+                    if (res.ok) {
+                        input.value = '';
+                        loadChatHistory(currentChatUserId, currentChatUserName);
+                    } else {
+                        alert("Failed to send message");
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            sendBtn.onclick = sendMessage;
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            loadConversations();
+        });
+    </script>
 </body>
 
 </html>

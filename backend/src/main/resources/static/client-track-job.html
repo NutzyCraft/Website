@@ -143,6 +143,11 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a href="client-my-profile.html" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a href="post-job.html" class="sidebar-link">
                         <i class="fa-solid fa-plus-circle"></i> Post a Job
                     </a>
@@ -160,8 +165,6 @@
                 <li class="sidebar-item">
                     <a href="client-messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
-                        <span
-                            style="margin-left: auto; background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem;">2</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -177,11 +180,11 @@
             </ul>
 
             <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=Client+User&background=D4B69D&color=fff"
+                <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
                     style="width: 40px; height: 40px; border-radius: 50%;">
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Client User</div>
-                    <div style="font-size: 0.8rem; color: #888;">Client</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;">&nbsp;</div>
+                    <div style="font-size: 0.8rem; color: #888;">&nbsp;</div>
                 </div>
                 <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
             </div>
@@ -194,7 +197,7 @@
                 <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
                 <div>
                     <h2 class="dashboard-title" style="font-size: 1.5rem;">Track Progress</h2>
-                    <p style="color: #666;">Job: Modern Logo Design for Startup</p>
+                    <p style="color: #666;">Job: Job Title</p>
                 </div>
                 <div class="topbar-actions">
                     <a href="client-messages.html" class="btn btn-outline"><i class="fa-solid fa-envelope"></i> Message
@@ -208,15 +211,15 @@
             <div class="glass-card"
                 style="margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <img src="https://ui-avatars.com/api/?name=Sarah+Lee&background=random"
+                    <img src="https://ui-avatars.com/api/?name=User&background=random"
                         style="width: 60px; height: 60px; border-radius: 50%;">
                     <div>
-                        <h3 style="margin-bottom: 5px;">Hired: Sarah Lee</h3>
-                        <p style="color: #666; font-size: 0.9rem;">Top Priority • Due Oct 25, 2025</p>
+                        <h3 style="margin-bottom: 5px;">Hired: Freelancer Name</h3>
+                        <p style="color: #666; font-size: 0.9rem;">Due Date</p>
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$450.00</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$0.00</div>
                     <div style="font-size: 0.85rem; color: #666;">Fixed Price</div>
                 </div>
             </div>
@@ -226,97 +229,49 @@
                 <h3 style="margin-bottom: 30px;">Project Timeline</h3>
                 <div class="timeline-container">
                     <div class="timeline-progress-bar">
-                        <div class="timeline-progress-fill"></div>
+                        <div class="timeline-progress-fill" style="width: 0%;"></div>
                     </div>
                     <div class="timeline-steps">
-                        <div class="timeline-step completed">
-                            <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+                        <div class="timeline-step">
+                            <div class="step-circle">1</div>
                             <div class="step-label">Project Started</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">Oct 20</div>
+                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
                         </div>
-                        <div class="timeline-step completed">
-                            <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+                        <div class="timeline-step">
+                            <div class="step-circle">2</div>
                             <div class="step-label">Initial Concepts</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">Oct 22</div>
+                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
                         </div>
-                        <div class="timeline-step active">
+                        <div class="timeline-step">
                             <div class="step-circle">3</div>
                             <div class="step-label">Revisions</div>
-                            <div style="font-size: 0.75rem; color: var(--primary); margin-top: 5px;">In Progress</div>
+                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
                         </div>
                         <div class="timeline-step">
                             <div class="step-circle">4</div>
                             <div class="step-label">Final Delivery</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">Est. Oct 25</div>
+                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="dashboard-split" style="gap: 30px;">
-                <!-- Milestones -->
+            <div class="dashboard-split" style="gap: 30px; display: flex;">
+                <!-- Left: Milestones -->
                 <div style="flex: 2;">
                     <h3 style="margin-bottom: 20px;">Milestones & Tasks</h3>
-
-                    <div class="milestone-card">
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            <div
-                                style="background: #E8F5E9; color: #2E7D32; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin: 0;">Concept Sketches</h4>
-                                <p style="font-size: 0.85rem; color: #666; margin-top: 4px;">Delivered 3 unique logo
-                                    concepts.</p>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span class="status-pill status-completed">Completed</span>
-                            <div style="margin-top: 5px; font-size: 0.8rem; color: #999;">Oct 22</div>
+                    <div id="milestones-list-container">
+                        <div
+                            style="padding: 20px; text-align: center; color: #888; background: white; border-radius: 10px; border: 1px solid #eee;">
+                            Loading milestones...
                         </div>
                     </div>
-
-                    <div class="milestone-card" style="border-left: 4px solid var(--primary);">
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            <div
-                                style="background: #FFF3E0; color: #EF6C00; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-pen-nib"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin: 0;">Refinement Round 1</h4>
-                                <p style="font-size: 0.85rem; color: #666; margin-top: 4px;">Incorporating feedback on
-                                    Concept B.</p>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span class="status-pill status-pending">In Progress</span>
-                            <div style="margin-top: 5px; font-size: 0.8rem; color: #999;">Due Tomorrow</div>
-                        </div>
-                    </div>
-
-                    <div class="milestone-card" style="opacity: 0.7;">
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            <div
-                                style="background: #f5f5f5; color: #999; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                <i class="fa-solid fa-box-open"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin: 0;">Final File Handoff</h4>
-                                <p style="font-size: 0.85rem; color: #666; margin-top: 4px;">Vector files (AI, EPS, SVG)
-                                    and PNGs.</p>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span class="status-pill" style="background: #eee; color: #666;">Pending</span>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Deliverables / Files -->
+                <!-- Right: Shared Files & Actions -->
                 <div style="flex: 1;">
                     <h3 style="margin-bottom: 20px;">Shared Files</h3>
-                    <div class="glass-card" style="padding: 20px;">
+                    <div class="glass-card" style="padding: 20px; margin-bottom: 20px;">
                         <div
                             style="display: flex; align-items: center; gap: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; margin-bottom: 15px;">
                             <div style="font-size: 1.5rem; color: #FF5722;"><i class="fa-solid fa-file-pdf"></i></div>

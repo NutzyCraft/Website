@@ -34,4 +34,7 @@ public class Job {
 
     // Status: OPEN, IN_PROGRESS, COMPLETED
     private String status = "OPEN";
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Milestone> milestones;
 }
