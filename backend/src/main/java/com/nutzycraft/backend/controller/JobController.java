@@ -20,9 +20,10 @@ public class JobController {
     @GetMapping
     public List<Job> getAllJobs(@RequestParam(required = false) String search) {
         if (search != null && !search.isEmpty()) {
-            return jobRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search);
+            return jobRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndStatusNot(search,
+                    search, "COMPLETED");
         }
-        return jobRepository.findAll();
+        return jobRepository.findByStatusNot("COMPLETED");
     }
 
     @GetMapping("/{id}")
