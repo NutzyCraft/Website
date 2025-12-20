@@ -13,18 +13,46 @@ public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private com.nutzycraft.backend.repository.JobRepository jobRepository;
+
+    @Autowired
+    private com.nutzycraft.backend.repository.TransactionRepository transactionRepository;
+
     @GetMapping("/me")
     public org.springframework.http.ResponseEntity<?> getMyProfile(@RequestParam String email) {
         try {
             System.out.println("Fetching profile for: " + email);
             Client client = clientRepository.findByUser_Email(email)
                     .orElseThrow(() -> new RuntimeException("Client profile not found"));
-            return org.springframework.http.ResponseEntity.ok(client);
+
+            long totalHires = jobRepository.countByClient_EmailAndFreelancerIsNotNull(email);
+            Double totalSpent = transactionRepository.calculateTotalSpentByUser(email);
+            Double avgRating = jobRepository.getAverageRatingForClient(email);
+
+            return org.springframework.http.ResponseEntity.ok(new com.nutzycraft.backend.dto.ClientProfileDTO(
+                    client,
+                    totalHires,
+                    totalSpent != null ? totalSpent : 0.0,
+                    2025, // Stub
+                    avgRating != null ? avgRating : 0.0));
         } catch (Exception e) {
             e.printStackTrace();
             return org.springframework.http.ResponseEntity.status(500)
                     .body(java.util.Collections.singletonMap("message", "Error fetching profile: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("/{id}")
+    public Client getClientById(@PathVariable Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+    }
+
+    @GetMapping("/user/{userId}")
+    public Client getClientByUserId(@PathVariable Long userId) {
+        return clientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Client profile not found for user id: " + userId));
     }
 
     @PutMapping("/me")

@@ -224,14 +224,23 @@
             }
 
             // Fetch Client Profile
+            // Fetch Client Profile
             fetch(`http://localhost:8080/api/clients/me?email=${email}`)
                 .then(res => res.json())
-                .then(client => {
+                .then(data => {
+                    // Check if response is DTO or direct Entity (fallback)
+                    const client = data.client || data;
+                    const stats = {
+                        hires: data.totalHires !== undefined ? data.totalHires : '-',
+                        spent: data.totalSpent !== undefined ? data.totalSpent : '-',
+                        since: data.memberSince !== undefined ? data.memberSince : '2025'
+                    };
+
                     const user = client.user || {};
 
                     // Header
                     let displayName = client.companyName;
-                    if (displayName === 'Freelancer Inc') displayName = null; // Filter out default
+                    if (displayName === 'Freelancer Inc') displayName = null;
                     displayName = displayName || client.contactPerson || user.fullName || 'Client';
 
                     document.getElementById('display-name').innerHTML = `${displayName} <i class="fa-solid fa-pen" style="font-size: 0.9rem; color: #ccc; cursor: pointer;" onclick="window.location.href='client-settings.html'"></i>`;
@@ -257,7 +266,26 @@
                     // Description
                     document.getElementById('display-description').innerText = client.description || 'No description provided.';
 
-                    // Sidebar User (handled by script.js globally, but just in case)
+                    // Stats Population
+                    document.getElementById('stat-hires').textContent = stats.hires;
+                    document.getElementById('stat-spent').textContent = stats.spent !== '-' ? `$${stats.spent.toFixed(2)}` : '-';
+
+                    // Display Rating
+                    const rating = data.rating || 0;
+                    const stars = Array(5).fill(0).map((_, i) =>
+                        `<i class="fa-${i < Math.round(rating) ? 'solid' : 'regular'} fa-star" style="color: #ffc107;"></i>`
+                    ).join('');
+
+                    let ratingContainer = document.getElementById('client-rating-display');
+                    if (!ratingContainer) {
+                        const parent = document.querySelector('.profile-info');
+                        ratingContainer = document.createElement('div');
+                        ratingContainer.id = 'client-rating-display';
+                        ratingContainer.style.marginTop = '10px';
+                        parent.appendChild(ratingContainer);
+                    }
+                    ratingContainer.innerHTML = `${stars} <span style="color: #666; font-size: 0.9rem;">(${rating.toFixed(1)})</span>`;
+
                 })
                 .catch(err => console.error(err));
         });

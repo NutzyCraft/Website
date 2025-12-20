@@ -38,6 +38,12 @@ public class FreelancerController {
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
     }
 
+    @GetMapping("/user/{userId}")
+    public Freelancer getFreelancerByUserId(@PathVariable Long userId) {
+        return freelancerRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Freelancer profile not found for user id: " + userId));
+    }
+
     @GetMapping("/me")
     public Freelancer getMyProfile(@RequestParam String email) {
         return freelancerRepository.findByUser_Email(email)

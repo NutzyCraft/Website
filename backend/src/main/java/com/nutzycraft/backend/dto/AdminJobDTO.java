@@ -14,4 +14,6 @@ public class AdminJobDTO {
     private String freelancerName;
     private Double value;
     private String status;
+    private Long clientUserId;
+    private Long freelancerUserId;
 }

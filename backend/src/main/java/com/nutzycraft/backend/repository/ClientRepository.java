@@ -7,4 +7,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     java.util.Optional<Client> findByUser(com.nutzycraft.backend.entity.User user);
 
     java.util.Optional<Client> findByUser_Email(String email);
+
+    java.util.Optional<Client> findByUser_Id(Long id);
 }

@@ -27,12 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <td style="padding: 15px;">#JOB-${job.id}</td>
                 <td style="font-weight: 600;">${escapeHtml(job.title)}</td>
-                <td>${escapeHtml(job.clientName)}</td>
-                <td>${escapeHtml(job.freelancerName)}</td>
+                <td>
+                    <span style="font-weight: 500;">
+                        ${escapeHtml(job.clientName)}
+                    </span>
+                </td>
+                <td>
+                    ${job.freelancerUserId ?
+                    `<span style="font-weight: 500;">${escapeHtml(job.freelancerName)}</span>`
+                    : `<span style="color: #999;">${escapeHtml(job.freelancerName)}</span>`
+                }
+                </td>
                 <td>${value}</td>
                 <td>${statusBadge}</td>
                 <td style="text-align: center;">
-                    <a href="#" class="btn btn-outline"
+                    <a href="admin-track-job.html?jobId=${job.id}" class="btn btn-outline"
                         style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none; display: inline-block;">View Tracking</a>
                 </td>
             `;

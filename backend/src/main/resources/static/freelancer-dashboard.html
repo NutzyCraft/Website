@@ -236,17 +236,29 @@
                                     <tr style="border-bottom: 1px solid #f0f0f0;">
                                         <td style="padding: 15px;">
                                             <div style="display: flex; align-items: center; gap: 10px;">
-                                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random"
-                                                    style="width: 30px; height: 30px; border-radius: 50%;">
+                                                <img id="avatar-active-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random"
+                                                    style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
                                                 ${job.client.fullName}
                                             </div>
                                         </td>
-                                        <td>${job.title}</td>
+                                        <td><a href="freelancer-track-job.html?jobId=${job.id}" style="color: inherit; text-decoration: none; font-weight: 600;">${job.title}</a></td>
                                         <td style="color: #FF5252;">${job.duration}</td>
                                         <td>$${job.budget}</td>
-                                        <td><span class="status-badge status-active">In Progress</span></td>
+                                        <td><a href="freelancer-track-job.html?jobId=${job.id}" class="status-badge status-active" style="text-decoration: none;">Track</a></td>
                                     </tr>
                                 `).join('');
+
+                                // Fetch real avatars
+                                stats.activeOrders.forEach(job => {
+                                    if (job.client) {
+                                        fetch(`/api/users/${job.client.id}/avatar`)
+                                            .then(res => res.text())
+                                            .then(url => {
+                                                if (url) document.getElementById(`avatar-active-job-${job.id}`).src = url;
+                                            })
+                                            .catch(e => console.error(e));
+                                    }
+                                });
                             }
                         }
 
@@ -258,7 +270,8 @@
                             } else {
                                 messageList.innerHTML = stats.recentMessages.map(msg => `
                                     <div class="message-item">
-                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random" class="message-avatar">
+                                        <img id="avatar-msg-${msg.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random" 
+                                             class="message-avatar" style="object-fit:cover;">
                                         <div>
                                             <div style="font-weight: 700; font-size: 0.95rem;">${msg.sender.fullName}</div>
                                             <div style="font-size: 0.85rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;">
@@ -268,6 +281,18 @@
                                         <div style="font-size: 0.75rem; color: #aaa; margin-left: auto;">${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                     </div>
                                 `).join('');
+
+                                // Fetch real avatars
+                                stats.recentMessages.forEach(msg => {
+                                    if (msg.sender) {
+                                        fetch(`/api/users/${msg.sender.id}/avatar`)
+                                            .then(res => res.text())
+                                            .then(url => {
+                                                if (url) document.getElementById(`avatar-msg-${msg.id}`).src = url;
+                                            })
+                                            .catch(e => console.error(e));
+                                    }
+                                });
                             }
                         }
 

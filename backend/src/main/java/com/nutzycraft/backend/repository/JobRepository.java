@@ -21,4 +21,12 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
 
     List<Job> findByFreelancer_Email(String email);
+
+    long countByClient_EmailAndFreelancerIsNotNull(String email);
+
+    @org.springframework.data.jpa.repository.Query("SELECT AVG(j.ratingForClient) FROM Job j WHERE j.client.email = :email AND j.ratingForClient IS NOT NULL")
+    Double getAverageRatingForClient(@org.springframework.data.repository.query.Param("email") String email);
+
+    @org.springframework.data.jpa.repository.Query("SELECT AVG(j.ratingForFreelancer) FROM Job j WHERE j.freelancer.email = :email AND j.ratingForFreelancer IS NOT NULL")
+    Double getAverageRatingForFreelancer(@org.springframework.data.repository.query.Param("email") String email);
 }

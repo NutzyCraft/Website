@@ -19,4 +19,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = 'DEBIT'")
     Double calculateTotalDebits();
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = 'DEBIT' AND t.status = 'COMPLETED' AND t.relatedUser.email = :email")
+    Double calculateTotalSpentByUser(@org.springframework.data.repository.query.Param("email") String email);
 }

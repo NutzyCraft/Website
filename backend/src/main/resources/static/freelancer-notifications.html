@@ -66,146 +66,77 @@
                     </a>
                 </li>
             </ul>
-
-            <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=User&background=random&color=fff"
-                    style="width: 40px; height: 40px; border-radius: 50%;">
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Loading...</div>
-                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
-                </div>
-                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
-            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="dashboard-main">
-            <!-- Topbar -->
             <div class="dashboard-topbar">
                 <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
                 <div>
                     <h2 class="dashboard-title" style="font-size: 1.5rem;">Notifications</h2>
-                    <p style="color: #666;">Stay updated with your latest alerts.</p>
-                </div>
-                <div class="topbar-actions">
-                    <button class="btn btn-text" style="color: #666;">Mark all as read</button>
+                    <p style="color: #666;">Stay updated with your latest activities.</p>
                 </div>
             </div>
 
-            <div class="glass-card" style="padding: 0;">
-                <div class="notification-list" id="notification-list">
-                    <!-- Loaded via JS -->
-                    <div style="padding: 40px; text-align: center; color: #888;">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                        <p>Loading notifications...</p>
-                    </div>
+            <div class="glass-card table-responsive" style="padding: 0;">
+                <div id="notifications-list" style="padding: 20px;">
+                    <div style="text-align: center; color: #888;">Loading notifications...</div>
                 </div>
             </div>
 
+            <script>
+                document.addEventListener('DOMContentLoaded', async () => {
+                    const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+                    const listContainer = document.getElementById('notifications-list');
+
+                    if (!email) {
+                        listContainer.innerHTML = '<div style="text-align: center; color: #888;">Please login to view notifications.</div>';
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/notifications?email=${encodeURIComponent(email)}`);
+                        if (response.ok) {
+                            const notifications = await response.json();
+
+                            if (notifications.length === 0) {
+                                listContainer.innerHTML = '<div style="text-align: center; color: #888;">No new notifications.</div>';
+                                return;
+                            }
+
+                            listContainer.innerHTML = notifications.map(n => `
+                                <div style="display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #f0f0f0; align-items: start; background: ${n.read ? 'transparent' : '#f9fafb'};">
+                                    <div style="background: ${n.type === 'ERROR' ? '#ffebee' : '#e3f2fd'}; color: ${n.type === 'ERROR' ? '#d32f2f' : '#1976d2'}; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        <i class="fa-solid ${n.type === 'ERROR' ? 'fa-triangle-exclamation' : 'fa-bell'}"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; margin-bottom: 5px;">${n.title}</div>
+                                        <div style="color: #555; font-size: 0.95rem;">${n.message}</div>
+                                        <div style="color: #999; font-size: 0.8rem; margin-top: 5px;">${new Date(n.createdAt).toLocaleDateString()} ${new Date(n.createdAt).toLocaleTimeString()}</div>
+                                        ${n.link ? `<div style="margin-top: 10px;"><a href="${n.link}" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">View Details</a></div>` : ''}
+                                    </div>
+                                    ${!n.read ? `<button onclick="markAsRead(${n.id}, this)" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">Mark Read</button>` : ''}
+                                </div>
+                            `).join('');
+                        } else {
+                            listContainer.innerHTML = '<div style="text-align: center; color: #888;">Failed to load notifications.</div>';
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        listContainer.innerHTML = '<div style="text-align: center; color: #888;">An error occurred.</div>';
+                    }
+
+                    window.markAsRead = async (id, btn) => {
+                        try {
+                            await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
+                            btn.remove();
+                            // Optional: reload or style update
+                        } catch (e) { console.error(e); }
+                    };
+                });
+            </script>
         </main>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
-
-            if (email) {
-                // 1. Fetch User Profile for Sidebar
-                try {
-                    const profileRes = await fetch(`/api/users/profile?email=${email}`);
-                    if (profileRes.ok) {
-                        const profile = await profileRes.json();
-                        const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
-                        if (sidebarUserEl) {
-                            sidebarUserEl.innerHTML = `
-                                <div style="font-weight: 700; font-size: 0.9rem;">${profile.fullName}</div>
-                                <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
-                            `;
-                        }
-                        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=D4B69D&color=fff`;
-                        const sidebarImg = document.querySelector('.sidebar-user img');
-                        if (sidebarImg) sidebarImg.src = avatarUrl;
-                    }
-                } catch (e) { console.error("Error fetching profile:", e); }
-
-                // 2. Fetch Notifications
-                try {
-                    const res = await fetch(`/api/notifications?email=${email}`);
-                    if (res.ok) {
-                        const notifications = await res.json();
-                        renderNotifications(notifications);
-                    } else {
-                        throw new Error('Failed to fetch');
-                    }
-                } catch (e) {
-                    console.error(e);
-                    document.getElementById('notification-list').innerHTML = `
-                         <div style="padding: 40px; text-align: center; color: #888;">
-                            <i class="fa-regular fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                            <p>No notifications.</p>
-                        </div>
-                    `;
-                }
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-
-        function renderNotifications(notifications) {
-            const container = document.getElementById('notification-list');
-            container.innerHTML = '';
-
-            if (notifications.length === 0) {
-                container.innerHTML = `
-                    <div style="padding: 40px; text-align: center; color: #888;">
-                        <i class="fa-regular fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                        <p>No new notifications.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            notifications.forEach(note => {
-                let iconClass = 'fa-bell';
-                let iconBg = '#E3F2FD';
-                let iconColor = '#1565C0';
-
-                // Simple heuristic for icons
-                if (note.title.toLowerCase().includes('money') || note.title.toLowerCase().includes('payment')) {
-                    iconClass = 'fa-money-bill-wave';
-                    iconBg = '#E8F5E9'; iconColor = '#2E7D32';
-                } else if (note.title.toLowerCase().includes('job')) {
-                    iconClass = 'fa-briefcase';
-                } else if (note.title.toLowerCase().includes('star') || note.title.toLowerCase().includes('review')) {
-                    iconClass = 'fa-star';
-                    iconBg = '#F3E5F5'; iconColor = '#7B1FA2';
-                }
-
-                const timeStr = new Date(note.timestamp).toLocaleString();
-
-                const item = document.createElement('div');
-                item.className = 'notification-item unread';
-                item.style.cssText = 'padding: 20px; border-bottom: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: start; background: #FFF9F5;';
-
-                // Remove bg color if read (simplified for now as unread)
-
-                item.innerHTML = `
-                    <div style="background: ${iconBg}; color: ${iconColor}; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i class="fa-solid ${iconClass}"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 5px;">${note.title}
-                            <span style="background: var(--primary); width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 5px;"></span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">${note.message}</p>
-                        <div style="font-size: 0.8rem; color: #999;">${timeStr}</div>
-                        ${note.actionLink ? `<div style="margin-top: 10px;"><a href="${note.actionLink}" class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem; text-decoration: none;">View</a></div>` : ''}
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-        }
-    </script>
 </body>
 
 </html>
