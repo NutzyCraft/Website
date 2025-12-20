@@ -140,7 +140,7 @@
                                     <td>${new Date(p.createdAt).toLocaleDateString()}</td>
                                     <td>$${p.bidAmount}</td>
                                     <td><span class="status-badge status-${p.status === 'PENDING' ? 'active' : (p.status === 'ACCEPTED' ? 'success' : 'error')}">${p.status}</span></td>
-                                    <td><button class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
+                                    <td><button class="btn btn-outline" onclick="window.location.href='freelancer-view-proposal.html?id=${p.id}'" style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
                                 </tr>
                             `).join('');
                         } else {

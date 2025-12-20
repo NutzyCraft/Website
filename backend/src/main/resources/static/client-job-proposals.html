@@ -87,6 +87,7 @@
                             <th>Delivery Time</th>
                             <th>Cover Letter</th>
                             <th>Date</th>
+                            <th>Attachments</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -119,9 +120,17 @@
 
                             tbody.innerHTML = proposals.map(p => `
                                 <tr>
-                                    <td style="font-weight: 600;">
-                                        ${p.freelancer.user.fullName} <br>
-                                        <span style="font-size: 0.8rem; color: #888;">${p.freelancer.user.email}</span>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <a href="client-view-freelancer.html?id=${p.freelancer.id}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                                                <img id="avatar-freelancer-${p.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.freelancer.fullName)}&background=random" 
+                                                     style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                                <div>
+                                                    <div style="font-weight: 600; color: var(--primary);">${p.freelancer.fullName}</div>
+                                                    <div style="font-size: 0.8rem; color: #888;">${p.freelancer.email}</div>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </td>
                                     <td>$${p.bidAmount}</td>
                                     <td>${p.deliveryTime}</td>
@@ -130,18 +139,65 @@
                                     </td>
                                     <td>${new Date(p.createdAt).toLocaleDateString()}</td>
                                     <td>
-                                        <button class="btn btn-primary" style="padding: 4px 12px; font-size: 0.8rem;">Contact</button>
-                                        <button class="btn btn-outline" style="padding: 4px 12px; font-size: 0.8rem;">Hire</button>
+                                        ${p.attachments ? p.attachments.split(',').map(file => `
+                                            <div style="font-size: 0.8rem; margin-bottom: 2px;">
+                                                <i class="fa-solid fa-paperclip" style="color: #888;"></i> ${file}
+                                            </div>
+                                        `).join('') : '<span style="color: #999; font-size: 0.8rem;">None</span>'}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary" onclick="window.location.href='client-messages.html?recipientEmail=${encodeURIComponent(p.freelancer.email)}'" style="padding: 4px 12px; font-size: 0.8rem;">Contact</button>
+                                        ${p.status === 'ACCEPTED' ?
+                                    '<span class="status-badge status-active">Hired</span>' :
+                                    (p.status === 'DECLINED' ?
+                                        '<span class="status-badge status-inactive">Declined</span>' :
+                                        `<button class="btn btn-outline" onclick="hireFreelancer(${p.id})" style="padding: 4px 12px; font-size: 0.8rem;">Hire</button>`
+                                    )
+                                }
                                     </td>
                                 </tr>
                             `).join('');
+
+                            // Fetch real avatars
+                            proposals.forEach(p => {
+                                fetch(`/api/users/${p.freelancer.id}/avatar`)
+                                    .then(res => res.text())
+                                    .then(url => {
+                                        if (url) document.getElementById(`avatar-freelancer-${p.id}`).src = url;
+                                    })
+                                    .catch(e => console.error(e));
+                            });
+
                         } else {
-                            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">Failed to load proposals.</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Failed to load proposals.</td></tr>';
                         }
                     } catch (error) {
                         console.error('Error:', error);
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">An error occurred.</td></tr>';
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: red;">Error: ${error.message}</td></tr>`;
                     }
+
+                    window.hireFreelancer = async (proposalId) => {
+                        if (!confirm('Are you sure you want to hire this freelancer? This will accept their bid and mark the job as In Progress.')) {
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch(`/api/proposals/${proposalId}/accept`, {
+                                method: 'POST'
+                            });
+
+                            if (response.ok) {
+                                alert('Freelancer hired successfully!');
+                                window.location.reload();
+                            } else {
+                                const errorText = await response.text();
+                                alert('Failed to hire: ' + (errorText ? JSON.parse(errorText).error : 'Unknown error'));
+                            }
+                        } catch (e) {
+                            console.error(e);
+                            alert('An error occurred while hiring.');
+                        }
+                    };
                 });
             </script>
 

@@ -101,6 +101,18 @@
                     </div>
                 </div>
 
+                <!-- Client Info -->
+                <div style="margin-bottom: 30px; display: flex; align-items: center; gap: 15px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s;"
+                    id="client-info-card" onmouseover="this.style.background='#f9f9f9'"
+                    onmouseout="this.style.background='#fff'">
+                    <img id="job-client-avatar" src="logo.jpg"
+                        style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 1rem;" id="job-client-name">Loading...</div>
+                        <div style="font-size: 0.8rem; color: #888;">Client (Click to view profile)</div>
+                    </div>
+                </div>
+
                 <form>
                     <div class="form-section">
                         <h3 style="font-size: 1.2rem; margin-bottom: 20px;">1. Terms</h3>
@@ -141,12 +153,18 @@
                     <div class="form-section" style="margin-top: 30px; margin-bottom: 40px;">
                         <h3 style="font-size: 1.2rem; margin-bottom: 20px;">3. Attachments</h3>
                         <div class="file-upload" id="proposal-attachment-area"
-                            style="border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s;">
-                            <i class="fa-solid fa-paperclip"
-                                style="font-size: 1.5rem; color: #888; margin-bottom: 10px;"></i>
-                            <p id="proposal-attachment-text" style="color: #666;">Attach portfolio samples or resume</p>
-                            <input type="file" id="proposal-attachment-input" style="display: none;">
+                            style="border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s; background: #fafafa;">
+                            <i class="fa-solid fa-cloud-arrow-up"
+                                style="font-size: 2rem; color: var(--primary); margin-bottom: 15px;"></i>
+                            <p id="proposal-attachment-text" style="color: #666; font-weight: 600;">Drag & Drop files
+                                here or <span style="color: var(--primary);">Browse</span></p>
+                            <p style="color: #999; font-size: 0.8rem; margin-top: 5px;">Supports multiple files (PDF,
+                                JPG, PNG, DOCX)</p>
+                            <input type="file" id="proposal-attachment-input" multiple style="display: none;">
                         </div>
+                        <ul id="file-list" style="list-style: none; margin-top: 15px; padding: 0;">
+                            <!-- File items will be added here -->
+                        </ul>
                     </div>
             </div>
 
@@ -155,23 +173,74 @@
                 const pAttachmentArea = document.getElementById('proposal-attachment-area');
                 const pAttachmentInput = document.getElementById('proposal-attachment-input');
                 const pAttachmentText = document.getElementById('proposal-attachment-text');
+                const fileListContainer = document.getElementById('file-list');
+                const selectedFiles = new Set(); // Store file names
 
                 if (pAttachmentArea && pAttachmentInput) {
-                    pAttachmentArea.addEventListener('click', () => {
-                        pAttachmentInput.click();
+                    pAttachmentArea.addEventListener('click', () => pAttachmentInput.click());
+
+                    pAttachmentArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        pAttachmentArea.style.borderColor = 'var(--primary)';
+                        pAttachmentArea.style.background = '#f0f9ff';
+                    });
+
+                    pAttachmentArea.addEventListener('dragleave', (e) => {
+                        e.preventDefault();
+                        pAttachmentArea.style.borderColor = '#ddd';
+                        pAttachmentArea.style.background = '#fafafa';
+                    });
+
+                    pAttachmentArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        pAttachmentArea.style.borderColor = '#ddd';
+                        pAttachmentArea.style.background = '#fafafa';
+                        handleFiles(e.dataTransfer.files);
                     });
 
                     pAttachmentInput.addEventListener('change', () => {
-                        if (pAttachmentInput.files.length > 0) {
-                            pAttachmentText.innerHTML = `Selected: <strong>${pAttachmentInput.files[0].name}</strong>`;
-                            pAttachmentArea.style.borderColor = 'var(--primary)';
-                            pAttachmentArea.style.background = '#f0f9ff';
-                        } else {
-                            pAttachmentText.innerHTML = 'Attach portfolio samples or resume';
-                            pAttachmentArea.style.borderColor = '#ddd';
-                            pAttachmentArea.style.background = 'transparent';
-                        }
+                        handleFiles(pAttachmentInput.files);
+                        // Reset input so same file can be selected again if needed (though Set handles dups)
+                        pAttachmentInput.value = '';
                     });
+                }
+
+                function handleFiles(files) {
+                    if (files.length > 0) {
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            if (!selectedFiles.has(file.name)) {
+                                selectedFiles.add(file.name);
+
+                                const li = document.createElement('li');
+                                li.style.display = 'flex';
+                                li.style.alignItems = 'center';
+                                li.style.justifyContent = 'space-between';
+                                li.style.background = 'white';
+                                li.style.padding = '10px 15px';
+                                li.style.marginBottom = '8px';
+                                li.style.borderRadius = '8px';
+                                li.style.border = '1px solid #eee';
+
+                                li.innerHTML = `
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i class="fa-solid fa-file" style="color: #888;"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">${file.name}</span>
+                                    </div>
+                                    <button type="button" class="btn-remove-file" style="background: none; border: none; color: #ff5252; cursor: pointer;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                `;
+
+                                li.querySelector('.btn-remove-file').addEventListener('click', () => {
+                                    selectedFiles.delete(file.name);
+                                    li.remove();
+                                });
+
+                                fileListContainer.appendChild(li);
+                            }
+                        }
+                    }
                 }
             </script>
     </div>
@@ -223,6 +292,25 @@
                             document.getElementById('job-summary-description').textContent = job.description;
                             document.getElementById('job-summary-budget').textContent = job.budget;
                             document.getElementById('apply-job-header').textContent = `Apply specifically for "${job.title}"`;
+
+                            // Populate Client Info
+                            if (job.client) {
+                                document.getElementById('job-client-name').textContent = job.client.fullName;
+                                document.getElementById('job-client-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random`;
+
+                                // Click to view profile
+                                document.getElementById('client-info-card').onclick = () => {
+                                    window.location.href = `freelancer-view-client.html?id=${job.client.id}`;
+                                };
+
+                                // Fetch real avatar
+                                fetch(`/api/users/${job.client.id}/avatar`)
+                                    .then(res => res.text())
+                                    .then(url => {
+                                        if (url) document.getElementById('job-client-avatar').src = url;
+                                    })
+                                    .catch(err => console.error(err));
+                            }
                         }
                     }
                 } catch (e) {
@@ -258,7 +346,8 @@
                     jobId: parseInt(jobId),
                     bidAmount: parseFloat(bidAmount),
                     deliveryTime: `${deliveryTime} ${deliveryUnit}`,
-                    coverLetter: coverLetter
+                    coverLetter: coverLetter,
+                    attachments: Array.from(selectedFiles)
                 };
 
                 try {

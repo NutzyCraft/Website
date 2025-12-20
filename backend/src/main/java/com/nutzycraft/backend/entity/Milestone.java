@@ -14,6 +14,7 @@ public class Milestone {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Job job;
 
     @Column(nullable = false)

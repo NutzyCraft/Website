@@ -277,6 +277,22 @@
 
             if (targetUserId && targetUserName) {
                 loadChatHistory(targetUserId, decodeURIComponent(targetUserName));
+            } else {
+                const recipientEmail = params.get('recipientEmail');
+                if (recipientEmail) {
+                    // Need to find user ID by email first. 
+                    // Assuming we have an endpoint for this or we iterate conversations.
+                    // The /api/users/profile?email=... returns the user object which has ID.
+                    try {
+                        const profileRes = await fetch(`/api/users/profile?email=${encodeURIComponent(recipientEmail)}`);
+                        if (profileRes.ok) {
+                            const user = await profileRes.json();
+                            loadChatHistory(user.id, user.fullName);
+                        }
+                    } catch (e) {
+                        console.error("Error fetching recipient profile:", e);
+                    }
+                }
             }
 
             // Always load list

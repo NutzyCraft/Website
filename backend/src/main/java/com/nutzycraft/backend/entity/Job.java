@@ -37,4 +37,18 @@ public class Job {
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Milestone> milestones;
+
+    // Timeline Step: 1=Started, 2=Concepts, 3=Revisions, 4=Delivery
+    private Integer currentStep = 1;
+
+    // Mutual Reviews
+    // Rating given BY Freelancer TO Client
+    private Integer ratingForClient;
+    @Column(columnDefinition = "TEXT")
+    private String reviewForClient;
+
+    // Rating given BY Client TO Freelancer
+    private Integer ratingForFreelancer;
+    @Column(columnDefinition = "TEXT")
+    private String reviewForFreelancer;
 }

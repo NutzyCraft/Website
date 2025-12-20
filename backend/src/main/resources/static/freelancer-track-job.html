@@ -33,8 +33,8 @@
         .timeline-progress-fill {
             height: 100%;
             background: var(--primary);
-            width: 66%;
-            /* Dynamic width based on progress */
+            width: 0%;
+            transition: width 0.3s ease;
             border-radius: 4px;
         }
 
@@ -51,6 +51,8 @@
             align-items: center;
             text-align: center;
             width: 120px;
+            cursor: pointer;
+            /* Clickable for freelancer */
         }
 
         .step-circle {
@@ -78,6 +80,10 @@
             border-color: var(--primary);
             color: var(--primary);
             background: #FFF5F2;
+        }
+
+        .timeline-step:hover .step-circle {
+            border-color: var(--primary);
         }
 
         .step-label {
@@ -138,42 +144,42 @@
 
             <ul class="sidebar-menu">
                 <li class="sidebar-item">
-                    <a href="client-dashboard.html" class="sidebar-link">
+                    <a href="freelancer-dashboard.html" class="sidebar-link">
                         <i class="fa-solid fa-grid-2"></i> Dashboard
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="client-my-profile.html" class="sidebar-link">
+                    <a href="freelancer-my-profile.html" class="sidebar-link">
                         <i class="fa-solid fa-user"></i> My Profile
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="post-job.html" class="sidebar-link">
-                        <i class="fa-solid fa-plus-circle"></i> Post a Job
+                    <a href="find-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Browse Jobs
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="client-my-jobs.html" class="sidebar-link active">
-                        <i class="fa-solid fa-briefcase"></i> My Jobs
+                    <a href="my-proposals.html" class="sidebar-link">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> My Proposals
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="find-freelancer.html" class="sidebar-link">
-                        <i class="fa-solid fa-users"></i> Find Freelancers
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-messages.html" class="sidebar-link">
+                    <a href="messages.html" class="sidebar-link">
                         <i class="fa-solid fa-message"></i> Messages
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="client-settings.html" class="sidebar-link">
+                    <a href="earnings.html" class="sidebar-link">
+                        <i class="fa-solid fa-wallet"></i> Earnings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="settings.html" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i> Settings
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="client-support.html" class="sidebar-link">
+                    <a href="freelancer-support.html" class="sidebar-link">
                         <i class="fa-solid fa-headset"></i> Support
                     </a>
                 </li>
@@ -200,9 +206,9 @@
                     <p style="color: #666;" id="track-job-subtitle">Job: Loading...</p>
                 </div>
                 <div class="topbar-actions">
-                    <a href="client-messages.html" class="btn btn-outline"><i class="fa-solid fa-envelope"></i> Message
-                        Freelancer</a>
-                    <a href="client-my-jobs.html" class="btn btn-outline" style="border: none;"><i
+                    <a href="messages.html" class="btn btn-outline"><i class="fa-solid fa-envelope"></i> Message
+                        Client</a>
+                    <a href="freelancer-dashboard.html" class="btn btn-outline" style="border: none;"><i
                             class="fa-solid fa-times"></i> Close</a>
                 </div>
             </div>
@@ -211,10 +217,10 @@
             <div class="glass-card"
                 style="margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <img src="https://ui-avatars.com/api/?name=User&background=random" id="freelancer-avatar"
+                    <img src="https://ui-avatars.com/api/?name=Client&background=random" id="client-avatar"
                         style="width: 60px; height: 60px; border-radius: 50%;">
                     <div>
-                        <h3 style="margin-bottom: 5px;" id="freelancer-name">Hired: Loading...</h3>
+                        <h3 style="margin-bottom: 5px;" id="client-name">Client: Loading...</h3>
                         <p style="color: #666; font-size: 0.9rem;" id="job-due-date">Due Date: TBD</p>
                     </div>
                 </div>
@@ -226,31 +232,35 @@
 
             <!-- Timeline -->
             <div class="glass-card" style="margin-bottom: 30px; padding: 40px;">
-                <h3 style="margin-bottom: 30px;">Project Timeline</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h3>Project Timeline</h3>
+                    <div style="font-size: 0.9rem; color: #666;">Click a step to update status</div>
+                </div>
+
                 <div class="timeline-container">
                     <div class="timeline-progress-bar">
                         <div class="timeline-progress-fill" style="width: 0%;"></div>
                     </div>
                     <div class="timeline-steps">
-                        <div class="timeline-step">
+                        <div class="timeline-step" onclick="updateStep(1)">
                             <div class="step-circle">1</div>
                             <div class="step-label">Project Started</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
+                            <!-- <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div> -->
                         </div>
-                        <div class="timeline-step">
+                        <div class="timeline-step" onclick="updateStep(2)">
                             <div class="step-circle">2</div>
                             <div class="step-label">Initial Concepts</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
+                            <!-- <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div> -->
                         </div>
-                        <div class="timeline-step">
+                        <div class="timeline-step" onclick="updateStep(3)">
                             <div class="step-circle">3</div>
                             <div class="step-label">Revisions</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
+                            <!-- <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div> -->
                         </div>
-                        <div class="timeline-step">
+                        <div class="timeline-step" onclick="updateStep(4)">
                             <div class="step-circle">4</div>
                             <div class="step-label">Final Delivery</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
+                            <!-- <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div> -->
                         </div>
                     </div>
                 </div>
@@ -286,9 +296,9 @@
     <div id="review-modal" class="modal-overlay"
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 9999;">
         <div class="glass-card" style="width: 400px; padding: 30px; background: white;">
-            <h3 style="margin-bottom: 20px;">Review Freelancer</h3>
+            <h3 style="margin-bottom: 20px;">Review Client</h3>
             <p style="color: #666; margin-bottom: 20px;">Rate your experience with <strong
-                    id="review-freelancer-name">freelancer</strong>.</p>
+                    id="review-client-name">client</strong>.</p>
 
             <div style="display: flex; gap: 10px; margin-bottom: 20px; font-size: 1.5rem; color: #ccc; cursor: pointer;"
                 id="star-rating-container">
@@ -333,16 +343,16 @@
                 document.getElementById('track-job-subtitle').textContent = `Job: ${job.title}`;
                 document.getElementById('job-budget').textContent = `$${job.budget}`;
 
-                // Populate Freelancer Info
-                if (job.freelancer) {
-                    document.getElementById('freelancer-name').textContent = `Hired: ${job.freelancer.fullName}`;
-                    document.getElementById('review-freelancer-name').textContent = job.freelancer.fullName;
+                // Populate Client Info
+                if (job.client) {
+                    document.getElementById('client-name').textContent = `Client: ${job.client.fullName}`;
+                    document.getElementById('review-client-name').textContent = job.client.fullName;
 
                     // Fetch real avatar
-                    fetch(`/api/users/${job.freelancer.id}/avatar`)
+                    fetch(`/api/users/${job.client.id}/avatar`)
                         .then(res => res.text())
                         .then(url => {
-                            if (url) document.getElementById('freelancer-avatar').src = url;
+                            if (url) document.getElementById('client-avatar').src = url;
                         })
                         .catch(err => console.error('Error loading avatar:', err));
 
@@ -350,10 +360,10 @@
                     if (job.status === 'COMPLETED') {
                         const actionContainer = document.querySelector('.topbar-actions');
 
-                        if (job.ratingForFreelancer) {
+                        if (job.ratingForClient) {
                             // Already reviewed
                             const reviewedBadge = document.createElement('span');
-                            reviewedBadge.innerHTML = `<i class="fa-solid fa-check-circle"></i> You rated: ${job.ratingForFreelancer}/5`;
+                            reviewedBadge.innerHTML = `<i class="fa-solid fa-check-circle"></i> You rated: ${job.ratingForClient}/5`;
                             reviewedBadge.className = 'status-badge status-active';
                             reviewedBadge.style.marginRight = '10px';
                             actionContainer.prepend(reviewedBadge);
@@ -361,15 +371,12 @@
                             // Needs review
                             const reviewBtn = document.createElement('button');
                             reviewBtn.className = 'btn btn-primary';
-                            reviewBtn.innerHTML = '<i class="fa-solid fa-star"></i> Review Freelancer';
+                            reviewBtn.innerHTML = '<i class="fa-solid fa-star"></i> Review Client';
                             reviewBtn.style.marginRight = '10px';
                             reviewBtn.onclick = () => openReviewModal();
                             actionContainer.prepend(reviewBtn);
                         }
                     }
-
-                } else {
-                    document.getElementById('freelancer-name').textContent = `Hired: Not Assigned`;
                 }
 
                 if (job.duration) {
@@ -459,7 +466,7 @@
             }
 
             try {
-                const res = await fetch(`/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=CLIENT`, {
+                const res = await fetch(`/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=FREELANCER`, {
                     method: 'POST'
                 });
 
@@ -481,10 +488,10 @@
                 const res = await fetch(`/api/shared-files/job/${jobId}`);
                 if (res.ok) {
                     const files = await res.json();
-                    const container = document.getElementById('shared-files-container');
+                    const sharedFilesColumn = document.querySelector('.dashboard-split > div:nth-child(2)');
 
                     if (files.length === 0) {
-                        container.innerHTML = `
+                        sharedFilesColumn.innerHTML = `
                              <h3 style="margin-bottom: 20px;">Shared Files</h3>
                              <div class="glass-card" style="padding: 20px; text-align: center; color: #888;">
                                 No files shared yet.
@@ -509,7 +516,7 @@
                             </div>
                         `).join('');
 
-                        container.innerHTML = `
+                        sharedFilesColumn.innerHTML = `
                             <h3 style="margin-bottom: 20px;">Shared Files</h3>
                             ${fileListHtml}
                             <div style="margin-top: 20px; text-align: center;">
@@ -558,11 +565,35 @@
             }
         }
 
+
+        async function updateStep(step) {
+            if (!currentJobId) return;
+
+            if (!confirm(`Update project progress to step ${step}?`)) return;
+
+            try {
+                const res = await fetch(`/api/jobs/${currentJobId}/step?step=${step}`, { method: 'PUT' });
+                if (res.ok) {
+                    renderTimeline(step);
+                    if (step === 4) {
+                        alert('Job marked as Completed! You can now leave a review.');
+                        window.location.reload();
+                    }
+                } else {
+                    alert('Failed to update progress');
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         function renderTimeline(currentStep) {
             const steps = document.querySelectorAll('.timeline-step');
             const progressFill = document.querySelector('.timeline-progress-fill');
 
-            // Calculate progress percentage: (step-1) / 3 * 100
+            // Calculate progress percentage: (step-1) / (total-1) * 100
+            // 4 steps total. 
+            // Step 1: 0%, Step 2: 33%, Step 3: 66%, Step 4: 100%
             const percent = ((currentStep - 1) / 3) * 100;
             progressFill.style.width = `${percent}%`;
 
@@ -582,9 +613,6 @@
             });
         }
     </script>
-</body>
-
-</html>
 
 </body>
 

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View User Profile | Nutzy Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="profile.css"> <!-- Reusing profile styles -->
+    <script src="script.js" defer></script>
+    <style>
+        .sidebar-link.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .sidebar-link:hover:not(.active) {
+            background: rgba(26, 35, 126, 0.1);
+            color: #1a237e;
+        }
+
+        /* Hide actions relevant to public users */
+        .public-actions {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
+                Nutzy Admin
+            </a>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="admin-dashboard.html" class="sidebar-link">
+                        <i class="fa-solid fa-gauge-high"></i> Overview
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-users.html" class="sidebar-link active">
+                        <i class="fa-solid fa-users-gear"></i> User Management
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-jobs.html" class="sidebar-link">
+                        <i class="fa-solid fa-briefcase"></i> Job Tracking
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-finance.html" class="sidebar-link">
+                        <i class="fa-solid fa-money-bill-trend-up"></i> Finance
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-disputes.html" class="sidebar-link">
+                        <i class="fa-solid fa-shield-halved"></i> Disputes
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-support.html" class="sidebar-link">
+                        <i class="fa-solid fa-envelope-open-text"></i> Support Messages
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="admin-settings.html" class="sidebar-link">
+                        <i class="fa-solid fa-sliders"></i> Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <div
+                    style="background: #1a237e; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                    A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.9rem;">Super Admin</div>
+                    <div style="font-size: 0.8rem; color: #888;">System OP</div>
+                </div>
+                <a href="admin-logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Topbar -->
+            <div class="dashboard-topbar">
+                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
+                <div>
+                    <h2 class="dashboard-title" style="font-size: 1.5rem;" id="page-title">User Profile</h2>
+                    <p style="color: #666;" id="page-subtitle">Admin View</p>
+                </div>
+                <div class="topbar-actions">
+                    <a href="javascript:history.back()" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i>
+                        Back</a>
+                </div>
+            </div>
+
+            <div class="profile-container" style="padding: 0; margin: 0; width: 100%; display: none;"
+                id="profile-content">
+
+                <!-- 1. Profile Header -->
+                <div class="glass-card profile-header-card">
+                    <div class="profile-banner"></div>
+                    <div class="profile-header-content">
+                        <img src="" alt="Avatar" class="profile-avatar-large" id="profileAvatar">
+
+                        <div class="profile-info">
+                            <div class="profile-name-row">
+                                <h1 class="profile-name" id="profileName">Loading...</h1>
+                                <div class="badge-verified"><i class="fa-solid fa-check"></i></div>
+                            </div>
+                            <p class="profile-title" id="profileTitle">Role</p>
+
+                            <div class="profile-meta" id="profileMeta">
+                                <!-- Meta details injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-grid-layout">
+                    <!-- Left: Description -->
+                    <div class="profile-main">
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title"><i class="fa-solid fa-user"></i> About</h3>
+                            <p style="color: var(--text-muted); line-height: 1.8;" id="profileBio">
+                                Loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Info -->
+                    <div class="profile-sidebar">
+                        <div class="glass-card profile-section">
+                            <h3 class="section-title"><i class="fa-solid fa-info-circle"></i> Details</h3>
+                            <div id="profileDetails">
+                                <!-- Dynamic details -->
+                            </div>
+                        </div>
+
+                        <!-- Skills (Freelancer only) -->
+                        <div class="glass-card profile-section" id="skillsSection" style="display: none;">
+                            <h3 class="section-title">Skills</h3>
+                            <div class="skills-tags" id="profileSkills"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="loading" style="text-align: center; padding: 50px; color: #888;">
+                Loading Profile...
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const params = new URLSearchParams(window.location.search);
+            const userId = params.get('userId');
+            const role = params.get('role'); // 'CLIENT' or 'FREELANCER'
+
+            if (!userId || !role) {
+                document.getElementById('loading').innerHTML = '<p class="text-danger">Invalid Profile Parameters</p>';
+                return;
+            }
+
+            try {
+                let apiUrl = '';
+                if (role === 'CLIENT') {
+                    apiUrl = `/api/clients/user/${userId}`;
+                } else if (role === 'FREELANCER') {
+                    apiUrl = `/api/freelancers/user/${userId}`;
+                } else {
+                    throw new Error('Unknown Role');
+                }
+
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error('Failed to fetch profile');
+                const data = await res.json();
+
+                renderProfile(data, role);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').innerHTML = '<p class="text-danger">Failed to load profile. User may not have a complete profile.</p>';
+            }
+        });
+
+        function renderProfile(data, role) {
+            const user = data.user || {};
+
+            // Common
+            document.getElementById('profileName').textContent = user.fullName || 'Unknown User';
+
+            // Avatar
+            const avatarUrl = data.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'U')}&background=random&size=200`;
+            document.getElementById('profileAvatar').src = avatarUrl;
+
+            // Details Container
+            const detailsDiv = document.getElementById('profileDetails');
+            const metaDiv = document.getElementById('profileMeta');
+
+            if (role === 'CLIENT') {
+                document.getElementById('profileTitle').textContent = data.companyName || 'Individual Client'; // Actually client doesn't store company name directly usually? Check Client entity.
+                // Assuming data structure based on previous Client Fetch
+                if (data.companyName) document.getElementById('profileTitle').textContent = data.companyName;
+                else document.getElementById('profileTitle').textContent = "Client Account";
+
+                document.getElementById('profileBio').textContent = data.description || 'No description provided.';
+
+                // Meta
+                metaDiv.innerHTML = `
+                    <div class="meta-item"><i class="fa-solid fa-globe"></i> ${data.website || 'N/A'}</div>
+                    <div class="meta-item"><i class="fa-solid fa-industry"></i> ${data.industry || 'N/A'}</div>
+                `;
+
+                // Sidebar Details
+                detailsDiv.innerHTML = `
+                    <div style="margin-bottom: 10px;"><strong>Email:</strong> ${user.email}</div>
+                    <div style="margin-bottom: 10px;"><strong>Contact Person:</strong> ${data.contactPerson || 'N/A'}</div>
+                    <div style="margin-bottom: 10px;"><strong>Address:</strong> ${data.billingAddress || 'N/A'}</div>
+                    <div style="margin-bottom: 10px;"><strong>Phone:</strong> ${data.phoneNumber || 'N/A'}</div>
+                `;
+
+            } else { // FREELANCER
+                document.getElementById('profileTitle').textContent = data.title || 'Freelancer';
+                document.getElementById('profileBio').textContent = data.bio || 'No bio provided.';
+
+                // Meta
+                metaDiv.innerHTML = `
+                   <div style="margin-top: 15px; display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$${data.hourlyRate || 0}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span></span>
+                        <div style="display: flex; color: #ffc107;">
+                            <i class="fa-solid fa-star"></i>
+                            <span style="color: var(--text-muted); margin-left: 5px; font-weight: 600;">(${data.rating || '0.0'})</span>
+                        </div>
+                    </div>
+                `;
+
+                // Sidebar Details
+                detailsDiv.innerHTML = `
+                     <div style="margin-bottom: 10px;"><strong>Email:</strong> ${user.email}</div>
+                     <div style="margin-bottom: 10px;"><strong>Portfolio:</strong> <a href="${data.portfolioUrl}" target="_blank">${data.portfolioUrl || 'N/A'}</a></div>
+                     <div style="margin-bottom: 10px;"><strong>Experience:</strong> ${data.yearsOfExperience || 0} Years</div>
+                `;
+
+                // Skills
+                if (data.skills && data.skills.length > 0) {
+                    document.getElementById('skillsSection').style.display = 'block';
+                    const skillsContainer = document.getElementById('profileSkills');
+                    data.skills.forEach(skill => {
+                        const span = document.createElement('span');
+                        span.className = 'skill-tag';
+                        span.textContent = skill;
+                        skillsContainer.appendChild(span);
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

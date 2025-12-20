@@ -10,4 +10,6 @@ public interface FreelancerRepository extends JpaRepository<Freelancer, Long> {
     List<Freelancer> findBySkillsContaining(String skill);
 
     java.util.Optional<Freelancer> findByUser_Email(String email);
+
+    java.util.Optional<Freelancer> findByUser_Id(Long id);
 }

@@ -32,6 +32,9 @@ public class Proposal {
     @Column(nullable = false)
     private String status = "PENDING"; // PENDING, ACCEPTED, DECLINED
 
+    @Column(columnDefinition = "TEXT")
+    private String attachments; // Comma-separated filenames
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private boolean isRead = false;

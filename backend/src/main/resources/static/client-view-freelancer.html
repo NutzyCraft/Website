@@ -162,13 +162,19 @@
                 document.addEventListener("DOMContentLoaded", function () {
                     const params = new URLSearchParams(window.location.search);
                     const id = params.get('id');
+                    const userId = params.get('userId');
 
-                    if (!id) {
+                    let fetchUrl;
+                    if (id) {
+                        fetchUrl = `/api/freelancers/${id}`;
+                    } else if (userId) {
+                        fetchUrl = `/api/freelancers/user/${userId}`;
+                    } else {
                         document.querySelector('.profile-container').innerHTML = '<p class="text-center">No freelancer ID provided.</p>';
                         return;
                     }
 
-                    fetch(`http://localhost:8080/api/freelancers/${id}`)
+                    fetch(fetchUrl)
                         .then(res => {
                             if (!res.ok) throw new Error("Freelancer not found");
                             return res.json();
@@ -199,8 +205,6 @@
                             const messageBtn = document.getElementById('messageBtn');
                             if (messageBtn) {
                                 messageBtn.onclick = () => {
-                                    // Freelancer ID is the internal ID, but message controller needs USER ID.
-                                    // We must check if 'freelancer' object has 'user.id'.
                                     if (freelancer.user && freelancer.user.id) {
                                         window.location.href = `client-messages.html?userId=${freelancer.user.id}&name=${encodeURIComponent(user.fullName)}`;
                                     } else {

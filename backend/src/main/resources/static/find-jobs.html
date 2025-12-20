@@ -164,9 +164,9 @@
 
                                 container.innerHTML = jobs.map(job => `
                                     <div class="glass-card" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: start;">
-                                        <div class="job-icon"
-                                            style="background: #e0f2fe; color: var(--accent-blue); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
-                                            <i class="fa-solid fa-briefcase"></i>
+                                        <div class="job-icon" style="flex-shrink: 0; cursor: pointer;" onclick="if(event.target.tagName !== 'A') window.location.href='freelancer-view-client.html?id=${job.client ? job.client.id : ''}'">
+                                            <img id="avatar-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client ? job.client.fullName : 'Client')}&background=random" 
+                                                 style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
                                         </div>
                                         <div style="flex: 1;">
                                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -192,6 +192,18 @@
                                             style="padding: 8px 20px; height: fit-content; text-decoration: none;">Apply Now</a>
                                     </div>
                                 `).join('');
+
+                                // Fetch real avatars for jobs
+                                jobs.forEach(job => {
+                                    if (job.client) {
+                                        fetch(`/api/users/${job.client.id}/avatar`)
+                                            .then(res => res.text())
+                                            .then(url => {
+                                                if (url) document.getElementById(`avatar-job-${job.id}`).src = url;
+                                            })
+                                            .catch(e => console.error(e));
+                                    }
+                                });
                             } else {
                                 container.innerHTML = '<div style="text-align: center; color: red;">Failed to load jobs.</div>';
                             }

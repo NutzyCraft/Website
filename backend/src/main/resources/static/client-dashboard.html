@@ -221,7 +221,7 @@
                                         <td style="padding: 15px; font-weight: 600;">${job.title}</td>
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 10px;">
-                                                <img src="${freelancerAvatar}" style="width: 24px; border-radius: 50%;">
+                                                <img id="avatar-active-proj-${job.id}" src="${freelancerAvatar}" style="width: 24px; border-radius: 50%; object-fit: cover;">
                                                 ${freelancerName}
                                             </div>
                                         </td>
@@ -230,6 +230,18 @@
                                     </tr>
                                 `;
                             }).join('');
+
+                            // Fetch real avatars
+                            data.activeProjects.forEach(job => {
+                                if (job.freelancer) {
+                                    fetch(`/api/users/${job.freelancer.id}/avatar`)
+                                        .then(res => res.text())
+                                        .then(url => {
+                                            if (url) document.getElementById(`avatar-active-proj-${job.id}`).src = url;
+                                        })
+                                        .catch(e => console.error(e));
+                                }
+                            });
                         } else {
                             projectsTable.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #888;">No active projects found.</td></tr>';
                         }
@@ -246,7 +258,7 @@
                                 return `
                                     <div class="message-item">
                                         <div style="display: flex; align-items: center; gap: 15px;">
-                                            <img src="${avatar}" class="message-avatar" style="width: 40px; height: 40px;">
+                                            <img id="avatar-msg-${msg.id}" src="${avatar}" class="message-avatar" style="width: 40px; height: 40px; object-fit: cover;">
                                             <div style="flex: 1; min-width: 0;">
                                                 <div style="font-weight: 700; font-size: 0.95rem;">${otherUser.fullName}</div>
                                                 <div style="font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -258,6 +270,20 @@
                                     </div>
                                 `;
                             }).join('');
+
+                            // Fetch real avatars
+                            data.recentMessages.forEach(msg => {
+                                const isMe = msg.sender.email === email;
+                                const otherUser = isMe ? msg.receiver : msg.sender;
+                                if (otherUser) {
+                                    fetch(`/api/users/${otherUser.id}/avatar`)
+                                        .then(res => res.text())
+                                        .then(url => {
+                                            if (url) document.getElementById(`avatar-msg-${msg.id}`).src = url;
+                                        })
+                                        .catch(e => console.error(e));
+                                }
+                            });
                         } else {
                             messagesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No recent messages.</div>';
                         }

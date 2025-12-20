@@ -276,15 +276,24 @@
     border-bottom: none;
     margin-bottom: 5px;
     border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .message-item:hover {
     background: #FFF9F5;
     border-color: #FFE0D1;
+    transform: translateX(5px);
 }
 
 .message-avatar {
+    width: 45px;
+    height: 45px;
     border-radius: 12px;
+    object-fit: cover;
 }
 
 /* Mobile Responsive */

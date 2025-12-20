@@ -1,19 +1,11 @@
 package com.nutzycraft.backend.controller;
 
-import com.nutzycraft.backend.entity.Job;
-import com.nutzycraft.backend.entity.Proposal;
-import com.nutzycraft.backend.entity.User;
-import com.nutzycraft.backend.repository.JobRepository;
-import com.nutzycraft.backend.repository.ProposalRepository;
-import com.nutzycraft.backend.repository.UserRepository;
-import lombok.Data;
+import com.nutzycraft.backend.entity.Notification;
+import com.nutzycraft.backend.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -21,82 +13,78 @@ import java.util.List;
 public class NotificationController {
 
     @Autowired
-    private ProposalRepository proposalRepository;
-
-    @Autowired
-    private JobRepository jobRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private NotificationRepository notificationRepository;
 
     @GetMapping
-    public List<NotificationDTO> getNotifications(@RequestParam String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<NotificationDTO> notifications = new ArrayList<>();
-
-        if (user.getRole() == User.Role.CLIENT) {
-            // 1. Get Proposals for Client's Jobs
-            List<Job> myJobs = jobRepository.findByClient_Email(email);
-            for (Job job : myJobs) {
-                List<Proposal> proposals = proposalRepository.findByJobId(job.getId());
-                for (Proposal p : proposals) {
-                    // Ideally check !p.isRead(), but for now showing all recent ones or unread ones
-                    if (!p.isRead()) {
-                        notifications.add(new NotificationDTO(
-                                "New Proposal",
-                                p.getFreelancer().getFullName() + " submitted a proposal for \"" + job.getTitle()
-                                        + "\".",
-                                "proposal",
-                                p.getCreatedAt(),
-                                "/client-job-proposals.html?jobId=" + job.getId() // Link action
-                        ));
-                    }
-                }
-            }
-        } else if (user.getRole() == User.Role.FREELANCER) {
-            // Freelancer logic (e.g. Job application accepted)
-            List<Proposal> myProposals = proposalRepository.findByFreelancerEmail(email);
-            for (Proposal p : myProposals) {
-                if ("ACCEPTED".equalsIgnoreCase(p.getStatus())) { // Assuming Proposal has status or derived from Job
-                    // Check if job is in progress
-                    if ("IN_PROGRESS".equals(p.getJob().getStatus())) {
-                        notifications.add(new NotificationDTO(
-                                "Proposal Accepted",
-                                "Your proposal for \"" + p.getJob().getTitle() + "\" was accepted!",
-                                "job_accepted",
-                                p.getJob().getPostedAt(), // Approximation
-                                "/freelancer-my-jobs.html"));
-                    }
-                }
-            }
+    public List<NotificationDTO> getNotifications(@RequestParam(required = false) String email,
+            @RequestParam(required = false) Long userId) {
+        List<Notification> notifications;
+        if (email != null) {
+            notifications = notificationRepository.findByRecipientEmailOrderByCreatedAtDesc(email);
+        } else if (userId != null) {
+            notifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(userId);
+        } else {
+            return List.of();
         }
 
-        // Sort by date desc
-        notifications.sort((n1, n2) -> n2.getTimestamp().compareTo(n1.getTimestamp()));
-        return notifications;
+        return notifications.stream()
+                .map(this::convertToDTO)
+                .collect(java.util.stream.Collectors.toList());
     }
 
-    @PostMapping("/mark-read")
-    public void markRead(@RequestParam String type, @RequestParam Long id) {
-        // Implementation for marking specific items read
+    @PostMapping("/{id}/read")
+    public void markAsRead(@PathVariable Long id) {
+        notificationRepository.findById(id).ifPresent(notification -> {
+            notification.setRead(true);
+            notificationRepository.save(notification);
+            notificationRepository.save(notification);
+        });
     }
 
-    @Data
+    @PostMapping("/mark-all-read")
+    public void markAllAsRead(@RequestParam(required = false) String email,
+            @RequestParam(required = false) Long userId) {
+        List<Notification> unread = List.of();
+        if (email != null) {
+            unread = notificationRepository.findByRecipientEmailAndIsReadFalse(email);
+        } else if (userId != null) {
+            unread = notificationRepository.findByRecipientIdAndIsReadFalse(userId);
+        }
+
+        unread.forEach(n -> n.setRead(true));
+        notificationRepository.saveAll(unread);
+    }
+
+    private NotificationDTO convertToDTO(Notification n) {
+        return new NotificationDTO(
+                n.getId(),
+                n.getTitle(),
+                n.getMessage(),
+                n.getType(),
+                n.getLink(),
+                n.isRead(),
+                n.getCreatedAt());
+    }
+
+    @lombok.Data
     public static class NotificationDTO {
+        private Long id;
         private String title;
         private String message;
-        private String type; // proposal, system, message
-        private LocalDateTime timestamp;
-        private String actionLink;
+        private String type;
+        private String link;
+        private boolean read;
+        private java.time.LocalDateTime createdAt;
 
-        public NotificationDTO(String title, String message, String type, LocalDateTime timestamp, String actionLink) {
+        public NotificationDTO(Long id, String title, String message, String type, String link, boolean read,
+                java.time.LocalDateTime createdAt) {
+            this.id = id;
             this.title = title;
             this.message = message;
             this.type = type;
-            this.timestamp = timestamp;
-            this.actionLink = actionLink;
+            this.link = link;
+            this.read = read;
+            this.createdAt = createdAt;
         }
     }
 }
