@@ -131,15 +131,42 @@
                         <div class="form-group" style="margin-top: 20px;">
                             <label class="form-label"
                                 style="display: block; font-weight: 700; margin-bottom: 8px;">Attachments</label>
-                            <div class="file-upload"
+                            <div class="file-upload" id="job-attachment-area"
                                 style="border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s;">
                                 <i class="fa-solid fa-cloud-arrow-up"
                                     style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                                <p>Drag & drop files or <span
+                                <p id="job-attachment-text">Drag & drop files or <span
                                         style="color: var(--primary); font-weight: 700;">Browse</span></p>
+                                <input type="file" id="job-attachment-input" style="display: none;">
                             </div>
                         </div>
                     </div>
+
+                    <script>
+                        // File Upload Interaction
+                        const attachmentArea = document.getElementById('job-attachment-area');
+                        const attachmentInput = document.getElementById('job-attachment-input');
+                        const attachmentText = document.getElementById('job-attachment-text');
+
+                        if (attachmentArea && attachmentInput) {
+                            attachmentArea.addEventListener('click', () => {
+                                attachmentInput.click();
+                            });
+
+                            attachmentInput.addEventListener('change', () => {
+                                if (attachmentInput.files.length > 0) {
+                                    attachmentText.innerHTML = `Selected: <strong>${attachmentInput.files[0].name}</strong>`;
+                                    // Optional: styled to look active
+                                    attachmentArea.style.borderColor = 'var(--primary)';
+                                    attachmentArea.style.background = '#f0f9ff';
+                                } else {
+                                    attachmentText.innerHTML = 'Drag & drop files or <span style="color: var(--primary); font-weight: 700;">Browse</span>';
+                                    attachmentArea.style.borderColor = '#ddd';
+                                    attachmentArea.style.background = 'transparent';
+                                }
+                            });
+                        }
+                    </script>
 
                     <div class="form-section" style="margin-top: 30px;">
                         <h3
