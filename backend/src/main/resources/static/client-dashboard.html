@@ -1,300 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Client Dashboard | Nutzy Craft</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dashboard.css" />
     <script src="script.js" defer></script>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="dashboard-sidebar">
-            <a href="index.html" class="sidebar-logo">
-                <img src="logo.jpg" alt="Logo" style="width: 40px; border-radius: 50%;">
-                Nutzy Craft
+      <!-- Sidebar -->
+      <aside class="dashboard-sidebar">
+        <a href="index.html" class="sidebar-logo">
+          <img
+            src="logo.jpg"
+            alt="Logo"
+            style="width: 40px; border-radius: 50%"
+          />
+          Nutzy Craft
+        </a>
+
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a href="client-dashboard.html" class="sidebar-link active">
+              <i class="fa-solid fa-grid-2"></i> Dashboard
             </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="client-my-profile.html" class="sidebar-link">
+              <i class="fa-solid fa-user"></i> My Profile
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="post-job.html" class="sidebar-link">
+              <i class="fa-solid fa-plus-circle"></i> Post a Job
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="client-my-jobs.html" class="sidebar-link">
+              <i class="fa-solid fa-briefcase"></i> My Jobs
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="find-freelancer.html" class="sidebar-link">
+              <i class="fa-solid fa-users"></i> Find Freelancers
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="client-messages.html" class="sidebar-link">
+              <i class="fa-solid fa-message"></i> Messages
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="client-settings.html" class="sidebar-link">
+              <i class="fa-solid fa-gear"></i> Settings
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="client-support.html" class="sidebar-link">
+              <i class="fa-solid fa-headset"></i> Support
+            </a>
+          </li>
+        </ul>
 
-            <ul class="sidebar-menu">
-                <li class="sidebar-item">
-                    <a href="client-dashboard.html" class="sidebar-link active">
-                        <i class="fa-solid fa-grid-2"></i> Dashboard
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-my-profile.html" class="sidebar-link">
-                        <i class="fa-solid fa-user"></i> My Profile
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="post-job.html" class="sidebar-link">
-                        <i class="fa-solid fa-plus-circle"></i> Post a Job
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-my-jobs.html" class="sidebar-link">
-                        <i class="fa-solid fa-briefcase"></i> My Jobs
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="find-freelancer.html" class="sidebar-link">
-                        <i class="fa-solid fa-users"></i> Find Freelancers
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-messages.html" class="sidebar-link">
-                        <i class="fa-solid fa-message"></i> Messages
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-settings.html" class="sidebar-link">
-                        <i class="fa-solid fa-gear"></i> Settings
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="client-support.html" class="sidebar-link">
-                        <i class="fa-solid fa-headset"></i> Support
-                    </a>
-                </li>
-            </ul>
+        <div class="sidebar-user">
+          <img
+            src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
+            style="width: 40px; height: 40px; border-radius: 50%"
+          />
+          <div style="flex: 1">
+            <div style="font-weight: 700; font-size: 0.9rem">&nbsp;</div>
+            <div style="font-size: 0.8rem; color: #888">&nbsp;</div>
+          </div>
+          <a href="logout.html" style="color: #888"
+            ><i class="fa-solid fa-sign-out-alt"></i
+          ></a>
+        </div>
+      </aside>
 
-            <div class="sidebar-user">
-                <img src="https://ui-avatars.com/api/?name=User&background=D4B69D&color=fff"
-                    style="width: 40px; height: 40px; border-radius: 50%;">
-                <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">&nbsp;</div>
-                    <div style="font-size: 0.8rem; color: #888;">&nbsp;</div>
-                </div>
-                <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
+      <!-- Main Content -->
+      <main class="dashboard-main">
+        <!-- Topbar -->
+        <div class="dashboard-topbar">
+          <button class="sidebar-toggle-btn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h1 class="dashboard-title">Welcome back! 👋</h1>
+          <div class="topbar-actions">
+            <a
+              href="post-job.html"
+              class="btn btn-primary"
+              style="padding: 10px 20px; font-size: 0.9rem"
+              ><i class="fa-solid fa-plus"></i> Post Job</a
+            >
+            <a
+              href="client-notifications.html"
+              class="icon-btn"
+              style="text-decoration: none; color: inherit"
+            >
+              <i class="fa-regular fa-bell"></i>
+              <span class="notification-dot"></span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats Rows -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #e8f5e9; color: #2e7d32">
+              <i class="fa-solid fa-file-circle-check"></i>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="dashboard-main">
-            <!-- Topbar -->
-            <div class="dashboard-topbar">
-                <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
-                <h1 class="dashboard-title">Welcome back! 👋</h1>
-                <div class="topbar-actions">
-                    <a href="post-job.html" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;"><i
-                            class="fa-solid fa-plus"></i> Post Job</a>
-                    <a href="client-notifications.html" class="icon-btn" style="text-decoration: none; color: inherit;">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notification-dot"></span>
-                    </a>
-                </div>
+            <div class="stat-info">
+              <h4>Active Jobs</h4>
+              <div class="stat-value">-</div>
             </div>
-
-            <!-- Stats Rows -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
-                        <i class="fa-solid fa-file-circle-check"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4>Active Jobs</h4>
-                        <div class="stat-value">-</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #FFF3E0; color: #EF6C00;">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4>Total Hires</h4>
-                        <div class="stat-value">-</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #F3E5F5; color: #7B1FA2;">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4>Total Spent</h4>
-                        <div class="stat-value">-</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: #E3F2FD; color: #1565C0;">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h4>Job Views</h4>
-                        <div class="stat-value">-</div>
-                    </div>
-                </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #fff3e0; color: #ef6c00">
+              <i class="fa-solid fa-users"></i>
             </div>
-
-            <!-- Recent Activity / Active Jobs Preview -->
-            <div class="dashboard-split">
-                <div class="dashboard-table-card">
-                    <div class="table-header">
-                        <h3>Active Projects</h3>
-                        <a href="client-my-jobs.html"
-                            style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">View All</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="dashboard-table" style="vertical-align: middle;">
-                            <thead>
-                                <tr style="text-align: left;">
-                                    <th style="padding: 15px;">Project Title</th>
-                                    <th>Freelancer</th>
-                                    <th>Status</th>
-                                    <th>Posted Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="active-projects-table-body">
-                                <tr>
-                                    <td colspan="4" style="text-align: center; padding: 20px; color: #888;">Loading
-                                        projects...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Recent Messages or Notifications -->
-                <div class="dashboard-table-card">
-                    <div class="table-header">
-                        <h3>Recent Messages</h3>
-                    </div>
-                    <div id="recent-messages-list">
-                        <div style="padding: 20px; text-align: center; color: #888;">Loading messages...</div>
-                    </div>
-                </div>
+            <div class="stat-info">
+              <h4>Total Hires</h4>
+              <div class="stat-value">-</div>
             </div>
-        </main>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #f3e5f5; color: #7b1fa2">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="stat-info">
+              <h4>Total Spent</h4>
+              <div class="stat-value">-</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #e3f2fd; color: #1565c0">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <div class="stat-info">
+              <h4>Job Views</h4>
+              <div class="stat-value">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity / Active Jobs Preview -->
+        <div class="dashboard-split">
+          <div class="dashboard-table-card">
+            <div class="table-header">
+              <h3>Active Projects</h3>
+              <a
+                href="client-my-jobs.html"
+                style="
+                  color: var(--primary);
+                  font-weight: 600;
+                  font-size: 0.9rem;
+                "
+                >View All</a
+              >
+            </div>
+            <div class="table-responsive">
+              <table class="dashboard-table" style="vertical-align: middle">
+                <thead>
+                  <tr style="text-align: left">
+                    <th style="padding: 15px">Project Title</th>
+                    <th>Freelancer</th>
+                    <th>Status</th>
+                    <th>Posted Date</th>
+                  </tr>
+                </thead>
+                <tbody id="active-projects-table-body">
+                  <tr>
+                    <td
+                      colspan="4"
+                      style="text-align: center; padding: 20px; color: #888"
+                    >
+                      Loading projects...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Messages or Notifications -->
+          <div class="dashboard-table-card">
+            <div class="table-header">
+              <h3>Recent Messages</h3>
+            </div>
+            <div id="recent-messages-list">
+              <div style="padding: 20px; text-align: center; color: #888">
+                Loading messages...
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
-            if (email) {
-                try {
-                    // Fetch Profile
-                    const profileRes = await fetch(`/api/users/profile?email=${email}`);
-                    if (profileRes.ok) {
-                        const profile = await profileRes.json();
-                        // Update UI
-                        const titleEl = document.querySelector('.dashboard-title');
-                        if (titleEl) titleEl.innerText = `Welcome back, ${profile.fullName.split(' ')[0]}! 👋`;
+      document.addEventListener("DOMContentLoaded", async () => {
+        const email =
+          localStorage.getItem("loggedInEmail") ||
+          sessionStorage.getItem("loggedInEmail");
+        if (email) {
+          try {
+            // Fetch Profile
+            const profileRes = await fetch(`/api/users/profile?email=${email}`);
+            if (profileRes.ok) {
+              const profile = await profileRes.json();
+              // Update UI
+              const titleEl = document.querySelector(".dashboard-title");
+              if (titleEl)
+                titleEl.innerText = `Welcome back, ${
+                  profile.fullName.split(" ")[0]
+                }! 👋`;
+            }
 
+            // Fetch Dashboard Data
+            const dashboardRes = await fetch(
+              `/api/dashboard/client?email=${email}`
+            );
+            if (dashboardRes.ok) {
+              const data = await dashboardRes.json();
 
-                    }
+              // Update Stats
+              const statValues = document.querySelectorAll(".stat-value");
+              if (statValues.length >= 4) {
+                statValues[0].innerText = data.activeJobs;
+                statValues[1].innerText = data.totalHires;
+                statValues[2].innerText = `$${data.totalSpent}`;
+                statValues[3].innerText = data.jobViews;
+              }
 
-                    // Fetch Dashboard Data
-                    const dashboardRes = await fetch(`/api/dashboard/client?email=${email}`);
-                    if (dashboardRes.ok) {
-                        const data = await dashboardRes.json();
+              // Render Active Projects
+              const projectsTable = document.getElementById(
+                "active-projects-table-body"
+              );
+              if (data.activeProjects && data.activeProjects.length > 0) {
+                projectsTable.innerHTML = data.activeProjects
+                  .map((job) => {
+                    const freelancerName = job.freelancer
+                      ? job.freelancer.fullName
+                      : "Not Assigned";
+                    const freelancerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      freelancerName
+                    )}&background=random`;
 
-                        // Update Stats
-                        const statValues = document.querySelectorAll('.stat-value');
-                        if (statValues.length >= 4) {
-                            statValues[0].innerText = data.activeJobs;
-                            statValues[1].innerText = data.totalHires;
-                            statValues[2].innerText = `$${data.totalSpent}`;
-                            statValues[3].innerText = data.jobViews;
-                        }
+                    let statusClass = "status-pending";
+                    if (job.status === "IN_PROGRESS")
+                      statusClass = "status-active";
+                    if (job.status === "COMPLETED")
+                      statusClass = "status-completed";
 
-                        // Render Active Projects
-                        const projectsTable = document.getElementById('active-projects-table-body');
-                        if (data.activeProjects && data.activeProjects.length > 0) {
-                            projectsTable.innerHTML = data.activeProjects.map(job => {
-                                const freelancerName = job.freelancer ? job.freelancer.fullName : 'Not Assigned';
-                                const freelancerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(freelancerName)}&background=random`;
-
-                                let statusClass = 'status-pending';
-                                if (job.status === 'IN_PROGRESS') statusClass = 'status-active';
-                                if (job.status === 'COMPLETED') statusClass = 'status-completed';
-
-                                return `
+                    return `
                                     <tr style="border-bottom: 1px solid #f0f0f0;">
-                                        <td style="padding: 15px; font-weight: 600;">${job.title}</td>
+                                        <td style="padding: 15px; font-weight: 600;">${
+                                          job.title
+                                        }</td>
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 10px;">
-                                                <img id="avatar-active-proj-${job.id}" src="${freelancerAvatar}" style="width: 24px; border-radius: 50%; object-fit: cover;">
+                                                <img id="avatar-active-proj-${
+                                                  job.id
+                                                }" src="${freelancerAvatar}" style="width: 24px; border-radius: 50%; object-fit: cover;">
                                                 ${freelancerName}
                                             </div>
                                         </td>
-                                        <td><span class="status-badge ${statusClass}">${job.status.replace('_', ' ')}</span></td>
-                                        <td>${new Date(job.postedAt).toLocaleDateString()}</td>
+                                        <td><span class="status-badge ${statusClass}">${job.status.replace(
+                      "_",
+                      " "
+                    )}</span></td>
+                                        <td>${new Date(
+                                          job.postedAt
+                                        ).toLocaleDateString()}</td>
                                     </tr>
                                 `;
-                            }).join('');
+                  })
+                  .join("");
 
-                            // Fetch real avatars
-                            data.activeProjects.forEach(job => {
-                                if (job.freelancer) {
-                                    fetch(`/api/users/${job.freelancer.id}/avatar`)
-                                        .then(res => res.text())
-                                        .then(url => {
-                                            if (url) document.getElementById(`avatar-active-proj-${job.id}`).src = url;
-                                        })
-                                        .catch(e => console.error(e));
-                                }
-                            });
-                        } else {
-                            projectsTable.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #888;">No active projects found.</td></tr>';
-                        }
+                // Fetch real avatars
+                data.activeProjects.forEach((job) => {
+                  if (job.freelancer) {
+                    fetch(`/api/users/${job.freelancer.id}/avatar`)
+                      .then((res) => res.text())
+                      .then((url) => {
+                        if (url)
+                          document.getElementById(
+                            `avatar-active-proj-${job.id}`
+                          ).src = url;
+                      })
+                      .catch((e) => console.error(e));
+                  }
+                });
+              } else {
+                projectsTable.innerHTML =
+                  '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #888;">No active projects found.</td></tr>';
+              }
 
-                        // Render Recent Messages
-                        const messagesList = document.getElementById('recent-messages-list');
-                        if (data.recentMessages && data.recentMessages.length > 0) {
-                            messagesList.innerHTML = data.recentMessages.map(msg => {
-                                const isMe = msg.sender.email === email;
-                                const otherUser = isMe ? msg.receiver : msg.sender;
-                                const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUser.fullName)}&background=random`;
-                                const timeAgo = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              // Render Recent Messages
+              const messagesList = document.getElementById(
+                "recent-messages-list"
+              );
+              if (data.recentMessages && data.recentMessages.length > 0) {
+                messagesList.innerHTML = data.recentMessages
+                  .map((msg) => {
+                    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      msg.name
+                    )}&background=random`;
+                    const timeAgo = new Date(
+                      msg.lastMessageTime
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
 
-                                return `
+                    return `
                                     <div class="message-item">
                                         <div style="display: flex; align-items: center; gap: 15px;">
-                                            <img id="avatar-msg-${msg.id}" src="${avatar}" class="message-avatar" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <img id="avatar-msg-${msg.userId}" src="${avatar}" class="message-avatar" style="width: 40px; height: 40px; object-fit: cover;">
                                             <div style="flex: 1; min-width: 0;">
-                                                <div style="font-weight: 700; font-size: 0.95rem;">${otherUser.fullName}</div>
+                                                <div style="font-weight: 700; font-size: 0.95rem;">${msg.name}</div>
                                                 <div style="font-size: 0.85rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                                    ${isMe ? 'You: ' : ''}${msg.content}
+                                                    ${msg.lastMessage}
                                                 </div>
                                             </div>
                                             <div style="font-size: 0.75rem; color: #999;">${timeAgo}</div>
                                         </div>
                                     </div>
                                 `;
-                            }).join('');
+                  })
+                  .join("");
 
-                            // Fetch real avatars
-                            data.recentMessages.forEach(msg => {
-                                const isMe = msg.sender.email === email;
-                                const otherUser = isMe ? msg.receiver : msg.sender;
-                                if (otherUser) {
-                                    fetch(`/api/users/${otherUser.id}/avatar`)
-                                        .then(res => res.text())
-                                        .then(url => {
-                                            if (url) document.getElementById(`avatar-msg-${msg.id}`).src = url;
-                                        })
-                                        .catch(e => console.error(e));
-                                }
-                            });
-                        } else {
-                            messagesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No recent messages.</div>';
-                        }
-                    }
-
-                } catch (error) {
-                    console.error('Failed to load dashboard data:', error);
-                }
+                // Fetch real avatars
+                data.recentMessages.forEach((msg) => {
+                  fetch(`/api/users/${msg.userId}/avatar`)
+                    .then((res) => res.text())
+                    .then((url) => {
+                      if (url)
+                        document.getElementById(
+                          `avatar-msg-${msg.userId}`
+                        ).src = url;
+                    })
+                    .catch((e) => console.error(e));
+                });
+              } else {
+                messagesList.innerHTML =
+                  '<div style="padding: 20px; text-align: center; color: #888;">No recent messages.</div>';
+              }
             }
-        });
+          } catch (error) {
+            console.error("Failed to load dashboard data:", error);
+          }
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>

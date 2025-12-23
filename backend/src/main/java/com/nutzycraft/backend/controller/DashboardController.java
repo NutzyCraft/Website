@@ -3,10 +3,10 @@ package com.nutzycraft.backend.controller;
 import com.nutzycraft.backend.entity.Job;
 import com.nutzycraft.backend.entity.Proposal;
 import com.nutzycraft.backend.repository.JobRepository;
-import com.nutzycraft.backend.entity.Message;
 import com.nutzycraft.backend.entity.User;
 
-import com.nutzycraft.backend.repository.MessageRepository;
+import com.nutzycraft.backend.service.ChatService;
+import com.nutzycraft.backend.dto.ConversationDTO;
 import com.nutzycraft.backend.repository.ProposalRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class DashboardController {
     private ProposalRepository proposalRepository;
 
     @Autowired
-    private MessageRepository messageRepository;
+    private ChatService chatService;
 
     @Autowired
     private UserRepository userRepository;
@@ -53,7 +53,7 @@ public class DashboardController {
                 .toList();
 
         // Get Recent Messages
-        List<Message> messages = messageRepository.findUserMessages(user.getId()).stream().limit(5).toList();
+        List<ConversationDTO> messages = chatService.getConversations(email).stream().limit(5).toList();
 
         ClientDashboardDTO stats = new ClientDashboardDTO();
         stats.setActiveJobs(activeJobsCount);
@@ -88,7 +88,8 @@ public class DashboardController {
                 .toList();
 
         // Get Recent Messages
-        List<Message> messages = messageRepository.findUserMessages(user.getId()).stream().limit(5).toList();
+        // Get Recent Messages
+        List<ConversationDTO> messages = chatService.getConversations(email).stream().limit(5).toList();
 
         // Get Recommended Jobs (Open jobs, exclude my jobs)
         List<Job> recommended = jobRepository.findAll().stream()
@@ -116,7 +117,7 @@ public class DashboardController {
         private double totalSpent;
         private long jobViews;
         private List<Job> activeProjects;
-        private List<Message> recentMessages;
+        private List<ConversationDTO> recentMessages;
     }
 
     @Data
@@ -126,7 +127,7 @@ public class DashboardController {
         private long activeJobs;
         private double rating;
         private List<Job> activeOrders;
-        private List<Message> recentMessages;
+        private List<ConversationDTO> recentMessages;
         private List<Job> recommendedJobs;
     }
 }
