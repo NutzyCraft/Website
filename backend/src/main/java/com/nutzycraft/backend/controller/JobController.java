@@ -55,6 +55,7 @@ public class JobController {
         private String status;
         private java.time.LocalDateTime postedAt;
         private long proposalCount;
+        private String attachments;
 
         public JobWithProposalsDTO(Job job, long proposalCount) {
             this.id = job.getId();
@@ -66,6 +67,7 @@ public class JobController {
             this.status = job.getStatus();
             this.postedAt = job.getPostedAt();
             this.proposalCount = proposalCount;
+            this.attachments = job.getAttachments();
         }
     }
 
