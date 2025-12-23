@@ -203,13 +203,17 @@
                         })
                         .catch(err => console.error(err));
 
-                    // Helper to read file as Base64
-                    const toBase64 = file => new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = error => reject(error);
-                    });
+                    // Helper to upload file and get URL
+                    const uploadFile = async (file) => {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error('Upload failed');
+                        return await res.text();
+                    };
 
                     // Save
                     document.getElementById('profileSettingsForm').addEventListener('submit', async function (e) {
@@ -220,34 +224,65 @@
                         const bio = document.getElementById('bio').value;
                         const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
 
-                        let profileImage = null;
-                        let bannerImage = null;
+                        let profileImage = document.getElementById('profilePictureUrl').value; // Default to existing code hidden input if any, though we don't have one in this file originally, let's look at how we get it.
+                        // Actually the original code didn't use a hidden input for existing value. It checked the preview src or fetched again.
+                        // Let's rely on the variables.
+                        
+                        let bannerImage = null; // We verify existence logic below
 
-                        const avatarInput = document.getElementById('settings-avatar-upload');
-                        if (avatarInput.files.length > 0) {
-                            profileImage = await toBase64(avatarInput.files[0]);
-                        } else if (document.getElementById('settings-avatar-preview').src.startsWith('data:')) {
-                            // Keep existing if it's already a data URL (though user might not have changed it, this logic is tricky. 
-                            // Better to only send if changed. But if we don't send it, does backend keep it? 
-                            // Backend code: if (updated.getProfileImage() != null) existing.set...
-                            // So if we send null, it keeps existing. Good.
+                        try {
+                             // Handle Profile Image Upload
+                            const avatarInput = document.getElementById('settings-avatar-upload');
+                            if (avatarInput.files.length > 0) {
+                                const btn = document.getElementById('saveBtn');
+                                btn.textContent = 'Uploading images...';
+                                btn.disabled = true;
+                                profileImage = await uploadFile(avatarInput.files[0]);
+                            }
+
+                             // Handle Banner Image Upload
+                            const coverInput = document.getElementById('settings-cover-upload');
+                            if (coverInput.files.length > 0) {
+                                const btn = document.getElementById('saveBtn');
+                                btn.textContent = 'Uploading images...';
+                                btn.disabled = true;
+                                bannerImage = await uploadFile(coverInput.files[0]);
+                            }
+                        } catch(err) {
+                            console.error("Error uploading images", err);
+                            alert("Failed to upload images. Please try again.");
+                            document.getElementById('saveBtn').textContent = 'Save Changes';
+                            document.getElementById('saveBtn').disabled = false;
+                            return;
                         }
 
-                        const coverInput = document.getElementById('settings-cover-upload');
-                        if (coverInput.files.length > 0) {
-                            bannerImage = await toBase64(coverInput.files[0]);
-                        }
 
                         const payload = {
                             user: { fullName: fullName },
                             title: title,
                             hourlyRate: parseFloat(hourlyRate),
                             bio: bio,
-                            skills: skills
+                            skills: skills,
+                            profileImage: profileImage, // Send the URL (new or null/undefined if not changed? API needs to handle nulls)
+                            bannerImage: bannerImage
+                            // Note: Backend code: if (updatedFreelancer.getProfileImage() != null) existing.set...
+                            // If we send null, it ignores it. So if we didn't upload a new one, we should probably NOT send it, OR send the existing one.
+                            // The original code:
+                            // if (profileImage) payload.profileImage = profileImage;
+                            // We need to mirror that.
                         };
-
-                        if (profileImage) payload.profileImage = profileImage;
-                        if (bannerImage) payload.bannerImage = bannerImage;
+                        
+                        // Refine payload logic
+                        // If we have a new URL, we send it.
+                        // If we didn't upload, we send nothing (so backend keeps existing).
+                        // profileImage variable holds the NEW url if uploaded.
+                        if (profileImage && profileImage.startsWith('http')) {
+                             payload.profileImage = profileImage;
+                        }
+                        
+                         if (bannerImage && bannerImage.startsWith('http')) {
+                             payload.bannerImage = bannerImage;
+                        }
 
                         fetch(`/api/freelancers/me?email=${email}`, {
                             method: 'PUT',
@@ -257,12 +292,13 @@
                             .then(res => res.json())
                             .then(data => {
                                 alert("Profile updated successfully!");
-                                // Refresh to show changes if needed, or just let user stay
                                 window.location.reload();
                             })
                             .catch(err => {
                                 console.error(err);
                                 alert("Failed to update.");
+                                document.getElementById('saveBtn').textContent = 'Save Changes';
+                                document.getElementById('saveBtn').disabled = false;
                             });
                     });
                 });

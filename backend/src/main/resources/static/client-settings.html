@@ -213,58 +213,100 @@
                         })
                         .catch(err => console.error(err));
 
-                    // File Conversion Logic
-                    const convertToBase64 = (file, callback) => {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onload = () => callback(reader.result);
-                        reader.onerror = error => console.error('Error: ', error);
+                    // File Upload Helper
+                    const uploadFile = async (file) => {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        const res = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error('Upload failed');
+                        return await res.text();
                     };
 
                     document.getElementById('profileUpload').addEventListener('change', function (e) {
                         const file = e.target.files[0];
                         if (file) {
-                            convertToBase64(file, (base64) => {
-                                document.getElementById('profilePictureUrl').value = base64;
-                                const preview = document.getElementById('profilePreview');
-                                preview.style.backgroundImage = `url('${base64}')`;
-                                preview.style.display = 'block';
-                                document.getElementById('removeProfile').style.display = 'inline-block';
-                            });
+                            // Provide valid temporary preview if needed, or just show text
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                 const preview = document.getElementById('profilePreview');
+                                 preview.style.backgroundImage = `url('${e.target.result}')`;
+                                 preview.style.display = 'block';
+                                 document.getElementById('removeProfile').style.display = 'inline-block';
+                            }
+                            reader.readAsDataURL(file);
                         }
                     });
 
                     document.getElementById('backgroundUpload').addEventListener('change', function (e) {
                         const file = e.target.files[0];
                         if (file) {
-                            convertToBase64(file, (base64) => {
-                                document.getElementById('backgroundPictureUrl').value = base64;
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
                                 const preview = document.getElementById('backgroundPreview');
-                                preview.style.backgroundImage = `url('${base64}')`;
+                                preview.style.backgroundImage = `url('${e.target.result}')`;
                                 preview.style.display = 'block';
                                 document.getElementById('removeBackground').style.display = 'inline-block';
-                            });
+                            }
+                            reader.readAsDataURL(file);
                         }
                     });
 
                     // Remove Handlers
                     document.getElementById('removeProfile').addEventListener('click', function () {
-                        document.getElementById('profilePictureUrl').value = '';
-                        document.getElementById('profileUpload').value = ''; // Reset file input
+                        document.getElementById('profilePictureUrl').value = ''; // Assuming this hidden input holds existing/new url
+                        document.getElementById('profileUpload').value = ''; 
                         document.getElementById('profilePreview').style.display = 'none';
                         this.style.display = 'none';
                     });
 
                     document.getElementById('removeBackground').addEventListener('click', function () {
                         document.getElementById('backgroundPictureUrl').value = '';
-                        document.getElementById('backgroundUpload').value = ''; // Reset file input
+                        document.getElementById('backgroundUpload').value = '';
                         document.getElementById('backgroundPreview').style.display = 'none';
                         this.style.display = 'none';
                     });
 
                     // Handle Submit
-                    document.getElementById('settingsForm').addEventListener('submit', function (e) {
+                    document.getElementById('settingsForm').addEventListener('submit', async function (e) {
                         e.preventDefault();
+                        
+                        let profileUrl = null;
+                        let bannerUrl = null;
+                        
+                        try {
+                            // Check if new file selected for Profile
+                            const profileInput = document.getElementById('profileUpload');
+                            if (profileInput.files.length > 0) {
+                                const btn = document.querySelector('button[type="submit"]');
+                                btn.textContent = 'Uploading...';
+                                btn.disabled = true;
+                                profileUrl = await uploadFile(profileInput.files[0]);
+                            } else {
+                                // Use existing if not removed
+                                profileUrl = document.getElementById('profilePictureUrl').value;
+                            }
+                            
+                            // Check if new file selected for Banner
+                            const bannerInput = document.getElementById('backgroundUpload');
+                            if (bannerInput.files.length > 0) {
+                                const btn = document.querySelector('button[type="submit"]');
+                                btn.textContent = 'Uploading...';
+                                btn.disabled = true;
+                                bannerUrl = await uploadFile(bannerInput.files[0]);
+                            } else {
+                                bannerUrl = document.getElementById('backgroundPictureUrl').value;
+                            }
+
+                        } catch(err) {
+                             console.error("Error uploading", err);
+                             alert("Error uploading images.");
+                             document.querySelector('button[type="submit"]').textContent = 'Save Changes';
+                             document.querySelector('button[type="submit"]').disabled = false;
+                             return;
+                        }
 
                         const formData = {
                             companyName: document.getElementById('companyName').value,
@@ -273,8 +315,8 @@
                             website: document.getElementById('website').value,
                             industry: document.getElementById('industry').value,
                             description: document.getElementById('description').value,
-                            profileImage: document.getElementById('profilePictureUrl').value,
-                            bannerImage: document.getElementById('backgroundPictureUrl').value
+                            profileImage: profileUrl,
+                            bannerImage: bannerUrl
                         };
 
                         fetch(`http://localhost:8080/api/clients/me?email=${email}`, {
@@ -285,10 +327,13 @@
                             .then(res => res.json())
                             .then(data => {
                                 alert("Settings updated successfully!");
+                                window.location.reload();
                             })
                             .catch(err => {
                                 console.error(err);
                                 alert("Failed to update settings.");
+                                document.querySelector('button[type="submit"]').textContent = 'Save Changes';
+                                document.querySelector('button[type="submit"]').disabled = false;
                             });
                     });
                 });

@@ -174,7 +174,8 @@
                 const pAttachmentInput = document.getElementById('proposal-attachment-input');
                 const pAttachmentText = document.getElementById('proposal-attachment-text');
                 const fileListContainer = document.getElementById('file-list');
-                const selectedFiles = new Set(); // Store file names
+                // Store File objects, keyed by name to avoid duplicates
+                const selectedFilesMap = new Map();
 
                 if (pAttachmentArea && pAttachmentInput) {
                     pAttachmentArea.addEventListener('click', () => pAttachmentInput.click());
@@ -200,7 +201,6 @@
 
                     pAttachmentInput.addEventListener('change', () => {
                         handleFiles(pAttachmentInput.files);
-                        // Reset input so same file can be selected again if needed (though Set handles dups)
                         pAttachmentInput.value = '';
                     });
                 }
@@ -209,8 +209,8 @@
                     if (files.length > 0) {
                         for (let i = 0; i < files.length; i++) {
                             const file = files[i];
-                            if (!selectedFiles.has(file.name)) {
-                                selectedFiles.add(file.name);
+                            if (!selectedFilesMap.has(file.name)) {
+                                selectedFilesMap.set(file.name, file);
 
                                 const li = document.createElement('li');
                                 li.style.display = 'flex';
@@ -233,7 +233,7 @@
                                 `;
 
                                 li.querySelector('.btn-remove-file').addEventListener('click', () => {
-                                    selectedFiles.delete(file.name);
+                                    selectedFilesMap.delete(file.name);
                                     li.remove();
                                 });
 
@@ -341,13 +341,52 @@
                     return;
                 }
 
+                // Upload files first
+                let attachmentUrls = [];
+                if (selectedFilesMap.size > 0) {
+                     try {
+                        const btn = document.getElementById('submit-proposal-btn');
+                        const originalText = btn.textContent;
+                        btn.textContent = 'Uploading files...';
+                        btn.disabled = true;
+
+                        for (const file of selectedFilesMap.values()) {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            
+                            const uploadRes = await fetch('/api/upload', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (uploadRes.ok) {
+                                const url = await uploadRes.text();
+                                attachmentUrls.push(url);
+                            } else {
+                                console.error('Failed to upload', file.name);
+                                alert('Failed to upload ' + file.name);
+                                btn.textContent = originalText;
+                                btn.disabled = false;
+                                return;
+                            }
+                        }
+                     } catch (e) {
+                         console.error('Error uploading:', e);
+                         alert('Error uploading files');
+                         const btn = document.getElementById('submit-proposal-btn');
+                         btn.textContent = 'Submit Proposal';
+                         btn.disabled = false;
+                         return;
+                     }
+                }
+
                 const proposalData = {
                     email: email,
                     jobId: parseInt(jobId),
                     bidAmount: parseFloat(bidAmount),
                     deliveryTime: `${deliveryTime} ${deliveryUnit}`,
                     coverLetter: coverLetter,
-                    attachments: Array.from(selectedFiles)
+                    attachments: attachmentUrls // Send list of URLs
                 };
 
                 try {
@@ -361,10 +400,16 @@
                         window.location.href = 'my-proposals.html';
                     } else {
                         alert('Failed to submit proposal');
+                        const btn = document.getElementById('submit-proposal-btn');
+                         btn.textContent = 'Submit Proposal';
+                         btn.disabled = false;
                     }
                 } catch (e) {
                     console.error(e);
                     alert('Error submitting proposal');
+                    const btn = document.getElementById('submit-proposal-btn');
+                     btn.textContent = 'Submit Proposal';
+                     btn.disabled = false;
                 }
             });
         });

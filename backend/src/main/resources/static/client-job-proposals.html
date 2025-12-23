@@ -139,11 +139,19 @@
                                     </td>
                                     <td>${new Date(p.createdAt).toLocaleDateString()}</td>
                                     <td>
-                                        ${p.attachments ? p.attachments.split(',').map(file => `
+                                        ${p.attachments ? p.attachments.split(',').map(fileUrl => {
+                                            let fileName = "Attachment";
+                                            try {
+                                                fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+                                                if(fileName.length > 20) fileName = fileName.substring(0, 20) + "...";
+                                            } catch(e) {}
+                                            return `
                                             <div style="font-size: 0.8rem; margin-bottom: 2px;">
-                                                <i class="fa-solid fa-paperclip" style="color: #888;"></i> ${file}
+                                                <i class="fa-solid fa-paperclip" style="color: #888;"></i> 
+                                                <a href="${fileUrl}" target="_blank" style="text-decoration: none; color: var(--primary);">${fileName}</a>
                                             </div>
-                                        `).join('') : '<span style="color: #999; font-size: 0.8rem;">None</span>'}
+                                        `;
+                                        }).join('') : '<span style="color: #999; font-size: 0.8rem;">None</span>'}
                                     </td>
                                     <td>
                                         <button class="btn btn-primary" onclick="window.location.href='client-messages.html?recipientEmail=${encodeURIComponent(p.freelancer.email)}'" style="padding: 4px 12px; font-size: 0.8rem;">Contact</button>
