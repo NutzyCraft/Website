@@ -53,42 +53,60 @@
         <div class="container">
             <div class="portfolio-grid">
                 <!-- Project 1 -->
-                <div class="portfolio-card">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
-                        alt="Tech Dashboard" class="portfolio-img">
-                    <div class="portfolio-content">
-                        <div class="portfolio-title">FinTech Dashboard</div>
-                        <p class="text-muted">React & Node.js</p>
-                        <br>
-                        <p style="font-size: 0.9rem;">Complete redesign of a financial analytics tool for a Colombo
-                            startup.</p>
+                <div id="portfolio-container" class="portfolio-grid">
+                    <!-- Dynamic Content Loading... -->
+                    <div class="loading-spinner" style="text-align: center; grid-column: 1/-1; padding: 2rem;">
+                        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Project 2 -->
-                <div class="portfolio-card">
-                    <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=800&q=80"
-                        alt="E-Commerce App" class="portfolio-img">
-                    <div class="portfolio-content">
-                        <div class="portfolio-title">Fashion Store App</div>
-                        <p class="text-muted">Flutter & Firebase</p>
-                        <br>
-                        <p style="font-size: 0.9rem;">Mobile application for a local clothing brand with 10k+ downloads.
-                        </p>
-                    </div>
-                </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('portfolio-container');
 
-                <!-- Project 3 -->
-                <div class="portfolio-card">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
-                        alt="Corporate Website" class="portfolio-img">
-                    <div class="portfolio-content">
-                        <div class="portfolio-title">Logistics Portal</div>
-                        <p class="text-muted">Vue.js & Laravel</p>
-                        <br>
-                        <p style="font-size: 0.9rem;">Fleet management and tracking system for a logistics firm.</p>
-                    </div>
-                </div>
+            fetch('/api/portfolio')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(items => {
+                    container.innerHTML = ''; // Clear loading spinner
+                    
+                    if (items.length === 0) {
+                        container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No projects found.</p>';
+                        return;
+                    }
+
+                    items.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'portfolio-card';
+                        
+                        // Use a placeholder if image URL is empty
+                        const imageUrl = item.imageUrl || 'https://via.placeholder.com/800x600?text=No+Image';
+
+                        card.innerHTML = `
+                            <img src="${imageUrl}" alt="${item.title}" class="portfolio-img">
+                            <div class="portfolio-content">
+                                <div class="portfolio-title">${item.title}</div>
+                                <p class="text-muted">${item.techStack || ''}</p>
+                                <br>
+                                <p style="font-size: 0.9rem;">${item.description || ''}</p>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching portfolio:', error);
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: red;">Failed to load projects. Please try again later.</p>';
+                });
+        });
+    </script>
             </div>
         </div>
     </section>
