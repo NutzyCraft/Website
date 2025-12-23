@@ -51,4 +51,7 @@ public class Job {
     private Integer ratingForFreelancer;
     @Column(columnDefinition = "TEXT")
     private String reviewForFreelancer;
+
+    @Column(columnDefinition = "TEXT")
+    private String attachments; // Comma-separated URLs
 }

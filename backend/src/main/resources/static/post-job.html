@@ -200,12 +200,52 @@
                         return;
                     }
 
+                    // Upload files first
+                    let attachmentUrls = [];
+                    if (selectedFiles.length > 0) {
+                        try {
+                            // Show loading state or text
+                            const btn = document.getElementById('post-job-btn');
+                            const originalText = btn.textContent;
+                            btn.textContent = 'Uploading files...';
+                            btn.disabled = true;
+
+                            for (const file of selectedFiles) {
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                
+                                const uploadRes = await fetch('/api/upload', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                
+                                if (uploadRes.ok) {
+                                    const url = await uploadRes.text();
+                                    attachmentUrls.push(url);
+                                } else {
+                                    console.error('Failed to upload file:', file.name);
+                                    alert('Failed to upload ' + file.name);
+                                    btn.textContent = originalText;
+                                    btn.disabled = false;
+                                    return;
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error uploading files:', e);
+                            alert('Error uploading files');
+                            document.getElementById('post-job-btn').textContent = 'Post Project Now';
+                             document.getElementById('post-job-btn').disabled = false;
+                            return;
+                        }
+                    }
+
                     const jobData = {
                         title,
                         description,
                         category,
                         budget: parseFloat(budget),
-                        duration
+                        duration,
+                        attachments: attachmentUrls.join(',')
                     };
 
                     try {
@@ -222,10 +262,14 @@
                             window.location.href = 'client-my-jobs.html';
                         } else {
                             alert('Failed to post job');
+                            document.getElementById('post-job-btn').textContent = 'Post Project Now';
+                            document.getElementById('post-job-btn').disabled = false;
                         }
                     } catch (error) {
                         console.error('Error:', error);
                         alert('An error occurred');
+                         document.getElementById('post-job-btn').textContent = 'Post Project Now';
+                         document.getElementById('post-job-btn').disabled = false;
                     }
                 });
 

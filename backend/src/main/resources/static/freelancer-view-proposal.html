@@ -190,12 +190,21 @@
                         // Populate Attachments
                         const attachmentsList = document.getElementById('attachments-list');
                         if (proposal.attachments) {
-                            attachmentsList.innerHTML = proposal.attachments.split(',').map(file => `
+                            attachmentsList.innerHTML = proposal.attachments.split(',').map(fileUrl => {
+                                // Extract filename from URL (or just show "Attachment X" if too long)
+                                let fileName = "Attachment";
+                                try {
+                                    fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+                                    if(fileName.length > 30) fileName = fileName.substring(0, 30) + "...";
+                                } catch(e) {}
+                                
+                                return `
                                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                                     <i class="fa-solid fa-file" style="color: #888;"></i>
-                                    <span>${file}</span>
+                                    <a href="${fileUrl}" target="_blank" style="text-decoration: none; color: var(--primary); font-weight: 600;">${fileName}</a>
                                 </div>
-                            `).join('');
+                            `;
+                            }).join('');
                         }
                     } else {
                         document.getElementById('job-header').textContent = "Proposal not found.";
