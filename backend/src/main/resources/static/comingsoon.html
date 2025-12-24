@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | Nutzy Craft</title>
+    <meta name="description" content="We are working hard to bring you the best experience. Stay tuned!">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Specific Styles for Coming Soon Page */
+        .coming-soon-section {
+            min-height: 80vh; /* Occupy most of the screen */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px; /* Account for fixed navbar if applicable */
+        }
+
+        .coming-soon-content {
+            text-align: center;
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .coming-soon-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .coming-soon-subtitle {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .coming-soon-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar glass-panel">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="logo.jpg" alt="Nutzy Craft Logo" class="logo-img">
+                Nutzy Craft
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#services">Services</a>
+                <a href="index.html#how-it-works">How it Works</a>
+                <a href="index.html#contact">Contact Us</a>
+            </div>
+            <!-- Removed Login/Join buttons from navbar on this page to prevent loops or confusion, or keep them pointing to creating interest -->
+             <div class="nav-actions">
+                <a href="index.html" class="btn btn-secondary">Go Home</a>
+            </div>
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Coming Soon Hero -->
+    <section class="coming-soon-section">
+         <div class="hero-glow glow-1"></div>
+         <div class="hero-glow glow-2"></div>
+         
+         <div class="container coming-soon-content glass-panel" style="backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.7); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.8);">
+            <div class="coming-soon-icon">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            <h1 class="coming-soon-title">Something Amazing is Coming</h1>
+            <p class="coming-soon-subtitle">
+                We are building a revolutionary platform to connect businesses with top-tier talent. 
+                <br>The full freelancer and client portal experience is launching soon!
+            </p>
+            <div class="hero-actions" style="justify-content: center;">
+                <a href="index.html" class="btn btn-primary btn-lg">Back to Home</a>
+                <a href="contact.html" class="btn btn-outline btn-lg">Contact Us</a>
+            </div>
+         </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+                <p>Copyright © 2025 All rights reserved by Nutzy Craft</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
