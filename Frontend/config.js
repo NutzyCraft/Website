@@ -5,7 +5,7 @@ const API_CONFIG = {
   // BASE_URL: 'http://localhost:8080'
 
   // For Render deployment (update after you get your Render URL)
-  BASE_URL: "https://nutzycraft-backend.onrender.com",
+  BASE_URL: "https://website-wk5a.onrender.com",
 
   // Uncomment the line below for automatic detection
   // BASE_URL: window.location.hostname === 'localhost'
