@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="content.css">
     <link rel="stylesheet" href="auth.css"> <!-- Reusing form styles -->
+    <script src="config.js"></script>
     <style>
         /* Accordion Styles */
         .accordion-item {
@@ -162,7 +163,7 @@
                         };
 
                         try {
-                            const response = await fetch('/api/contact', {
+                            const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/contact`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
