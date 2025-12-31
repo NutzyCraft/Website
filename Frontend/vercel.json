@@ -1,16 +1,3 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/freelancer-login", "destination": "/freelancer-login.html" },
-    { "source": "/client-login", "destination": "/client-login.html" },
-    { "source": "/admin-login", "destination": "/admin-login.html" },
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/register", "destination": "/register.html" },
-    { "source": "/portfolio", "destination": "/portfolio.html" },
-    { "source": "/services", "destination": "/services.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/contact", "destination": "/contact.html" },
-    { "source": "/how-it-works", "destination": "/how-it-works.html" }
-  ]
+  "cleanUrls": true
 }
