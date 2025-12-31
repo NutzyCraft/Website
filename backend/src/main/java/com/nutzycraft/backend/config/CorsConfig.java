@@ -17,8 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                             "http://localhost:3000",
                             "http://localhost:8080",
-                            "https://nutzy-craft.vercel.app",
-                            "https://*.vercel.app"
+                            "https://nutzy-craft.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
