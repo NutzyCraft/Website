@@ -16,9 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.style.top = '70px';
             navLinks.style.left = '0';
             navLinks.style.width = '100%';
-            navLinks.style.background = '#0f0f13';
+            navLinks.style.background = 'rgba(255, 255, 255, 0.95)';
+            navLinks.style.backdropFilter = 'blur(10px)';
             navLinks.style.padding = '20px';
-            navLinks.style.border = '1px solid rgba(255,255,255,0.1)';
+            navLinks.style.border = '1px solid rgba(217, 182, 157, 0.3)';
+            navLinks.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
 
             navActions.style.display = navActions.style.display === 'flex' ? '' : 'flex';
             navActions.style.flexDirection = 'column';
