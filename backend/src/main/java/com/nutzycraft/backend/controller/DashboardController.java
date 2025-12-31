@@ -91,8 +91,10 @@ public class DashboardController {
         // Get Recent Messages
         List<ConversationDTO> messages = chatService.getConversations(email).stream().limit(5).toList();
 
-        // Get Recommended Jobs (Open jobs) - optimized query
-        List<Job> recommended = jobRepository.findTop5ByStatusIgnoreCase("OPEN");
+        // Get Recommended Jobs (Open jobs) - optimized query with eager fetching
+        List<Job> recommended = jobRepository.findTop5ByStatusIgnoreCaseWithUsers("OPEN").stream()
+                .limit(5)
+                .toList();
 
         FreelancerStatsDTO stats = new FreelancerStatsDTO();
         stats.setActiveJobs(activeJobsVal > 0 ? activeJobsVal : activeProposals); // Fallback to proposals if job

@@ -43,4 +43,7 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findByFreelancerEmailWithUsers(@org.springframework.data.repository.query.Param("email") String email);
 
     List<Job> findTop5ByStatusIgnoreCase(String status);
+
+    @org.springframework.data.jpa.repository.Query("SELECT j FROM Job j LEFT JOIN FETCH j.client LEFT JOIN FETCH j.freelancer WHERE UPPER(j.status) = UPPER(:status)")
+    List<Job> findTop5ByStatusIgnoreCaseWithUsers(@org.springframework.data.repository.query.Param("status") String status);
 }

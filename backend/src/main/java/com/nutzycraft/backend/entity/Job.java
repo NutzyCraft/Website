@@ -36,6 +36,7 @@ public class Job {
     private String status = "OPEN";
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private java.util.List<Milestone> milestones;
 
     // Timeline Step: 1=Started, 2=Concepts, 3=Revisions, 4=Delivery
