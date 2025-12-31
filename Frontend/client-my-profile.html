@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="profile.css"> <!-- Reusing profile css -->
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
     <style>
         .edit-overlay {
@@ -225,7 +226,7 @@
 
             // Fetch Client Profile
             // Fetch Client Profile
-            fetch(`http://localhost:8080/api/clients/me?email=${email}`)
+            fetch(`${window.API_CONFIG.BASE_URL}/api/clients/me?email=${email}`)
                 .then(res => res.json())
                 .then(data => {
                     // Check if response is DTO or direct Entity (fallback)

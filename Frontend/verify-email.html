@@ -10,6 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
+    <script src="config.js"></script>
     <style>
         body {
             background-color: #FFF9F5;
@@ -154,7 +155,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/verify', {
+                const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/verify`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, code })
@@ -200,7 +201,7 @@
             if (!email) return;
 
             try {
-                const response = await fetch('http://localhost:8080/api/auth/resend-verification', {
+                const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/resend-verification`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })

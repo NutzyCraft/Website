@@ -36,8 +36,8 @@ public class DashboardController {
     public ClientDashboardDTO getClientDashboard(@RequestParam String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch jobs for client
-        List<Job> jobs = jobRepository.findByClient_Email(email);
+        // Fetch jobs for client with eager loading to prevent N+1 queries
+        List<Job> jobs = jobRepository.findByClientEmailWithUsers(email);
 
         long activeJobsCount = jobs.stream()
                 .filter(j -> "OPEN".equalsIgnoreCase(j.getStatus()) || "IN_PROGRESS".equalsIgnoreCase(j.getStatus()))
@@ -74,8 +74,8 @@ public class DashboardController {
         List<Proposal> proposals = proposalRepository.findByFreelancerEmail(email);
         long activeProposals = proposals.stream().filter(p -> "ACCEPTED".equalsIgnoreCase(p.getStatus())).count();
 
-        // Fetch actual Active/Completed Jobs
-        List<Job> myJobs = jobRepository.findByFreelancer_Email(email);
+        // Fetch actual Active/Completed Jobs with eager loading to prevent N+1 queries
+        List<Job> myJobs = jobRepository.findByFreelancerEmailWithUsers(email);
         long activeJobsVal = myJobs.stream().filter(j -> "IN_PROGRESS".equalsIgnoreCase(j.getStatus())).count();
         long completedJobsVal = myJobs.stream().filter(j -> "COMPLETED".equalsIgnoreCase(j.getStatus())).count();
 
@@ -91,9 +91,8 @@ public class DashboardController {
         // Get Recent Messages
         List<ConversationDTO> messages = chatService.getConversations(email).stream().limit(5).toList();
 
-        // Get Recommended Jobs (Open jobs, exclude my jobs)
-        List<Job> recommended = jobRepository.findAll().stream()
-                .filter(j -> "OPEN".equalsIgnoreCase(j.getStatus()))
+        // Get Recommended Jobs (Open jobs) - optimized query with eager fetching
+        List<Job> recommended = jobRepository.findTop5ByStatusIgnoreCaseWithUsers("OPEN").stream()
                 .limit(5)
                 .toList();
 
