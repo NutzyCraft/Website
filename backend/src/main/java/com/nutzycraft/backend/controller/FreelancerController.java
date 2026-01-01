@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/freelancers")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // Allow all origins explicitly
 public class FreelancerController {
 
     @Autowired
