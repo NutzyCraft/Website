@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.nutzycraft.backend.dto.FreelancerDTO;
+import com.nutzycraft.backend.dto.UserSummaryDTO;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,9 +47,10 @@ public class FreelancerController {
     }
 
     @GetMapping("/me")
-    public Freelancer getMyProfile(@RequestParam String email) {
-        return freelancerRepository.findByUser_Email(email)
+    public FreelancerDTO getMyProfile(@RequestParam String email) {
+        Freelancer freelancer = freelancerRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+        return mapToDTO(freelancer);
     }
 
     @PutMapping("/me")
@@ -77,5 +80,25 @@ public class FreelancerController {
         }
 
         return freelancerRepository.save(existing);
+    }
+
+    private FreelancerDTO mapToDTO(Freelancer freelancer) {
+        FreelancerDTO dto = new FreelancerDTO();
+        dto.setId(freelancer.getId());
+        dto.setTitle(freelancer.getTitle());
+        dto.setBio(freelancer.getBio());
+        dto.setHourlyRate(freelancer.getHourlyRate());
+        dto.setSkills(freelancer.getSkills());
+        dto.setRating(freelancer.getRating());
+        
+        if (freelancer.getUser() != null) {
+            UserSummaryDTO userDto = new UserSummaryDTO();
+            userDto.setId(freelancer.getUser().getId());
+            userDto.setFullName(freelancer.getUser().getFullName());
+            userDto.setEmail(freelancer.getUser().getEmail());
+            // No profile picture here
+            dto.setUser(userDto);
+        }
+        return dto;
     }
 }
