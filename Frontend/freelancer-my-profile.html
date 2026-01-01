@@ -260,7 +260,7 @@
                 return;
             }
 
-            fetch(`/api/freelancers/me?email=${email}`)
+            fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${email}`)
                 .then(res => {
                     if (!res.ok) throw new Error("Freelancer not found");
                     return res.json();

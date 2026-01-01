@@ -194,7 +194,7 @@
             if (email) {
                 try {
                     // Fetch Profile
-                    const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                    const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
                     if (profileRes.ok) {
                         const profile = await profileRes.json();
                         const titleEl = document.querySelector('.dashboard-title');
@@ -214,7 +214,7 @@
                     }
 
                     // Fetch Stats
-                    const statsRes = await fetch(`/api/dashboard/freelancer?email=${email}`);
+                    const statsRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/dashboard/freelancer?email=${email}`);
                     if (statsRes.ok) {
                         const stats = await statsRes.json();
                         // Update Stat Cards (order: Total Earnings, Completed Jobs, Active Jobs, Rating)
@@ -251,7 +251,7 @@
                                 // Fetch real avatars
                                 stats.activeOrders.forEach(job => {
                                     if (job.client) {
-                                        fetch(`/api/users/${job.client.id}/avatar`)
+                                        fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
                                             .then(res => res.text())
                                             .then(url => {
                                                 if (url) document.getElementById(`avatar-active-job-${job.id}`).src = url;
@@ -284,7 +284,7 @@
 
                                 // Fetch real avatars
                                 stats.recentMessages.forEach(msg => {
-                                    fetch(`/api/users/${msg.userId}/avatar`)
+                                    fetch(`${window.API_CONFIG.BASE_URL}/api/users/${msg.userId}/avatar`)
                                         .then(res => res.text())
                                         .then(url => {
                                             if (url) document.getElementById(`avatar-msg-${msg.userId}`).src = url;

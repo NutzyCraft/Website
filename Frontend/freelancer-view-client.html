@@ -162,7 +162,7 @@
                     const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
                     if (email) {
                         try {
-                            const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                            const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
                             if (profileRes.ok) {
                                 const profile = await profileRes.json();
                                 const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
