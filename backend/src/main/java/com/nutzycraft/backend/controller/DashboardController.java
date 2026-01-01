@@ -7,6 +7,8 @@ import com.nutzycraft.backend.entity.User;
 
 import com.nutzycraft.backend.service.ChatService;
 import com.nutzycraft.backend.dto.ConversationDTO;
+import com.nutzycraft.backend.dto.JobDTO;
+import com.nutzycraft.backend.dto.UserSummaryDTO;
 import com.nutzycraft.backend.repository.ProposalRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import lombok.Data;
@@ -47,9 +49,10 @@ public class DashboardController {
         double totalSpent = totalHires * 500.0; // Mock data
 
         // Get Active Projects (IN_PROGRESS)
-        List<Job> activeProjects = jobs.stream()
+        List<JobDTO> activeProjects = jobs.stream()
                 .filter(j -> "IN_PROGRESS".equalsIgnoreCase(j.getStatus()) || "OPEN".equalsIgnoreCase(j.getStatus()))
                 .limit(5)
+                .map(this::mapToJobDTO)
                 .toList();
 
         // Get Recent Messages
@@ -83,8 +86,9 @@ public class DashboardController {
         double totalEarnings = completedJobsVal * 500.0;
 
         // Get Active Orders (List)
-        List<Job> activeOrders = myJobs.stream()
+        List<JobDTO> activeOrders = myJobs.stream()
                 .filter(j -> "IN_PROGRESS".equalsIgnoreCase(j.getStatus()))
+                .map(this::mapToJobDTO)
                 .toList();
 
         // Get Recent Messages
@@ -92,8 +96,9 @@ public class DashboardController {
         List<ConversationDTO> messages = chatService.getConversations(email).stream().limit(5).toList();
 
         // Get Recommended Jobs (Open jobs) - optimized query with eager fetching
-        List<Job> recommended = jobRepository.findTop5ByStatusIgnoreCaseWithUsers("OPEN").stream()
+        List<JobDTO> recommended = jobRepository.findTop5ByStatusIgnoreCaseWithUsers("OPEN").stream()
                 .limit(5)
+                .map(this::mapToJobDTO)
                 .toList();
 
         FreelancerStatsDTO stats = new FreelancerStatsDTO();
@@ -115,7 +120,7 @@ public class DashboardController {
         private long totalHires;
         private double totalSpent;
         private long jobViews;
-        private List<Job> activeProjects;
+        private List<JobDTO> activeProjects;
         private List<ConversationDTO> recentMessages;
     }
 
@@ -125,8 +130,46 @@ public class DashboardController {
         private long completedJobs;
         private long activeJobs;
         private double rating;
-        private List<Job> activeOrders;
+        private List<JobDTO> activeOrders;
         private List<ConversationDTO> recentMessages;
-        private List<Job> recommendedJobs;
+        private List<JobDTO> recommendedJobs;
+    }
+
+    private JobDTO mapToJobDTO(Job job) {
+        JobDTO dto = new JobDTO();
+        dto.setId(job.getId());
+        dto.setTitle(job.getTitle());
+        dto.setDescription(job.getDescription());
+        dto.setCategory(job.getCategory());
+        dto.setBudget(job.getBudget());
+        dto.setDuration(job.getDuration());
+        dto.setPostedAt(job.getPostedAt());
+        dto.setStatus(job.getStatus());
+        dto.setCurrentStep(job.getCurrentStep());
+        dto.setAttachments(job.getAttachments());
+        dto.setRatingForClient(job.getRatingForClient());
+        dto.setRatingForFreelancer(job.getRatingForFreelancer());
+        dto.setReviewForClient(job.getReviewForClient());
+        dto.setReviewForFreelancer(job.getReviewForFreelancer());
+
+        if (job.getClient() != null) {
+            UserSummaryDTO clientDTO = new UserSummaryDTO();
+            clientDTO.setId(job.getClient().getId());
+            clientDTO.setFullName(job.getClient().getFullName());
+            clientDTO.setEmail(job.getClient().getEmail());
+            // Intentionally not mapping profilePictureUrl to lighten the payload
+            dto.setClient(clientDTO);
+        }
+
+        if (job.getFreelancer() != null) {
+            UserSummaryDTO freelancerDTO = new UserSummaryDTO();
+            freelancerDTO.setId(job.getFreelancer().getId());
+            freelancerDTO.setFullName(job.getFreelancer().getFullName());
+            freelancerDTO.setEmail(job.getFreelancer().getEmail());
+            // Intentionally not mapping profilePictureUrl to lighten the payload
+            dto.setFreelancer(freelancerDTO);
+        }
+
+        return dto;
     }
 }
