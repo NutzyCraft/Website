@@ -93,4 +93,32 @@ public class UserController {
         }
         return ResponseEntity.ok(avatar);
     }
+
+    @Autowired
+    private com.nutzycraft.backend.service.UserDeletionService userDeletionService;
+
+    /**
+     * Delete user account and all associated data.
+     * Requires password confirmation for security.
+     */
+    @DeleteMapping("/account")
+    public ResponseEntity<?> deleteAccount(@RequestParam String email, @RequestParam String password) {
+        try {
+            // Verify the user exists and password is correct
+            com.nutzycraft.backend.entity.User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Simple password check (should use BCrypt in production)
+            if (!password.equals(user.getPassword())) {
+                return ResponseEntity.status(401).body(java.util.Map.of("error", "Invalid password"));
+            }
+
+            // Perform the deletion
+            userDeletionService.deleteUserAccount(email);
+
+            return ResponseEntity.ok(java.util.Map.of("message", "Account deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to delete account: " + e.getMessage()));
+        }
+    }
 }
