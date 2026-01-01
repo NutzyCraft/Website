@@ -233,19 +233,31 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         com.nutzycraft.backend.dto.UserProfileDTO dto = new com.nutzycraft.backend.dto.UserProfileDTO();
-        dto.setFullName(user.getFullName());
-        dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole().name());
+        
+        // Only set primitive/String fields explicitly
+        dto.setFullName(user.getFullName() != null ? user.getFullName() : "");
+        dto.setEmail(user.getEmail() != null ? user.getEmail() : "");
+        dto.setRole(user.getRole() != null ? user.getRole().name() : "");
 
         if (user.getRole() == User.Role.CLIENT) {
-            clientRepository.findByUser(user).ifPresent(client -> {
-                dto.setCompanyName(client.getCompanyName());
-                dto.setIndustry(client.getIndustry());
-                dto.setProfileImage(client.getProfileImage());
+            clientRepository.findByUser_Email(email).ifPresent(client -> {
+                // Explicitly map only String fields
+                if (client.getCompanyName() != null) {
+                    dto.setCompanyName(client.getCompanyName());
+                }
+                if (client.getIndustry() != null) {
+                    dto.setIndustry(client.getIndustry());
+                }
+                if (client.getProfileImage() != null) {
+                    dto.setProfileImage(client.getProfileImage());
+                }
             });
         } else if (user.getRole() == User.Role.FREELANCER) {
-            freelancerRepository.findByUser_Email(user.getEmail()).ifPresent(freelancer -> {
-                dto.setProfileImage(freelancer.getProfileImage());
+            freelancerRepository.findByUser_Email(email).ifPresent(freelancer -> {
+                // Explicitly map only String fields
+                if (freelancer.getProfileImage() != null) {
+                    dto.setProfileImage(freelancer.getProfileImage());
+                }
             });
         }
 
