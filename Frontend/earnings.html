@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -155,7 +156,7 @@
 
                     if (email) {
                         try {
-                            const res = await fetch(`/api/transactions?email=${email}`);
+                            const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/transactions?email=${email}`);
                             if (res.ok) {
                                 const transactions = await res.json();
 

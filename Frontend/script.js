@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!email) return;
 
         try {
-            const res = await fetch(`/api/users/profile?email=${email}`);
+            const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
             if (res.ok) {
                 const profile = await res.json();
 
