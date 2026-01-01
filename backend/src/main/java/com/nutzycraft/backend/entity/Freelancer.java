@@ -15,6 +15,7 @@ public class Freelancer {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     private String title;
