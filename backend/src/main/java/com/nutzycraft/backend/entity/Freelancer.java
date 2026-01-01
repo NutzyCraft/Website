@@ -7,7 +7,6 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "freelancers")
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"user"})
 public class Freelancer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +30,7 @@ public class Freelancer {
     @Column(columnDefinition = "TEXT")
     private String bannerImage;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> skills;
 
     private Double rating = 0.0;
