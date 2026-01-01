@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="jobs.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -124,7 +125,7 @@
                     const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
                     if (email) {
                         try {
-                            const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                            const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
                             if (profileRes.ok) {
                                 const profile = await profileRes.json();
                                 const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
@@ -149,7 +150,7 @@
                             </div>
                         `;
                         try {
-                            const url = query ? `/api/jobs?search=${encodeURIComponent(query)}` : '/api/jobs';
+                            const url = query ? `${window.API_CONFIG.BASE_URL}/api/jobs?search=${encodeURIComponent(query)}` : `${window.API_CONFIG.BASE_URL}/api/jobs`;
                             const response = await fetch(url);
                             if (response.ok) {
                                 const jobs = await response.json();
@@ -196,7 +197,7 @@
                                 // Fetch real avatars for jobs
                                 jobs.forEach(job => {
                                     if (job.client) {
-                                        fetch(`/api/users/${job.client.id}/avatar`)
+                                        fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
                                             .then(res => res.text())
                                             .then(url => {
                                                 if (url) document.getElementById(`avatar-job-${job.id}`).src = url;
