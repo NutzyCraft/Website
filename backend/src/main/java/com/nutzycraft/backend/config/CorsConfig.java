@@ -21,7 +21,8 @@ public class CorsConfig {
                             "https://nutzycraft.com",
                             "https://www.nutzycraft.com",
                             "http://nutzycraft.com",
-                            "http://www.nutzycraft.com"
+                            "http://www.nutzycraft.com",
+                            "https://nutzy-craft-git-login-soesh-coorays-projects.vercel.app/"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
