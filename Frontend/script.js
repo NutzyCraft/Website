@@ -206,10 +206,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Global User Profile Sync
+    // Global User Profile Sync (only if not already loading)
     const updateSidebarProfile = async () => {
         const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
         if (!email) return;
+
+        // Check if already loading or loaded
+        if (window.__profileLoading || window.__profileLoaded) return;
+        
+        // Check if sidebar already has content (another script populated it)
+        const sidebarUserContainer = document.querySelector('.sidebar-user');
+        if (sidebarUserContainer) {
+            const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
+            if (nameEl && nameEl.textContent !== 'Loading...') {
+                return; // Already populated by page-specific script
+            }
+        }
+
+        window.__profileLoading = true;
 
         try {
             const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
@@ -217,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const profile = await res.json();
 
                 // Update Sidebar User Info
-                const sidebarUserContainer = document.querySelector('.sidebar-user');
                 if (sidebarUserContainer) {
                     const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
                     const roleEl = sidebarUserContainer.querySelector('div > div:last-child');
@@ -238,11 +251,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
+                window.__profileLoaded = true;
             }
         } catch (err) {
             console.error('Failed to sync profile:', err);
+        } finally {
+            window.__profileLoading = false;
         }
     };
 
-    updateSidebarProfile();
+    // Delay execution slightly to let page-specific scripts run first
+    setTimeout(updateSidebarProfile, 100);
 });
