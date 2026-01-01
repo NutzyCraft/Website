@@ -130,11 +130,13 @@ public class UserDeletionService {
             // Delete jobs created by this client
             List<Job> jobs = jobRepository.findByClient_Email(email);
             for (Job job : jobs) {
-                // Collect any Cloudinary attachments from jobs
-                if (job.getAttachments() != null) {
-                    for (String attachment : job.getAttachments()) {
-                        if (attachment.contains("cloudinary")) {
-                            cloudinaryUrls.add(attachment);
+                // Collect any Cloudinary attachments from jobs (comma-separated URLs)
+                if (job.getAttachments() != null && !job.getAttachments().isEmpty()) {
+                    String[] attachmentUrls = job.getAttachments().split(",");
+                    for (String attachment : attachmentUrls) {
+                        String trimmed = attachment.trim();
+                        if (trimmed.contains("cloudinary")) {
+                            cloudinaryUrls.add(trimmed);
                         }
                     }
                 }
