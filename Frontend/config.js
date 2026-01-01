@@ -4,8 +4,8 @@ const API_CONFIG = {
   // For local development
   // BASE_URL: 'http://localhost:8080'
 
-  // For Render deployment (update after you get your Render URL)
-  BASE_URL: "https://website-wk5a.onrender.com",
+  // For DigitalOcean deployment
+  BASE_URL: "https://nutzy-craft-4qhbx.ondigitalocean.app",
 
   // Uncomment the line below for automatic detection
   // BASE_URL: window.location.hostname === 'localhost'
