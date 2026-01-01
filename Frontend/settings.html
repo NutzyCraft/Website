@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -176,7 +177,7 @@
                     }
 
                     // Populate
-                    fetch(`/api/freelancers/me?email=${email}`)
+                    fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${email}`)
                         .then(res => res.json())
                         .then(data => {
                             if (data) {
@@ -207,7 +208,7 @@
                     const uploadFile = async (file) => {
                         const formData = new FormData();
                         formData.append('file', file);
-                        const res = await fetch('/api/upload', {
+                        const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/upload`, {
                             method: 'POST',
                             body: formData
                         });
@@ -284,7 +285,7 @@
                              payload.bannerImage = bannerImage;
                         }
 
-                        fetch(`/api/freelancers/me?email=${email}`, {
+                        fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${email}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
