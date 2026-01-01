@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -95,7 +96,7 @@
                     }
 
                     try {
-                        const response = await fetch(`/api/notifications?email=${encodeURIComponent(email)}`);
+                        const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/notifications?email=${encodeURIComponent(email)}`);
                         if (response.ok) {
                             const notifications = await response.json();
 
@@ -128,7 +129,7 @@
 
                     window.markAsRead = async (id, btn) => {
                         try {
-                            await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
+                            await fetch(`${window.API_CONFIG.BASE_URL}/api/notifications/${id}/read`, { method: 'POST' });
                             btn.remove();
                             // Optional: reload or style update
                         } catch (e) { console.error(e); }
