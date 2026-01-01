@@ -225,9 +225,7 @@
                         const bio = document.getElementById('bio').value;
                         const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
 
-                        let profileImage = document.getElementById('profilePictureUrl').value; // Default to existing code hidden input if any, though we don't have one in this file originally, let's look at how we get it.
-                        // Actually the original code didn't use a hidden input for existing value. It checked the preview src or fetched again.
-                        // Let's rely on the variables.
+                        let profileImage = null; // Will be set if user uploads a new image
                         
                         let bannerImage = null; // We verify existence logic below
 
