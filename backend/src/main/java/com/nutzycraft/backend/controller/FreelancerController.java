@@ -2,13 +2,14 @@ package com.nutzycraft.backend.controller;
 
 import com.nutzycraft.backend.entity.Freelancer;
 import com.nutzycraft.backend.repository.FreelancerRepository;
+import com.nutzycraft.backend.dto.FreelancerDTO;
+import com.nutzycraft.backend.dto.UserSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import com.nutzycraft.backend.dto.FreelancerDTO;
-import com.nutzycraft.backend.dto.UserSummaryDTO;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.Stream;
 
 @RestController

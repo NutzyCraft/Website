@@ -11,6 +11,5 @@ public class FreelancerDTO {
     private Double hourlyRate;
     private List<String> skills;
     private Double rating;
-    // Exclude heavy image fields
     private UserSummaryDTO user;
 }

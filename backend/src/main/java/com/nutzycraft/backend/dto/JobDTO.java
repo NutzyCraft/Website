@@ -10,19 +10,18 @@ public class JobDTO {
     private String description;
     private String category;
     private Double budget;
-    private String duration;
-    private LocalDateTime postedAt;
+    private String duration; // Changed to String to match Entity
     private String status;
-    private Integer currentStep;
-    private String attachments;
-    
-    // User summaries instead of full User entities
+    private LocalDateTime postedAt;
     private UserSummaryDTO client;
     private UserSummaryDTO freelancer;
-    
-    // Ratings
+    private int proposalCount;
+
+    // New fields
+    private Integer currentStep;
+    private String attachments;
     private Integer ratingForClient;
-    private String reviewForClient;
     private Integer ratingForFreelancer;
+    private String reviewForClient;
     private String reviewForFreelancer;
 }
