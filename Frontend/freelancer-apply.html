@@ -260,7 +260,7 @@
             // 1. Fetch User Profile for Sidebar
             if (email) {
                 try {
-                    const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                    const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
                     if (profileRes.ok) {
                         const profile = await profileRes.json();
                         const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
@@ -304,7 +304,7 @@
                                 };
 
                                 // Fetch real avatar
-                                fetch(`/api/users/${job.client.id}/avatar`)
+                                fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
                                     .then(res => res.text())
                                     .then(url => {
                                         if (url) document.getElementById('job-client-avatar').src = url;

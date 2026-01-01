@@ -128,9 +128,9 @@
 
             let apiUrl = null;
             if (id) {
-                apiUrl = `/api/freelancers/${id}`;
+                apiUrl = `${window.API_CONFIG.BASE_URL}/api/freelancers/${id}`;
             } else if (email) {
-                apiUrl = `/api/freelancers/me?email=${email}`; // Reusing existing endpoint if applicable, or logic
+                apiUrl = `${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${email}`; // Reusing existing endpoint if applicable, or logic
             }
 
             if (!apiUrl) {
