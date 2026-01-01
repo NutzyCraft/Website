@@ -7,6 +7,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "freelancers")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"user"})
 public class Freelancer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
