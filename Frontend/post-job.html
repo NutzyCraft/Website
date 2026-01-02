@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <!-- jobs.css might conflict or be redundant with dashboard styles, carefully integrating -->
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -214,7 +215,7 @@
                                 const formData = new FormData();
                                 formData.append('file', file);
                                 
-                                const uploadRes = await fetch('/api/upload', {
+                                const uploadRes = await fetch(`${API_CONFIG.BASE_URL}/api/upload`, {
                                     method: 'POST',
                                     body: formData
                                 });
@@ -249,7 +250,7 @@
                     };
 
                     try {
-                        const response = await fetch(`/api/jobs?clientEmail=${encodeURIComponent(email)}`, {
+                        const response = await fetch(`${API_CONFIG.BASE_URL}/api/jobs?clientEmail=${encodeURIComponent(email)}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
