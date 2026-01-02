@@ -284,7 +284,7 @@
 
             if (jobId) {
                 try {
-                    const response = await fetch('/api/jobs');
+                    const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/jobs`);
                     if (response.ok) {
                         const jobs = await response.json();
                         const job = jobs.find(j => j.id == jobId);
@@ -355,7 +355,7 @@
                             const formData = new FormData();
                             formData.append('file', file);
                             
-                            const uploadRes = await fetch('/api/upload', {
+                            const uploadRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/upload`, {
                                 method: 'POST',
                                 body: formData
                             });
@@ -391,7 +391,7 @@
                 };
 
                 try {
-                    const res = await fetch('/api/proposals', {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/proposals`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(proposalData)
