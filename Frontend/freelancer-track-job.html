@@ -336,7 +336,7 @@
 
             try {
                 // 1. Fetch Job Details
-                const jobRes = await fetch(`/api/jobs/${jobId}`);
+                const jobRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/jobs/${jobId}`);
                 if (!jobRes.ok) throw new Error('Failed to fetch job');
                 const job = await jobRes.json();
 
@@ -388,7 +388,7 @@
                 renderTimeline(job.currentStep || 1);
 
                 // 2. Fetch Milestones
-                const milestonesRes = await fetch(`/api/milestones/job/${jobId}`);
+                const milestonesRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/job/${jobId}`);
                 const milestonesContainer = document.getElementById('milestones-list-container');
 
                 if (milestonesRes.ok) {
@@ -467,7 +467,7 @@
             }
 
             try {
-                const res = await fetch(`/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=FREELANCER`, {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=FREELANCER`, {
                     method: 'POST'
                 });
 
@@ -486,7 +486,7 @@
 
         async function loadSharedFiles(jobId) {
             try {
-                const res = await fetch(`/api/shared-files/job/${jobId}`);
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/shared-files/job/${jobId}`);
                 if (res.ok) {
                     const files = await res.json();
                     const sharedFilesColumn = document.querySelector('.dashboard-split > div:nth-child(2)');
@@ -549,7 +549,7 @@
             try {
                 input.parentElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
 
-                const res = await fetch('/api/shared-files/upload', {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/shared-files/upload`, {
                     method: 'POST',
                     body: formData
                 });
@@ -573,7 +573,7 @@
             if (!confirm(`Update project progress to step ${step}?`)) return;
 
             try {
-                const res = await fetch(`/api/jobs/${currentJobId}/step?step=${step}`, { method: 'PUT' });
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/jobs/${currentJobId}/step?step=${step}`, { method: 'PUT' });
                 if (res.ok) {
                     renderTimeline(step);
                     if (step === 4) {

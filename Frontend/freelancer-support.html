@@ -255,7 +255,7 @@
                 const message = document.getElementById('support-message').value;
 
                 try {
-                    const res = await fetch(`/api/support?userEmail=${encodeURIComponent(email)}`, {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/support?userEmail=${encodeURIComponent(email)}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

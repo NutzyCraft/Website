@@ -187,7 +187,7 @@
 
                     try {
                         // The 'id' param from URL is actually the User ID (passed from Job object)
-                        const res = await fetch(`/api/clients/user/${clientId}`);
+                        const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${clientId}`);
                         if (!res.ok) throw new Error('Failed to fetch client');
                         const client = await res.json();
 

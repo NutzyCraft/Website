@@ -173,7 +173,7 @@
 
             if (proposalId) {
                 try {
-                    const response = await fetch(`/api/proposals/${proposalId}`);
+                    const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/proposals/${proposalId}`);
                     if (response.ok) {
                         const proposal = await response.json();
 
