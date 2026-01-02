@@ -218,7 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidebarUserContainer = document.querySelector('.sidebar-user');
         if (sidebarUserContainer) {
             const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
-            if (nameEl && nameEl.textContent !== 'Loading...') {
+            // detailed check: if it's "Loading..." OR it's a non-breaking space (placeholder), we should proceed to update
+            const currentText = nameEl.textContent;
+            // Char code 160 is &nbsp;
+            if (currentText !== 'Loading...' && currentText.trim().length > 0 && currentText.charCodeAt(0) !== 160) {
                 return; // Already populated by page-specific script
             }
         }

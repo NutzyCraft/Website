@@ -186,28 +186,32 @@
                             return res.json();
                         })
                         .then(data => {
+                            // The API returns ClientProfileDTO which contains { client: { ... }, totalHires: ..., ... }
+                            const clientData = data.client;
+                            const userData = clientData.user;
+                            
                             // Populate form with checks for nulls, inheriting User data if Client data is missing
-                            const userName = (data.user && data.user.fullName) ? data.user.fullName : '';
+                            const userName = (userData && userData.fullName) ? userData.fullName : '';
 
-                            document.getElementById('companyName').value = data.companyName || userName;
-                            document.getElementById('contactPerson').value = data.contactPerson || userName;
-                            document.getElementById('billingAddress').value = data.billingAddress || '';
-                            document.getElementById('website').value = data.website || '';
-                            document.getElementById('industry').value = data.industry || '';
-                            document.getElementById('description').value = data.description || '';
+                            document.getElementById('companyName').value = clientData.companyName || userName;
+                            document.getElementById('contactPerson').value = clientData.contactPerson || userName;
+                            document.getElementById('billingAddress').value = clientData.billingAddress || '';
+                            document.getElementById('website').value = clientData.website || '';
+                            document.getElementById('industry').value = clientData.industry || '';
+                            document.getElementById('description').value = clientData.description || '';
 
-                            document.getElementById('profilePictureUrl').value = data.profileImage || '';
-                            if (data.profileImage) {
+                            document.getElementById('profilePictureUrl').value = clientData.profileImage || '';
+                            if (clientData.profileImage) {
                                 const preview = document.getElementById('profilePreview');
-                                preview.style.backgroundImage = `url('${data.profileImage}')`;
+                                preview.style.backgroundImage = `url('${clientData.profileImage}')`;
                                 preview.style.display = 'block';
                                 document.getElementById('removeProfile').style.display = 'inline-block';
                             }
 
-                            document.getElementById('backgroundPictureUrl').value = data.bannerImage || '';
-                            if (data.bannerImage) {
+                            document.getElementById('backgroundPictureUrl').value = clientData.bannerImage || '';
+                            if (clientData.bannerImage) {
                                 const preview = document.getElementById('backgroundPreview');
-                                preview.style.backgroundImage = `url('${data.bannerImage}')`;
+                                preview.style.backgroundImage = `url('${clientData.bannerImage}')`;
                                 preview.style.display = 'block';
                                 document.getElementById('removeBackground').style.display = 'inline-block';
                             }
