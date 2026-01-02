@@ -115,9 +115,9 @@
 
                     <div style="padding: 20px; border-top: 1px solid #eee; background: white;">
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="message-input" placeholder="Type a message..."
+                            <input type="text" id="message-input" placeholder="Type a message..." disabled
                                 style="flex: 1; padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; outline: none;">
-                            <button id="send-btn" class="btn btn-primary"
+                            <button id="send-btn" class="btn btn-primary" disabled
                                 style="border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center;"><i
                                     class="fa-solid fa-paper-plane"></i></button>
                         </div>
@@ -217,6 +217,10 @@
             window.loadChatHistory = async function (userId, name) {
                 currentChatUserId = userId;
                 currentChatUserName = name;
+                
+                // Enable input
+                document.getElementById('message-input').disabled = false;
+                document.getElementById('send-btn').disabled = false;
 
                 // Update Header
                 const header = document.getElementById('chat-header');
@@ -288,7 +292,11 @@
             const sendBtn = document.getElementById('send-btn');
 
             async function sendMessage() {
-                if (!currentChatUserId || !input.value.trim()) return;
+                if (!currentChatUserId) {
+                    alert("Please select a chat first.");
+                    return;
+                }
+                if (!input.value.trim()) return;
 
                 try {
                     const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/messages`, {
@@ -308,7 +316,8 @@
                         alert("Failed to send message");
                     }
                 } catch (err) {
-                    console.error(err);
+                    console.error('Send Error:', err);
+                    alert("Error sending message: " + err.message);
                 }
             }
 
