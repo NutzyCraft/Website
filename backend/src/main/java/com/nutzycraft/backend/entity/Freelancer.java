@@ -7,6 +7,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "freelancers")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Freelancer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +15,6 @@ public class Freelancer {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     private String title;
