@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="profile.css"> <!-- Reusing profile styles -->
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
     <style>
         .sidebar-link.active {
@@ -180,9 +181,9 @@
             try {
                 let apiUrl = '';
                 if (role === 'CLIENT') {
-                    apiUrl = `/api/clients/user/${userId}`;
+                    apiUrl = `${API_CONFIG.BASE_URL}/api/clients/user/${userId}`;
                 } else if (role === 'FREELANCER') {
-                    apiUrl = `/api/freelancers/user/${userId}`;
+                    apiUrl = `${API_CONFIG.BASE_URL}/api/freelancers/user/${userId}`;
                 } else {
                     throw new Error('Unknown Role');
                 }

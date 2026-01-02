@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/settings';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/settings`;
     const form = document.querySelector('form');
     const inputs = {
         siteName: form.querySelector('input[type="text"]'),

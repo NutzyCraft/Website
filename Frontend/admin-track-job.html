@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
     <style>
         /* Admin Specific Overrides */
@@ -316,7 +317,7 @@
 
             try {
                 // 1. Fetch Job Details
-                const jobRes = await fetch(`/api/jobs/${jobId}`);
+                const jobRes = await fetch(`${API_CONFIG.BASE_URL}/api/jobs/${jobId}`);
                 if (!jobRes.ok) throw new Error('Failed to fetch job');
                 const job = await jobRes.json();
 
@@ -330,7 +331,7 @@
                     document.getElementById('client-profile-link').href = `admin-view-profile.html?userId=${job.client.id}&role=CLIENT`;
 
                     // Fetch Client Avatar
-                    fetch(`/api/users/${job.client.id}/avatar`)
+                    fetch(`${API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
                         .then(res => res.text())
                         .then(url => {
                             if (url) document.getElementById('client-avatar').src = url;
@@ -348,7 +349,7 @@
                     flLink.style.display = 'inline-block';
 
                     // Fetch Freelancer Avatar
-                    fetch(`/api/users/${job.freelancer.id}/avatar`)
+                    fetch(`${API_CONFIG.BASE_URL}/api/users/${job.freelancer.id}/avatar`)
                         .then(res => res.text())
                         .then(url => {
                             if (url) document.getElementById('freelancer-avatar').src = url;
@@ -371,7 +372,7 @@
                 renderTimeline(job.currentStep || 1);
 
                 // 2. Fetch Milestones
-                const milestonesRes = await fetch(`/api/milestones/job/${jobId}`);
+                const milestonesRes = await fetch(`${API_CONFIG.BASE_URL}/api/milestones/job/${jobId}`);
                 const milestonesContainer = document.getElementById('milestones-list-container');
 
                 if (milestonesRes.ok) {
@@ -409,7 +410,7 @@
 
         async function loadSharedFiles(jobId) {
             try {
-                const res = await fetch(`/api/shared-files/job/${jobId}`);
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/shared-files/job/${jobId}`);
                 if (res.ok) {
                     const files = await res.json();
                     const container = document.getElementById('shared-files-container');
