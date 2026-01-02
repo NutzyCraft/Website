@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -148,7 +149,7 @@
             // Fetch Conversations
             async function loadConversations(autoSelect = true) {
                 try {
-                    const res = await fetch(`/api/messages?email=${encodeURIComponent(email)}`);
+                    const res = await fetch(`${API_CONFIG.BASE_URL}/api/messages?email=${encodeURIComponent(email)}`);
                     if (!res.ok) throw new Error('Failed to load conversations');
                     const conversations = await res.json();
                     renderConversations(conversations);
@@ -203,7 +204,7 @@
                 `;
 
                 try {
-                    const res = await fetch(`/api/messages/${userId}?email=${encodeURIComponent(email)}`);
+                    const res = await fetch(`${API_CONFIG.BASE_URL}/api/messages/${userId}?email=${encodeURIComponent(email)}`);
                     if (!res.ok) throw new Error('Failed to load chat');
                     const messages = await res.json();
                     renderMessages(messages);
@@ -242,7 +243,7 @@
                 if (!currentChatUserId || !messageInput.value.trim()) return;
 
                 try {
-                    const res = await fetch('/api/messages', {
+                    const res = await fetch(`${API_CONFIG.BASE_URL}/api/messages`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -283,8 +284,9 @@
                     // Need to find user ID by email first. 
                     // Assuming we have an endpoint for this or we iterate conversations.
                     // The /api/users/profile?email=... returns the user object which has ID.
+                    // The /api/users/profile?email=... returns the user object which has ID.
                     try {
-                        const profileRes = await fetch(`/api/users/profile?email=${encodeURIComponent(recipientEmail)}`);
+                        const profileRes = await fetch(`${API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(recipientEmail)}`);
                         if (profileRes.ok) {
                             const user = await profileRes.json();
                             loadChatHistory(user.id, user.fullName);

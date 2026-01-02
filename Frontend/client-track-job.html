@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
     <style>
         /* Specific Styles for Tracking Page */
@@ -325,7 +326,7 @@
 
             try {
                 // 1. Fetch Job Details
-                const jobRes = await fetch(`/api/jobs/${jobId}`);
+                const jobRes = await fetch(`${API_CONFIG.BASE_URL}/api/jobs/${jobId}`);
                 if (!jobRes.ok) throw new Error('Failed to fetch job');
                 const job = await jobRes.json();
 
@@ -339,7 +340,7 @@
                     document.getElementById('review-freelancer-name').textContent = job.freelancer.fullName;
 
                     // Fetch real avatar
-                    fetch(`/api/users/${job.freelancer.id}/avatar`)
+                    fetch(`${API_CONFIG.BASE_URL}/api/users/${job.freelancer.id}/avatar`)
                         .then(res => res.text())
                         .then(url => {
                             if (url) document.getElementById('freelancer-avatar').src = url;
@@ -380,7 +381,7 @@
                 renderTimeline(job.currentStep || 1);
 
                 // 2. Fetch Milestones
-                const milestonesRes = await fetch(`/api/milestones/job/${jobId}`);
+                const milestonesRes = await fetch(`${API_CONFIG.BASE_URL}/api/milestones/job/${jobId}`);
                 const milestonesContainer = document.getElementById('milestones-list-container');
 
                 if (milestonesRes.ok) {
@@ -459,7 +460,7 @@
             }
 
             try {
-                const res = await fetch(`/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=CLIENT`, {
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/jobs/${currentJobId}/review?reviewerEmail=${email}&rating=${rating}&reviewText=${encodeURIComponent(reviewText)}&role=CLIENT`, {
                     method: 'POST'
                 });
 
@@ -478,7 +479,7 @@
 
         async function loadSharedFiles(jobId) {
             try {
-                const res = await fetch(`/api/shared-files/job/${jobId}`);
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/shared-files/job/${jobId}`);
                 if (res.ok) {
                     const files = await res.json();
                     const container = document.getElementById('shared-files-container');
@@ -541,7 +542,7 @@
             try {
                 input.parentElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
 
-                const res = await fetch('/api/shared-files/upload', {
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/shared-files/upload`, {
                     method: 'POST',
                     body: formData
                 });

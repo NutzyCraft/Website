@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
     <style>
         .accordion-item {
@@ -254,7 +255,7 @@
             const msgDiv = document.getElementById('support-message');
 
             try {
-                const res = await fetch(`/api/support?userEmail=${encodeURIComponent(email)}`, {
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/support?userEmail=${encodeURIComponent(email)}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ subject, message })

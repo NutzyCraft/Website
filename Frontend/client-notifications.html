@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -112,7 +113,7 @@
                     if (markAllBtn) {
                         markAllBtn.addEventListener('click', async () => {
                             try {
-                                await fetch(`/api/notifications/mark-all-read?email=${encodeURIComponent(email)}`, { method: 'POST' });
+                                await fetch(`${API_CONFIG.BASE_URL}/api/notifications/mark-all-read?email=${encodeURIComponent(email)}`, { method: 'POST' });
                                 // Reload notifications
                                 window.location.reload();
                             } catch (e) {
@@ -122,7 +123,7 @@
                     }
 
                     try {
-                        const res = await fetch(`/api/notifications?email=${encodeURIComponent(email)}`);
+                        const res = await fetch(`${API_CONFIG.BASE_URL}/api/notifications?email=${encodeURIComponent(email)}`);
                         if (res.ok) {
                             const notifications = await res.json();
                             if (notifications.length === 0) {

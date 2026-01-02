@@ -218,7 +218,7 @@
                     const uploadFile = async (file) => {
                         const formData = new FormData();
                         formData.append('file', file);
-                        const res = await fetch('/api/upload', {
+                        const res = await fetch(`${API_CONFIG.BASE_URL}/api/upload`, {
                             method: 'POST',
                             body: formData
                         });

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -109,7 +110,7 @@
                     }
 
                     try {
-                        const response = await fetch(`/api/proposals/job/${jobId}`);
+                        const response = await fetch(`${API_CONFIG.BASE_URL}/api/proposals/job/${jobId}`);
                         if (response.ok) {
                             const proposals = await response.json();
 
@@ -168,7 +169,7 @@
 
                             // Fetch real avatars
                             proposals.forEach(p => {
-                                fetch(`/api/users/${p.freelancer.id}/avatar`)
+                                fetch(`${API_CONFIG.BASE_URL}/api/users/${p.freelancer.id}/avatar`)
                                     .then(res => res.text())
                                     .then(url => {
                                         if (url) document.getElementById(`avatar-freelancer-${p.id}`).src = url;
@@ -190,7 +191,7 @@
                         }
 
                         try {
-                            const response = await fetch(`/api/proposals/${proposalId}/accept`, {
+                            const response = await fetch(`${API_CONFIG.BASE_URL}/api/proposals/${proposalId}/accept`, {
                                 method: 'POST'
                             });
 

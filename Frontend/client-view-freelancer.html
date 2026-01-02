@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="profile.css">
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -166,9 +167,9 @@
 
                     let fetchUrl;
                     if (id) {
-                        fetchUrl = `/api/freelancers/${id}`;
+                        fetchUrl = `${API_CONFIG.BASE_URL}/api/freelancers/${id}`;
                     } else if (userId) {
-                        fetchUrl = `/api/freelancers/user/${userId}`;
+                        fetchUrl = `${API_CONFIG.BASE_URL}/api/freelancers/user/${userId}`;
                     } else {
                         document.querySelector('.profile-container').innerHTML = '<p class="text-center">No freelancer ID provided.</p>';
                         return;
