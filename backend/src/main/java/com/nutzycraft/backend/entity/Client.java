@@ -6,7 +6,6 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "clients")
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"user"})
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +13,6 @@ public class Client {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     private String companyName;
