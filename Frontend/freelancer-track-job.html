@@ -130,6 +130,120 @@
             background: #FFF3E0;
             color: #EF6C00;
         }
+
+        /* Milestone Checkbox */
+        .milestone-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .milestone-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 8px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-icon.delete:hover {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* File Type Icons */
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .file-icon.pdf {
+            background: #F44336;
+            color: white;
+        }
+
+        .file-icon.image {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .file-icon.ppt {
+            background: #FF9800;
+            color: white;
+        }
+
+        .file-icon.default {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
     </style>
 </head>
 
@@ -270,7 +384,12 @@
             <div class="dashboard-split" style="gap: 30px; display: flex;">
                 <!-- Left: Milestones -->
                 <div style="flex: 2;">
-                    <h3 style="margin-bottom: 20px;">Milestones & Tasks</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Milestones & Tasks</h3>
+                        <button class="btn btn-primary" onclick="openMilestoneModal()">
+                            <i class="fa-solid fa-plus"></i> Add New
+                        </button>
+                    </div>
                     <div id="milestones-list-container">
                         <div
                             style="padding: 20px; text-align: center; color: #888; background: white; border-radius: 10px; border: 1px solid #eee;">
@@ -318,6 +437,35 @@
                 <button class="btn btn-outline" onclick="closeReviewModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="submitReview()">Submit Review</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Milestone Modal -->
+    <div id="milestone-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">Create Milestone/Task</h3>
+            <form id="milestone-form" onsubmit="submitMilestone(event)">
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="milestone-title" required placeholder="e.g., Initial Design Mockup">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="milestone-description" placeholder="Describe the milestone..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="milestone-amount" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="milestone-due-date">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" onclick="closeMilestoneModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Milestone</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -397,19 +545,31 @@
                     if (milestones.length === 0) {
                         milestonesContainer.innerHTML = `
                             <div style="padding: 20px; text-align: center; color: #888; background: white; border-radius: 10px; border: 1px solid #eee;">
-                                No milestones created yet.
+                                No milestones created yet. Click "Add New" to create one.
                             </div>`;
                     } else {
                         milestonesContainer.innerHTML = milestones.map(m => `
-                            <div class="milestone-card">
-                                <div>
-                                    <h4 style="margin-bottom: 5px;">${m.title}</h4>
-                                    <p style="color: #666; font-size: 0.9rem;">${m.description || ''}</p>
-                                    <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Due: ${m.dueDate || 'N/A'} • $${m.amount}</div>
+                            <div class="milestone-card" id="milestone-${m.id}">
+                                <div style="display: flex; align-items: flex-start; gap: 10px; flex: 1;">
+                                    <input type="checkbox" class="milestone-checkbox" 
+                                        ${m.status === 'COMPLETED' ? 'checked' : ''}
+                                        onchange="toggleMilestoneStatus('${m.id}', this.checked)">
+                                    <div style="flex: 1;">
+                                        <h4 style="margin-bottom: 5px;">${m.title}</h4>
+                                        <p style="color: #666; font-size: 0.9rem;">${m.description || ''}</p>
+                                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">
+                                            Due: ${m.dueDate || 'N/A'} • $${m.amount || '0'} • Created by: ${m.createdBy || 'Unknown'}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span class="status-pill ${m.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
-                                    ${m.status}
-                                </span>
+                                <div class="milestone-actions">
+                                    <span class="status-pill ${m.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                                        ${m.status}
+                                    </span>
+                                    <button class="btn-icon delete" onclick="deleteMilestone('${m.id}')" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('');
                     }
@@ -497,25 +657,35 @@
                              <div class="glass-card" style="padding: 20px; text-align: center; color: #888;">
                                 No files shared yet.
                                 <label class="btn btn-outline" style="margin-top: 10px; display:inline-block; cursor: pointer;">
-                                    Upload File <input type="file" style="display: none;" onchange="uploadFile(this, ${jobId})">
+                                    <i class="fa-solid fa-upload"></i> Upload File 
+                                    <input type="file" accept=".jpg,.jpeg,.png,.gif,.pdf,.ppt,.pptx" style="display: none;" onchange="uploadFile(this, ${jobId})">
                                 </label>
                              </div>
                         `;
                     } else {
-                        const fileListHtml = files.map(f => `
+                        const fileListHtml = files.map(f => {
+                            const fileType = getFileType(f.fileName);
+                            return `
                             <div style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="background: #E3F2FD; color: #1565C0; width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fa-solid fa-file"></i>
+                                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                    <div class="file-icon ${fileType}">
+                                        ${getFileIcon(fileType)}
                                     </div>
-                                    <div style="overflow: hidden;">
-                                        <div style="font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="${f.fileName}">${f.fileName}</div>
+                                    <div style="overflow: hidden; flex: 1;">
+                                        <div style="font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${f.fileName}">${f.fileName}</div>
                                         <div style="font-size: 0.75rem; color: #888;">${f.uploaderName} • ${(f.size / 1024).toFixed(1)} KB</div>
                                     </div>
                                 </div>
-                                <a href="${f.downloadUrl}" class="btn-icon" style="color: #666;"><i class="fa-solid fa-download"></i></a>
+                                <div style="display: flex; gap: 5px;">
+                                    <a href="${f.downloadUrl}" target="_blank" class="btn-icon" style="color: #666;" title="Download">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                    <button class="btn-icon delete" onclick="deleteSharedFile(${f.id}, ${jobId})" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        `).join('');
+                        `}).join('');
 
                         sharedFilesColumn.innerHTML = `
                             <h3 style="margin-bottom: 20px;">Shared Files</h3>
@@ -523,7 +693,7 @@
                             <div style="margin-top: 20px; text-align: center;">
                                 <label class="btn btn-outline" style="width: 100%; cursor: pointer;">
                                     <i class="fa-solid fa-upload"></i> Upload New File
-                                    <input type="file" style="display: none;" onchange="uploadFile(this, ${jobId})">
+                                    <input type="file" accept=".jpg,.jpeg,.png,.gif,.pdf,.ppt,.pptx" style="display: none;" onchange="uploadFile(this, ${jobId})">
                                 </label>
                             </div>
                         `;
@@ -538,6 +708,23 @@
             const file = input.files[0];
             if (!file) return;
 
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf', 
+                                  'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Please upload images (JPG, PNG, GIF), PDF, or PowerPoint (PPT, PPTX).');
+                input.value = '';
+                return;
+            }
+
+            // Validate file size (10MB for Cloudinary free tier)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                alert('File size exceeds 10MB limit (Cloudinary free tier).');
+                input.value = '';
+                return;
+            }
+
             const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
             if (!email) { alert("Please login to upload."); return; }
 
@@ -547,7 +734,8 @@
             formData.append('file', file);
 
             try {
-                input.parentElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+                const parent = input.parentElement;
+                parent.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
 
                 const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/shared-files/upload`, {
                     method: 'POST',
@@ -557,12 +745,187 @@
                 if (res.ok) {
                     loadSharedFiles(jobId);
                 } else {
-                    alert('Upload failed');
+                    const error = await res.json();
+                    alert('Upload failed: ' + (error.error || 'Unknown error'));
                     loadSharedFiles(jobId);
                 }
             } catch (e) {
                 console.error(e);
                 alert('Error uploading file');
+                loadSharedFiles(jobId);
+            }
+        }
+
+        function getFileType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'image';
+            if (ext === 'pdf') return 'pdf';
+            if (['ppt', 'pptx'].includes(ext)) return 'ppt';
+            return 'default';
+        }
+
+        function getFileIcon(type) {
+            switch(type) {
+                case 'image': return '<i class="fa-solid fa-image"></i>';
+                case 'pdf': return '<i class="fa-solid fa-file-pdf"></i>';
+                case 'ppt': return '<i class="fa-solid fa-file-powerpoint"></i>';
+                default: return '<i class="fa-solid fa-file"></i>';
+            }
+        }
+
+        async function deleteSharedFile(fileId, jobId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/shared-files/${fileId}`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    loadSharedFiles(jobId);
+                } else {
+                    alert('Failed to delete file');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting file');
+            }
+        }
+
+        function openMilestoneModal() {
+            document.getElementById('milestone-modal').style.display = 'flex';
+        }
+
+        function closeMilestoneModal() {
+            document.getElementById('milestone-modal').style.display = 'none';
+            document.getElementById('milestone-form').reset();
+        }
+
+        async function submitMilestone(event) {
+            event.preventDefault();
+
+            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            if (!email) {
+                alert('Please login to create milestones');
+                return;
+            }
+
+            const data = {
+                jobId: currentJobId,
+                title: document.getElementById('milestone-title').value,
+                description: document.getElementById('milestone-description').value,
+                amount: parseFloat(document.getElementById('milestone-amount').value) || 0,
+                dueDate: document.getElementById('milestone-due-date').value || null,
+                createdByEmail: email
+            };
+
+            try {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    closeMilestoneModal();
+                    // Reload milestones
+                    const milestonesRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/job/${currentJobId}`);
+                    if (milestonesRes.ok) {
+                        const milestones = await milestonesRes.json();
+                        updateMilestonesDisplay(milestones);
+                    }
+                } else {
+                    const error = await res.json();
+                    alert('Failed to create milestone: ' + (error.message || 'Unknown error'));
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error creating milestone');
+            }
+        }
+
+        async function toggleMilestoneStatus(id, isCompleted) {
+            const status = isCompleted ? 'COMPLETED' : 'PENDING';
+
+            try {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/${id}/status?status=${status}`, {
+                    method: 'PUT'
+                });
+
+                if (res.ok) {
+                    // Update the UI
+                    const card = document.getElementById(`milestone-${id}`);
+                    const statusPill = card.querySelector('.status-pill');
+                    statusPill.textContent = status;
+                    statusPill.className = `status-pill ${status === 'COMPLETED' ? 'status-completed' : 'status-pending'}`;
+                } else {
+                    alert('Failed to update milestone status');
+                    // Revert checkbox
+                    const checkbox = event.target;
+                    checkbox.checked = !checkbox.checked;
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error updating milestone');
+            }
+        }
+
+        async function deleteMilestone(id) {
+            if (!confirm('Are you sure you want to delete this milestone?')) return;
+
+            try {
+                const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    // Reload milestones
+                    const milestonesRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/job/${currentJobId}`);
+                    if (milestonesRes.ok) {
+                        const milestones = await milestonesRes.json();
+                        updateMilestonesDisplay(milestones);
+                    }
+                } else {
+                    alert('Failed to delete milestone');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error deleting milestone');
+            }
+        }
+
+        function updateMilestonesDisplay(milestones) {
+            const container = document.getElementById('milestones-list-container');
+            if (milestones.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #888; background: white; border-radius: 10px; border: 1px solid #eee;">
+                        No milestones created yet. Click "Add New" to create one.
+                    </div>`;
+            } else {
+                container.innerHTML = milestones.map(m => `
+                    <div class="milestone-card" id="milestone-${m.id}">
+                        <div style="display: flex; align-items: flex-start; gap: 10px; flex: 1;">
+                            <input type="checkbox" class="milestone-checkbox" 
+                                ${m.status === 'COMPLETED' ? 'checked' : ''}
+                                onchange="toggleMilestoneStatus('${m.id}', this.checked)">
+                            <div style="flex: 1;">
+                                <h4 style="margin-bottom: 5px;">${m.title}</h4>
+                                <p style="color: #666; font-size: 0.9rem;">${m.description || ''}</p>
+                                <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">
+                                    Due: ${m.dueDate || 'N/A'} • $${m.amount || '0'} • Created by: ${m.createdBy || 'Unknown'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="milestone-actions">
+                            <span class="status-pill ${m.status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                                ${m.status}
+                            </span>
+                            <button class="btn-icon delete" onclick="deleteMilestone('${m.id}')" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
 
