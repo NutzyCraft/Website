@@ -167,23 +167,16 @@
 
                 // Fetch profile pictures for all users in conversations
                 const userProfilePics = {};
-                console.log('Fetching profile pictures for conversations:', conversations);
                 await Promise.all(conversations.map(async (conv) => {
                     try {
-                        console.log(`Fetching freelancer profile for userId: ${conv.userId}`);
                         // Try to fetch freelancer profile first
                         const freelancerRes = await fetch(`${API_CONFIG.BASE_URL}/api/freelancers/user/${conv.userId}`);
-                        console.log(`Response status for userId ${conv.userId}:`, freelancerRes.status);
                         if (freelancerRes.ok) {
                             const freelancer = await freelancerRes.json();
-                            console.log(`Freelancer data for userId ${conv.userId}:`, freelancer);
                             userProfilePics[conv.userId] = freelancer.profileImage || (freelancer.user && freelancer.user.profilePictureUrl) || null;
-                            console.log(`Profile pic URL for userId ${conv.userId}:`, userProfilePics[conv.userId]);
-                        } else {
-                            console.log(`Failed to fetch freelancer for userId ${conv.userId}, status: ${freelancerRes.status}`);
                         }
                     } catch (err) {
-                        console.error(`Error fetching profile for user ${conv.userId}:`, err);
+                        console.log(`Could not fetch profile for user ${conv.userId}`);
                     }
                 }));
 
