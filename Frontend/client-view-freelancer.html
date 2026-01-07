@@ -188,7 +188,13 @@
                             document.getElementById('profileBio').textContent = freelancer.bio || 'No bio provided.';
                             document.getElementById('profileRate').textContent = freelancer.hourlyRate || 0;
                             document.getElementById('profileRating').textContent = `(${freelancer.rating || 0.0})`;
-                            document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${user.fullName}&background=random&size=200`;
+                            // Robust Image Logic
+                            let finalImg = freelancer.profileImage || (user && user.profilePictureUrl);
+                            if (finalImg) {
+                                document.getElementById('profileAvatar').src = finalImg;
+                            } else {
+                                document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}&background=random&size=200`;
+                            }
 
                             const skillsContainer = document.getElementById('profileSkills');
                             skillsContainer.innerHTML = '';
