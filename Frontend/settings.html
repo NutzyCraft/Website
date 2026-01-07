@@ -104,7 +104,7 @@
                             </div>
                             <button class="btn btn-outline" type="button"
                                 style="margin-top: 10px; font-size: 0.8rem; padding: 5px 10px;"
-                                onclick="document.getElementById('settings-avatar-upload').click()">Change</button>
+                                onclick="document.getElementById('settings-avatar-upload').click()">Change()</button>
                             <input type="file" id="settings-avatar-upload" hidden accept="image/*">
                         </div>
                         <div style="flex: 1;">
@@ -230,12 +230,29 @@
                                 document.getElementById('hourlyRate').value = data.hourlyRate || '';
                                 document.getElementById('bio').value = data.bio || '';
                                 document.getElementById('skills').value = (data.skills || []).join(', ');
-                                document.getElementById('skills').value = (data.skills || []).join(', ');
 
-                                if (data.profileImage) {
-                                    document.getElementById('settings-avatar-preview').src = data.profileImage;
+                                // Robust Image Loading: Check Freelancer -> User -> Fetch User Profile
+                                let validImage = data.profileImage;
+                                if (!validImage && data.user && data.user.profilePictureUrl) {
+                                    validImage = data.user.profilePictureUrl;
+                                }
+
+                                if (validImage) {
+                                     document.getElementById('settings-avatar-preview').src = validImage;
                                 } else {
-                                    document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${data.user.fullName}&background=random&size=200`;
+                                     // Fallback: Try fetching User Profile directly (Source of Truth for Sidebar)
+                                     fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(email)}`)
+                                        .then(r => r.json())
+                                        .then(uProfile => {
+                                            if (uProfile && uProfile.profileImage) {
+                                                document.getElementById('settings-avatar-preview').src = uProfile.profileImage;
+                                            } else {
+                                                document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.fullName)}&background=random&size=200`;
+                                            }
+                                        })
+                                        .catch(() => {
+                                            document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.fullName)}&background=random&size=200`;
+                                        });
                                 }
 
                                 if (data.bannerImage) {
@@ -244,7 +261,7 @@
                                     coverPreview.src = data.bannerImage;
                                     coverPreview.style.display = 'block';
                                 }
-                            }
+                             }
                         })
                         .catch(err => console.error(err));
 

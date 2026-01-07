@@ -273,14 +273,27 @@
                     document.querySelector('.profile-title').innerHTML = `${freelancer.title || 'Freelancer'} <i class="fa-solid fa-pen" style="font-size: 0.8rem; color: #ccc; cursor: pointer;" onclick="window.location.href='settings.html'"></i>`;
 
                     // Update Avatar
+                    // Update Avatar with Robust Fallback
                     const avatarImg = document.querySelector('.profile-avatar-large');
                     if (avatarImg) {
-                        if (freelancer.profileImage) {
-                            avatarImg.src = freelancer.profileImage;
-                        } else if (user.profileImage) {
-                             avatarImg.src = user.profileImage;
+                        let finalImg = freelancer.profileImage || (user && user.profilePictureUrl);
+                        
+                        if (finalImg) {
+                            avatarImg.src = finalImg;
                         } else {
-                            avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}&background=random&size=200`;
+                            // Fetch from User Profile API as last resort
+                             fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(email)}`)
+                                .then(r => r.json())
+                                .then(uProfile => {
+                                    if (uProfile && uProfile.profileImage) {
+                                        avatarImg.src = uProfile.profileImage;
+                                    } else {
+                                        avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}&background=random&size=200`;
+                                    }
+                                })
+                                .catch(() => {
+                                    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}&background=random&size=200`;
+                                });
                         }
                     }
 
