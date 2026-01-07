@@ -180,13 +180,28 @@
                 }
             }
 
-            function renderConversations(conversations) {
+            async function renderConversations(conversations) {
                 const list = document.getElementById('conversations-list');
                 list.innerHTML = '';
                 if (conversations.length === 0) {
                     list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No messages yet.</div>';
                     return;
                 }
+
+                // Fetch profile pictures for all users in conversations
+                const userProfilePics = {};
+                await Promise.all(conversations.map(async (conv) => {
+                    try {
+                        // Try to fetch client profile first
+                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${conv.userId}`);
+                        if (clientRes.ok) {
+                            const client = await clientRes.json();
+                            userProfilePics[conv.userId] = client.profileImage || (client.user && client.user.profilePictureUrl) || null;
+                        }
+                    } catch (err) {
+                        console.log(`Could not fetch profile for user ${conv.userId}`);
+                    }
+                }));
 
                 conversations.forEach(c => {
                     const div = document.createElement('div');
@@ -197,10 +212,12 @@
                     div.style.borderBottom = '1px solid #f0f0f0';
                     div.style.background = (currentChatUserId == c.userId) ? '#f0f9ff' : 'transparent';
 
-                    div.onclick = () => loadChatHistory(c.userId, c.name);
+                    const profilePic = userProfilePics[c.userId] || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random`;
+
+                    div.onclick = () => loadChatHistory(c.userId, c.name, profilePic);
 
                     div.innerHTML = `
-                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <img src="${profilePic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                         <div style="flex: 1; overflow: hidden;">
                              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                 <span style="font-weight: 700; font-size: 0.95rem;">${c.name}</span>
@@ -214,7 +231,7 @@
             }
 
             // Load Chat History
-            window.loadChatHistory = async function (userId, name) {
+            window.loadChatHistory = async function (userId, name, profilePic = null) {
                 currentChatUserId = userId;
                 currentChatUserName = name;
                 
@@ -222,10 +239,25 @@
                 document.getElementById('message-input').disabled = false;
                 document.getElementById('send-btn').disabled = false;
 
+                // Fetch profile picture if not provided
+                if (!profilePic) {
+                    try {
+                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${userId}`);
+                        if (clientRes.ok) {
+                            const client = await clientRes.json();
+                            profilePic = client.profileImage || (client.user && client.user.profilePictureUrl);
+                        }
+                    } catch (err) {
+                        console.log('Could not fetch profile picture');
+                    }
+                }
+
+                const finalProfilePic = profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+
                 // Update Header
                 const header = document.getElementById('chat-header');
                 header.innerHTML = `
-                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random" style="width: 40px; height: 40px; border-radius: 50%;">
+                    <img src="${finalProfilePic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                     <div>
                         <div style="font-weight: 700;">${name}</div>
                     </div>
@@ -246,27 +278,34 @@
                 loadConversations();
             }
 
-            function renderMessages(messages, otherUserId) {
+            async function renderMessages(messages, otherUserId) {
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = '';
 
-                messages.forEach(msg => {
-                    const isMe = (msg.sender.id != otherUserId); // Logic depends on how fetch returns? 
-                    // Actually api/messages/{id} returns list of Message.
-                    // We need to check sender vs current user. 
-                    // But we don't have current user ID easily unless we fetch profile.
-                    // Easier: check distinct sender ID.
-                    // Or simpler: The controller returns all messages. 
+                // Fetch profile pictures for all senders
+                const senderProfilePics = {};
+                const uniqueSenderIds = [...new Set(messages.filter(msg => msg.sender.email !== email).map(msg => msg.sender.id))];
+                
+                await Promise.all(uniqueSenderIds.map(async (senderId) => {
+                    try {
+                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${senderId}`);
+                        if (clientRes.ok) {
+                            const client = await clientRes.json();
+                            senderProfilePics[senderId] = client.profileImage || (client.user && client.user.profilePictureUrl);
+                        }
+                    } catch (err) {
+                        console.log(`Could not fetch profile for sender ${senderId}`);
+                    }
+                }));
 
-                    // We can assume if sender.email == email, it's Me.
+                messages.forEach(msg => {
                     const isMyMsg = (msg.sender.email === email);
+                    const senderProfilePic = senderProfilePics[msg.sender.id] || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
 
                     const div = document.createElement('div');
                     div.style.display = 'flex';
                     div.style.marginBottom = '20px';
                     div.style.justifyContent = isMyMsg ? 'flex-end' : 'flex-start';
-
-                    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
 
                     if (isMyMsg) {
                         div.innerHTML = `
@@ -276,7 +315,7 @@
                         `;
                     } else {
                         div.innerHTML = `
-                            <img src="${avatar}" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                            <img src="${senderProfilePic}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
                             <div style="background: white; padding: 12px 18px; border-radius: 0 20px 20px 20px; border: 1px solid #eee; max-width: 70%;">
                                 <p style="font-size: 0.95rem;">${msg.content}</p>
                             </div>
