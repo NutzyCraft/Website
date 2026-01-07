@@ -29,4 +29,9 @@ public class Milestone {
     private String status = "PENDING";
 
     private LocalDate dueDate;
+
+    // Track who created this milestone
+    private String createdBy;  // Name of creator (Freelancer/Client)
+
+    private String createdByEmail;  // Email of creator
 }

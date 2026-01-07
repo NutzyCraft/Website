@@ -17,6 +17,12 @@ public class JobController {
     @Autowired
     private com.nutzycraft.backend.repository.UserRepository userRepository;
 
+    @Autowired
+    private com.nutzycraft.backend.repository.SharedFileRepository sharedFileRepository;
+
+    @Autowired
+    private com.nutzycraft.backend.service.FileUploadService fileUploadService;
+
     @GetMapping
     public List<Job> getAllJobs(@RequestParam(required = false) String search) {
         if (search != null && !search.isEmpty()) {
@@ -100,6 +106,21 @@ public class JobController {
         job.setCurrentStep(step);
         if (step == 4) {
             job.setStatus("COMPLETED");
+            
+            // Automatically delete all shared files when job is completed
+            try {
+                List<com.nutzycraft.backend.entity.SharedFile> files = sharedFileRepository.findByJobId(id);
+                for (com.nutzycraft.backend.entity.SharedFile file : files) {
+                    try {
+                        fileUploadService.deleteFile(file.getPublicId());
+                    } catch (Exception e) {
+                        System.err.println("Failed to delete file from Cloudinary: " + file.getPublicId());
+                    }
+                }
+                sharedFileRepository.deleteByJobId(id);
+            } catch (Exception e) {
+                System.err.println("Error deleting shared files for job " + id + ": " + e.getMessage());
+            }
         }
         return jobRepository.save(job);
     }

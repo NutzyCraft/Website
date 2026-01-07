@@ -2,8 +2,10 @@ package com.nutzycraft.backend.controller;
 
 import com.nutzycraft.backend.entity.Job;
 import com.nutzycraft.backend.entity.Milestone;
+import com.nutzycraft.backend.entity.User;
 import com.nutzycraft.backend.repository.JobRepository;
 import com.nutzycraft.backend.repository.MilestoneRepository;
+import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,9 @@ public class MilestoneController {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/job/{jobId}")
     public List<Milestone> getMilestonesByJob(@PathVariable Long jobId) {
         return milestoneRepository.findByJobId(jobId);
@@ -31,6 +36,9 @@ public class MilestoneController {
         Job job = jobRepository.findById(request.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
+        User creator = userRepository.findByEmail(request.getCreatedByEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Milestone milestone = new Milestone();
         milestone.setJob(job);
         milestone.setTitle(request.getTitle());
@@ -38,6 +46,8 @@ public class MilestoneController {
         milestone.setAmount(request.getAmount());
         milestone.setStatus("PENDING");
         milestone.setDueDate(request.getDueDate());
+        milestone.setCreatedBy(creator.getFullName());
+        milestone.setCreatedByEmail(request.getCreatedByEmail());
 
         return milestoneRepository.save(milestone);
     }
@@ -50,6 +60,15 @@ public class MilestoneController {
         return milestoneRepository.save(milestone);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMilestone(@PathVariable Long id) {
+        if (!milestoneRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        milestoneRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
     // DTO
     @lombok.Data
     public static class MilestoneRequest {
@@ -58,5 +77,6 @@ public class MilestoneController {
         private String description;
         private Double amount;
         private java.time.LocalDate dueDate;
+        private String createdByEmail;
     }
 }
