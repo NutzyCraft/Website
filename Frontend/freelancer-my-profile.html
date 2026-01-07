@@ -277,6 +277,8 @@
                     if (avatarImg) {
                         if (freelancer.profileImage) {
                             avatarImg.src = freelancer.profileImage;
+                        } else if (user.profileImage) {
+                             avatarImg.src = user.profileImage;
                         } else {
                             avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName || 'User')}&background=random&size=200`;
                         }
