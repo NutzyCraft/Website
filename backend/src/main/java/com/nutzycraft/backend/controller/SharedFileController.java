@@ -100,6 +100,7 @@ public class SharedFileController {
             sharedFile.setPublicId((String) uploadResult.get("public_id"));
             sharedFile.setUploaderName(uploader.getFullName());
             sharedFile.setUploaderEmail(uploaderEmail);
+            sharedFile.setUploaderId(uploader.getId());  // REQUIRED: Fix NOT NULL constraint
             sharedFile.setSize(file.getSize());
 
             SharedFile saved = sharedFileRepository.save(sharedFile);
