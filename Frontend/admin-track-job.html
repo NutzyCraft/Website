@@ -327,7 +327,7 @@
 
                 // Populate Client Info
                 if (job.client) {
-                    document.getElementById('client-name').textContent = `${job.client.fullName} (ID: ${job.client.id})`;
+                    document.getElementById('client-name').textContent = `${job.client.deletedAt ? 'User Deleted' : job.client.fullName} (ID: ${job.client.id})`;
                     document.getElementById('client-profile-link').href = `admin-view-profile.html?userId=${job.client.id}&role=CLIENT`;
 
                     // Fetch Client Avatar
@@ -343,7 +343,7 @@
 
                 // Populate Freelancer Info
                 if (job.freelancer) {
-                    document.getElementById('freelancer-name').textContent = `${job.freelancer.fullName} (ID: ${job.freelancer.id})`;
+                    document.getElementById('freelancer-name').textContent = `${job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName} (ID: ${job.freelancer.id})`;
                     const flLink = document.getElementById('freelancer-profile-link');
                     flLink.href = `admin-view-profile.html?userId=${job.freelancer.id}&role=FREELANCER`;
                     flLink.style.display = 'inline-block';

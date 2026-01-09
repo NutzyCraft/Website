@@ -484,8 +484,8 @@
 
                 // Populate Freelancer Info
                 if (job.freelancer) {
-                    document.getElementById('freelancer-name').textContent = `Hired: ${job.freelancer.fullName}`;
-                    document.getElementById('review-freelancer-name').textContent = job.freelancer.fullName;
+                    document.getElementById('freelancer-name').textContent = `Hired: ${job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName}`;
+                    document.getElementById('review-freelancer-name').textContent = job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName;
 
                     // Fetch real avatar
                     fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.freelancer.id}/avatar`)

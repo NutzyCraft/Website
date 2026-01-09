@@ -252,7 +252,7 @@
                 projectsTable.innerHTML = data.activeProjects
                   .map((job) => {
                     const freelancerName = job.freelancer
-                      ? job.freelancer.fullName
+                      ? (job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName)
                       : "Not Assigned";
                     const freelancerAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                       freelancerName

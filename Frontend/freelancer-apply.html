@@ -296,8 +296,8 @@
 
                             // Populate Client Info
                             if (job.client) {
-                                document.getElementById('job-client-name').textContent = job.client.fullName;
-                                document.getElementById('job-client-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random`;
+                                document.getElementById('job-client-name').textContent = job.client.deletedAt ? 'User Deleted' : job.client.fullName;
+                                document.getElementById('job-client-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.deletedAt ? 'User Deleted' : job.client.fullName)}&background=random`;
 
                                 // Click to view profile
                                 document.getElementById('client-info-card').onclick = () => {

@@ -163,10 +163,12 @@
 
                                 document.getElementById('job-count-label').innerText = `${jobs.length} new jobs for you`;
 
-                                container.innerHTML = jobs.map(job => `
+                                container.innerHTML = jobs.map(job => {
+                                    const clientName = job.client ? (job.client.deletedAt ? 'User Deleted' : job.client.fullName) : 'Client';
+                                    return `
                                     <div class="glass-card" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: start;">
                                         <div class="job-icon" style="flex-shrink: 0; cursor: pointer;" onclick="if(event.target.tagName !== 'A') window.location.href='freelancer-view-client.html?id=${job.client ? job.client.id : ''}'">
-                                            <img id="avatar-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client ? job.client.fullName : 'Client')}&background=random" 
+                                            <img id="avatar-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=random" 
                                                  style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
                                         </div>
                                         <div style="flex: 1;">
@@ -192,6 +194,7 @@
                                         <a href="freelancer-apply.html?jobId=${job.id}" class="btn btn-primary"
                                             style="padding: 8px 20px; height: fit-content; text-decoration: none;">Apply Now</a>
                                     </div>
+                                `}).join('');
                                 `).join('');
 
                                 // Fetch real avatars for jobs

@@ -233,13 +233,15 @@
                             if (stats.activeOrders.length === 0) {
                                 ordersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No active orders.</td></tr>';
                             } else {
-                                ordersTableBody.innerHTML = stats.activeOrders.map(job => `
+                                ordersTableBody.innerHTML = stats.activeOrders.map(job => {
+                                    const clientName = job.client.deletedAt ? 'User Deleted' : job.client.fullName;
+                                    return `
                                     <tr style="border-bottom: 1px solid #f0f0f0;">
                                         <td style="padding: 15px;">
                                             <div style="display: flex; align-items: center; gap: 10px;">
-                                                <img id="avatar-active-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random"
+                                                <img id="avatar-active-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=random"
                                                     style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
-                                                ${job.client.fullName}
+                                                ${clientName}
                                             </div>
                                         </td>
                                         <td><a href="freelancer-track-job.html?jobId=${job.id}" style="color: inherit; text-decoration: none; font-weight: 600;">${job.title}</a></td>
@@ -247,7 +249,7 @@
                                         <td>$${job.budget}</td>
                                         <td><a href="freelancer-track-job.html?jobId=${job.id}" class="status-badge status-active" style="text-decoration: none;">Track</a></td>
                                     </tr>
-                                `).join('');
+                                `}).join('');
 
                                 // Fetch real avatars
                                 stats.activeOrders.forEach(job => {

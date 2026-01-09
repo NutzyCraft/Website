@@ -494,8 +494,8 @@
 
                 // Populate Client Info
                 if (job.client) {
-                    document.getElementById('client-name').textContent = `Client: ${job.client.fullName}`;
-                    document.getElementById('review-client-name').textContent = job.client.fullName;
+                    document.getElementById('client-name').textContent = `Client: ${job.client.deletedAt ? 'User Deleted' : job.client.fullName}`;
+                    document.getElementById('review-client-name').textContent = job.client.deletedAt ? 'User Deleted' : job.client.fullName;
 
                     // Fetch real avatar
                     fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
