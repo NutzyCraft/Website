@@ -33,9 +33,17 @@ public class AuthService {
     @Transactional
     public User registerFreelancer(FreelancerRegisterRequest request) {
         validatePassword(request.getPassword());
+        
+        // Check if email is in use by active user
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
+        
+        // Check if email belongs to a soft-deleted account
+        if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
+        }
+        
         User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.FREELANCER);
 
         Freelancer freelancer = new Freelancer();
@@ -49,9 +57,17 @@ public class AuthService {
     @Transactional
     public User registerClient(ClientRegisterRequest request) {
         validatePassword(request.getPassword());
+        
+        // Check if email is in use by active user
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
+        
+        // Check if email belongs to a soft-deleted account
+        if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
+        }
+        
         User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.CLIENT);
 
         Client client = new Client();
@@ -113,6 +129,12 @@ public class AuthService {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+            
+            // Check if account has been deleted
+            if (user.isDeleted() || user.getDeletedAt() != null) {
+                throw new RuntimeException("This account has been deleted. Please contact support if you believe this is an error.");
+            }
+            
             if (password.equals(user.getPassword())) { // Simple check, should use Encoder matches
                 if (!user.isVerified()) {
                     throw new RuntimeException("Account not verified. Please check your email.");

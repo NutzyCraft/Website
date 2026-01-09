@@ -75,7 +75,8 @@ public class ChatService {
         User otherUser = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new RuntimeException("Other user not found"));
         
-        List<ChatMessage> messages = chatRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverIdOrderByTimestampAsc(
+        // Use new query method that excludes deleted messages
+        List<ChatMessage> messages = chatRepository.findBySenderIdAndReceiverIdAndDeletedAtIsNullOrSenderIdAndReceiverIdAndDeletedAtIsNullOrderByTimestampAsc(
                 currentUser.getId(), otherUserId,
                 otherUserId, currentUser.getId()
         );
@@ -101,8 +102,8 @@ public class ChatService {
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Get all messages where user is sender OR receiver
-        List<ChatMessage> allMessages = chatRepository.findBySenderIdOrReceiverIdOrderByTimestampDesc(
+        // Get all messages where user is sender OR receiver, excluding deleted messages
+        List<ChatMessage> allMessages = chatRepository.findBySenderIdOrReceiverIdAndDeletedAtIsNullOrderByTimestampDesc(
                 currentUser.getId(), currentUser.getId()
         );
 

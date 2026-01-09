@@ -9,8 +9,13 @@ import com.nutzycraft.backend.repository.JobRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +41,9 @@ public class AdminService {
 
     @Autowired
     private com.nutzycraft.backend.repository.NotificationRepository notificationRepository;
+    
+    @Autowired
+    private UserDeletionService userDeletionService;
 
     public DashboardStatsDTO getDashboardStats() {
         long totalUsers = userRepository.count();
@@ -106,8 +114,8 @@ public class AdminService {
         return new AdminJobDTO(
                 job.getId(),
                 job.getTitle(),
-                job.getClient() != null ? job.getClient().getFullName() : "Unknown",
-                job.getFreelancer() != null ? job.getFreelancer().getFullName() : "Not Assigned",
+                job.getClient() != null ? job.getClient().getDisplayName() : "Unknown",
+                job.getFreelancer() != null ? job.getFreelancer().getDisplayName() : "Not Assigned",
                 job.getBudget(),
                 job.getStatus(),
                 job.getClient() != null ? job.getClient().getId() : null,
@@ -211,7 +219,7 @@ public class AdminService {
         return new com.nutzycraft.backend.dto.AdminDTOs.AdminTransactionItemDTO(
                 t.getId(),
                 t.getDescription(),
-                t.getRelatedUser() != null ? t.getRelatedUser().getFullName() : "System",
+                t.getRelatedUser() != null ? t.getRelatedUser().getDisplayName() : "System",
                 t.getAmount(),
                 t.getStatus().name(),
                 formatDate(t.getDate()),
@@ -222,8 +230,8 @@ public class AdminService {
             com.nutzycraft.backend.entity.Dispute d) {
         return new com.nutzycraft.backend.dto.AdminDTOs.AdminDisputeDTO(
                 d.getId(),
-                d.getClient() != null ? d.getClient().getFullName() : "Unknown",
-                d.getFreelancer() != null ? d.getFreelancer().getFullName() : "Unknown",
+                d.getClient() != null ? d.getClient().getDisplayName() : "Unknown",
+                d.getFreelancer() != null ? d.getFreelancer().getDisplayName() : "Unknown",
                 d.getIssue(),
                 d.getStatus().name(),
                 formatDate(d.getCreatedAt()));
@@ -233,7 +241,7 @@ public class AdminService {
             com.nutzycraft.backend.entity.SupportMessage s) {
         return new com.nutzycraft.backend.dto.AdminDTOs.AdminSupportDTO(
                 s.getId(),
-                s.getSender() != null ? s.getSender().getFullName() : "Guest",
+                s.getSender() != null ? s.getSender().getDisplayName() : "Guest",
                 s.getSender() != null && s.getSender().getRole() != null ? s.getSender().getRole().name() : "GUEST",
                 s.getSubject(),
                 s.getStatus().name(),
@@ -244,5 +252,64 @@ public class AdminService {
         if (date == null)
             return "";
         return date.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, yyyy"));
+    }
+    
+    /**
+     * Get all soft-deleted users with details
+     */
+    public List<Map<String, Object>> getDeletedUsers() {
+        List<User> deletedUsers = userRepository.findAllDeleted();
+        LocalDateTime now = LocalDateTime.now();
+        
+        return deletedUsers.stream().map(user -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("id", user.getId());
+            userMap.put("email", user.getEmail());
+            userMap.put("fullName", user.getFullName());
+            userMap.put("role", user.getRole().name());
+            userMap.put("deletedAt", user.getDeletedAt());
+            
+            if (user.getDeletedAt() != null) {
+                long daysSinceDeletion = ChronoUnit.DAYS.between(user.getDeletedAt(), now);
+                userMap.put("daysSinceDeletion", daysSinceDeletion);
+            } else {
+                userMap.put("daysSinceDeletion", 0);
+            }
+            
+            return userMap;
+        }).collect(Collectors.toList());
+    }
+    
+    /**
+     * Restore a soft-deleted user account
+     */
+    @Transactional
+    public void restoreUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+                
+        if (!user.isDeleted()) {
+            throw new RuntimeException("User is not deleted");
+        }
+        
+        user.setDeleted(false);
+        user.setDeletedAt(null);
+        userRepository.save(user);
+    }
+    
+    /**
+     * Permanently delete a user account
+     */
+    @Transactional
+    public void permanentlyDeleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+                
+        if (!user.isDeleted()) {
+            throw new RuntimeException("User must be soft-deleted first");
+        }
+        
+        // Call the permanent deletion service
+        userDeletionService.permanentlyDeleteUserAccount(user.getEmail());
     }
 }

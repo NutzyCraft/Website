@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,8 +30,9 @@ public class UserDeletionService {
     private final Cloudinary cloudinary;
 
     /**
-     * Deletes a user and all their associated data from PostgreSQL, MongoDB, and Cloudinary.
-     * This is a destructive operation and cannot be undone.
+     * Soft deletes a user account by marking it as deleted instead of permanently removing it.
+     * Associated data like chat messages are also marked as deleted.
+     * Admin can permanently delete the account later.
      */
     @Transactional
     public void deleteUserAccount(String email) {
@@ -38,12 +40,37 @@ public class UserDeletionService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Long userId = user.getId();
+
+        log.info("Starting soft delete for user: {} (ID: {})", email, userId);
+
+        // 1. Mark MongoDB chat messages as deleted
+        softDeleteChatMessages(userId);
+
+        // 2. Mark the user as deleted
+        user.setDeleted(true);
+        user.setDeletedAt(LocalDateTime.now());
+        userRepository.save(user);
+        
+        log.info("Soft deleted user account: {}", email);
+    }
+
+    /**
+     * Permanently deletes a user and all their associated data from PostgreSQL, MongoDB, and Cloudinary.
+     * This is a destructive operation and cannot be undone.
+     * Should only be called by admins for accounts that have been soft-deleted for 30+ days.
+     */
+    @Transactional
+    public void permanentlyDeleteUserAccount(String email) {
+        User user = userRepository.findDeletedByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Deleted user not found"));
+
+        Long userId = user.getId();
         List<String> cloudinaryUrls = new ArrayList<>();
 
-        log.info("Starting account deletion for user: {} (ID: {})", email, userId);
+        log.info("Starting permanent deletion for user: {} (ID: {})", email, userId);
 
-        // 1. Delete MongoDB chat messages
-        deleteMongoDBData(userId);
+        // 1. Permanently delete MongoDB chat messages
+        permanentlyDeleteChatMessages(userId);
 
         // 2. Collect Cloudinary URLs and delete PostgreSQL data based on role
         if (user.getRole() == User.Role.FREELANCER) {
@@ -55,26 +82,44 @@ public class UserDeletionService {
         // 3. Delete notifications for this user
         deleteNotifications(userId);
 
-        // 4. Delete the user record
+        // 4. Delete the user record permanently
         userRepository.delete(user);
-        log.info("Deleted user record for: {}", email);
+        log.info("Permanently deleted user record for: {}", email);
 
         // 5. Delete Cloudinary assets (after DB transaction commits)
         deleteCloudinaryAssets(cloudinaryUrls);
 
-        log.info("Account deletion completed for user: {}", email);
+        log.info("Permanent account deletion completed for user: {}", email);
     }
 
-    private void deleteMongoDBData(Long userId) {
+    private void softDeleteChatMessages(Long userId) {
         try {
-            // Delete all messages where user is sender or receiver
+            // Mark all messages where user is sender or receiver as deleted
+            List<ChatMessage> messages = chatRepository.findBySenderIdOrReceiverIdOrderByTimestampDesc(userId, userId);
+            if (!messages.isEmpty()) {
+                LocalDateTime now = LocalDateTime.now();
+                for (ChatMessage message : messages) {
+                    message.setDeletedAt(now);
+                }
+                chatRepository.saveAll(messages);
+                log.info("Soft deleted {} chat messages from MongoDB for user ID: {}", messages.size(), userId);
+            }
+        } catch (Exception e) {
+            log.error("Error soft deleting MongoDB data for user {}: {}", userId, e.getMessage());
+            // Continue with deletion even if MongoDB fails
+        }
+    }
+
+    private void permanentlyDeleteChatMessages(Long userId) {
+        try {
+            // Permanently delete all messages where user is sender or receiver
             List<ChatMessage> messages = chatRepository.findBySenderIdOrReceiverIdOrderByTimestampDesc(userId, userId);
             if (!messages.isEmpty()) {
                 chatRepository.deleteAll(messages);
-                log.info("Deleted {} chat messages from MongoDB for user ID: {}", messages.size(), userId);
+                log.info("Permanently deleted {} chat messages from MongoDB for user ID: {}", messages.size(), userId);
             }
         } catch (Exception e) {
-            log.error("Error deleting MongoDB data for user {}: {}", userId, e.getMessage());
+            log.error("Error permanently deleting MongoDB data for user {}: {}", userId, e.getMessage());
             // Continue with deletion even if MongoDB fails
         }
     }

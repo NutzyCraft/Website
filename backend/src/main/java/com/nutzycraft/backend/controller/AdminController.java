@@ -4,11 +4,15 @@ import com.nutzycraft.backend.dto.AdminJobDTO;
 import com.nutzycraft.backend.dto.AdminUserDTO;
 import com.nutzycraft.backend.dto.DashboardStatsDTO;
 import com.nutzycraft.backend.service.AdminService;
+import com.nutzycraft.backend.service.UserDeletionService;
+import com.nutzycraft.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -17,6 +21,9 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+    
+    @Autowired
+    private UserDeletionService userDeletionService;
 
     @GetMapping("/dashboard/stats")
     public ResponseEntity<DashboardStatsDTO> getDashboardStats() {
@@ -104,6 +111,41 @@ public class AdminController {
                  trx.getStatus(),
                  trx.getDate()
              );
+        }
+    }
+    
+    /**
+     * Get all soft-deleted users
+     */
+    @GetMapping("/users/deleted")
+    public ResponseEntity<List<Map<String, Object>>> getDeletedUsers() {
+        return ResponseEntity.ok(adminService.getDeletedUsers());
+    }
+    
+    /**
+     * Restore a soft-deleted user account
+     */
+    @PutMapping("/users/{id}/restore")
+    public ResponseEntity<?> restoreUser(@PathVariable Long id) {
+        try {
+            adminService.restoreUser(id);
+            return ResponseEntity.ok(Map.of("message", "User restored successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Permanently delete a soft-deleted user account
+     * Admin can delete at their discretion (no 30-day enforcement)
+     */
+    @DeleteMapping("/users/{id}/permanent")
+    public ResponseEntity<?> permanentlyDeleteUser(@PathVariable Long id) {
+        try {
+            adminService.permanentlyDeleteUser(id);
+            return ResponseEntity.ok(Map.of("message", "User permanently deleted"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 }
