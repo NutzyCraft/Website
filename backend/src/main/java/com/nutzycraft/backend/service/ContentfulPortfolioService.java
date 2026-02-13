@@ -61,6 +61,7 @@ public class ContentfulPortfolioService {
         String title = entry.getField("heading");
         String description = entry.getField("description");
         String techStack = entry.getField("tech");
+        String link= entry.getField("link");
         
         // Image is likely a link to an asset
         String imageUrl = "";
@@ -69,6 +70,6 @@ public class ContentfulPortfolioService {
             imageUrl = "https:" + ((CDAAsset) imageField).url();
         }
 
-        return new PortfolioItem(title, description, techStack, imageUrl);
+        return new PortfolioItem(title, description, techStack, imageUrl, link);
     }
 }

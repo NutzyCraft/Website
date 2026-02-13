@@ -12,4 +12,5 @@ public class PortfolioItem {
     private String description;
     private String techStack;
     private String imageUrl;
+    private String link;
 }
