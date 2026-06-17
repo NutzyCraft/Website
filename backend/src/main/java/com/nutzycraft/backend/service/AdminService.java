@@ -8,6 +8,7 @@ import com.nutzycraft.backend.entity.User;
 import com.nutzycraft.backend.repository.JobRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -284,7 +285,7 @@ public class AdminService {
      * Restore a soft-deleted user account
      */
     @Transactional
-    public void restoreUser(Long userId) {
+    public void restoreUser(@NonNull Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
                 
@@ -301,7 +302,7 @@ public class AdminService {
      * Permanently delete a user account
      */
     @Transactional
-    public void permanentlyDeleteUser(Long userId) {
+    public void permanentlyDeleteUser(@NonNull Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
                 

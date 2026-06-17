@@ -3,6 +3,7 @@ package com.nutzycraft.backend.controller;
 import com.nutzycraft.backend.entity.Client;
 import com.nutzycraft.backend.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,7 +45,7 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public Client getClientById(@PathVariable Long id) {
+    public Client getClientById(@PathVariable @NonNull Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Client not found"));
     }

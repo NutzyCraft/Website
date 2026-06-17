@@ -7,6 +7,7 @@ import com.nutzycraft.backend.repository.ChatRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import com.nutzycraft.backend.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -68,7 +69,7 @@ public class ChatService {
                 .build();
     }
 
-    public List<com.nutzycraft.backend.dto.MessageResponse> getChatHistory(String currentUserEmail, Long otherUserId) {
+    public List<com.nutzycraft.backend.dto.MessageResponse> getChatHistory(String currentUserEmail, @NonNull Long otherUserId) {
         User currentUser = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -119,7 +120,9 @@ public class ChatService {
 
         List<ConversationDTO> conversations = new ArrayList<>();
         for (Map.Entry<Long, ChatMessage> entry : latestMessages.entrySet()) {
-            Long otherId = entry.getKey();
+            Long otherIdRaw = entry.getKey();
+            if (otherIdRaw == null) continue;
+            @NonNull Long otherId = otherIdRaw;
             ChatMessage lastMsg = entry.getValue();
             
             Optional<User> otherUserOpt = userRepository.findById(otherId);

@@ -4,6 +4,7 @@ import com.nutzycraft.backend.dto.UserProfileDTO;
 import com.nutzycraft.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,7 +33,7 @@ public class UserController {
     private com.nutzycraft.backend.service.FileUploadService fileUploadService;
 
     @PostMapping("/{id}/avatar")
-    public ResponseEntity<String> uploadAvatar(@PathVariable Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+    public ResponseEntity<String> uploadAvatar(@PathVariable @NonNull Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
         try {
             com.nutzycraft.backend.entity.User user = userRepository.findById(id).orElse(null);
             if (user == null) {
@@ -65,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/avatar")
-    public ResponseEntity<String> getUserAvatar(@PathVariable Long id) {
+    public ResponseEntity<String> getUserAvatar(@PathVariable @NonNull Long id) {
         com.nutzycraft.backend.entity.User user = userRepository.findById(id).orElse(null);
         if (user == null)
             return ResponseEntity.notFound().build();

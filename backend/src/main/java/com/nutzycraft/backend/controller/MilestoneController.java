@@ -8,6 +8,7 @@ import com.nutzycraft.backend.repository.MilestoneRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,12 @@ public class MilestoneController {
 
     @PostMapping
     public Milestone createMilestone(@RequestBody MilestoneRequest request) {
-        Job job = jobRepository.findById(request.getJobId())
+        Long jobIdRaw = request.getJobId();
+        if (jobIdRaw == null) {
+            throw new IllegalArgumentException("Job ID is required");
+        }
+        @NonNull Long jobId = jobIdRaw;
+        Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
         User creator = userRepository.findByEmail(request.getCreatedByEmail())
@@ -53,7 +59,7 @@ public class MilestoneController {
     }
 
     @PutMapping("/{id}/status")
-    public Milestone updateStatus(@PathVariable Long id, @RequestParam String status) {
+    public Milestone updateStatus(@PathVariable @NonNull Long id, @RequestParam String status) {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
         milestone.setStatus(status);
@@ -61,7 +67,7 @@ public class MilestoneController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMilestone(@PathVariable Long id) {
+    public ResponseEntity<?> deleteMilestone(@PathVariable @NonNull Long id) {
         if (!milestoneRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

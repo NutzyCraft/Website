@@ -9,6 +9,7 @@ import com.nutzycraft.backend.repository.UserRepository;
 import com.nutzycraft.backend.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +65,7 @@ public class SharedFileController {
      */
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
-            @RequestParam("jobId") Long jobId,
+            @RequestParam("jobId") @NonNull Long jobId,
             @RequestParam("uploaderEmail") String uploaderEmail,
             @RequestParam("file") MultipartFile file) {
 
@@ -127,7 +128,7 @@ public class SharedFileController {
      * Delete a shared file
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
+    public ResponseEntity<?> deleteFile(@PathVariable @NonNull Long id) {
         try {
             SharedFile file = sharedFileRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("File not found"));

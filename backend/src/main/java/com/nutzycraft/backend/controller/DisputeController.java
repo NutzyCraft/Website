@@ -6,6 +6,7 @@ import com.nutzycraft.backend.entity.User;
 import com.nutzycraft.backend.repository.DisputeRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,18 @@ public class DisputeController {
     private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<String> createDispute(@RequestBody AdminDTOs.CreateDisputeDTO request, @RequestParam String clientEmail) {
+    public ResponseEntity<String> createDispute(@RequestBody AdminDTOs.CreateDisputeDTO request,
+            @RequestParam String clientEmail) {
         User client = userRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new RuntimeException("Client not found"));
-        
-        if (request.getFreelancerId() == null) {
+
+        Long freelancerIdRaw = request.getFreelancerId();
+        if (freelancerIdRaw == null) {
             return ResponseEntity.badRequest().body("Freelancer ID is required");
         }
-        
-        User freelancer = userRepository.findById(request.getFreelancerId())
+        @NonNull Long freelancerId = freelancerIdRaw;
+
+        User freelancer = userRepository.findById(freelancerId)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
 
         Dispute dispute = new Dispute();

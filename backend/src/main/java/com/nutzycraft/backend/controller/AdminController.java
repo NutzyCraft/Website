@@ -5,12 +5,10 @@ import com.nutzycraft.backend.dto.AdminUserDTO;
 import com.nutzycraft.backend.dto.DashboardStatsDTO;
 import com.nutzycraft.backend.service.AdminService;
 import com.nutzycraft.backend.service.UserDeletionService;
-import com.nutzycraft.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +19,7 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
-    
+
     @Autowired
     private UserDeletionService userDeletionService;
 
@@ -67,7 +65,8 @@ public class AdminController {
     }
 
     @PostMapping("/settings")
-    public ResponseEntity<Void> updateSettings(@RequestBody com.nutzycraft.backend.dto.AdminDTOs.SystemSettingsDTO settings) {
+    public ResponseEntity<Void> updateSettings(
+            @RequestBody com.nutzycraft.backend.dto.AdminDTOs.SystemSettingsDTO settings) {
         adminService.updateSystemSettings(settings);
         return ResponseEntity.ok().build();
     }
@@ -76,7 +75,7 @@ public class AdminController {
     public ResponseEntity<List<com.nutzycraft.backend.dto.AdminDTOs.NotificationDTO>> getNotifications() {
         return ResponseEntity.ok(adminService.getNotifications());
     }
-    
+
     @PutMapping("/disputes/{id}/resolve")
     public ResponseEntity<Void> resolveDispute(@PathVariable Long id) {
         adminService.resolveDispute(id);
@@ -93,27 +92,26 @@ public class AdminController {
     public void exportFinanceReport(jakarta.servlet.http.HttpServletResponse response) throws java.io.IOException {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=finance_report.csv");
-        
+
         com.nutzycraft.backend.dto.AdminDTOs.AdminFinanceDTO stats = adminService.getFinanceStats();
         java.io.PrintWriter writer = response.getWriter();
-        
+
         // Write CSV Header
         writer.println("Transaction ID,Description,User,Type,Amount,Status,Date");
-        
+
         // Write Data
         for (com.nutzycraft.backend.dto.AdminDTOs.AdminTransactionItemDTO trx : stats.getRecentTransactions()) {
-             writer.printf("%d,\"%s\",\"%s\",%s,%.2f,%s,%s%n",
-                 trx.getId(),
-                 trx.getDescription().replace("\"", "\"\""), // Escape quotes
-                 trx.getUserName(),
-                 trx.getType(),
-                 trx.getAmount(),
-                 trx.getStatus(),
-                 trx.getDate()
-             );
+            writer.printf("%d,\"%s\",\"%s\",%s,%.2f,%s,%s%n",
+                    trx.getId(),
+                    trx.getDescription().replace("\"", "\"\""), // Escape quotes
+                    trx.getUserName(),
+                    trx.getType(),
+                    trx.getAmount(),
+                    trx.getStatus(),
+                    trx.getDate());
         }
     }
-    
+
     /**
      * Get all soft-deleted users
      */
@@ -121,7 +119,7 @@ public class AdminController {
     public ResponseEntity<List<Map<String, Object>>> getDeletedUsers() {
         return ResponseEntity.ok(adminService.getDeletedUsers());
     }
-    
+
     /**
      * Restore a soft-deleted user account
      */
@@ -134,7 +132,7 @@ public class AdminController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-    
+
     /**
      * Permanently delete a soft-deleted user account
      * Admin can delete at their discretion (no 30-day enforcement)

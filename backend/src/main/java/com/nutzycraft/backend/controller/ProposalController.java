@@ -9,6 +9,7 @@ import com.nutzycraft.backend.repository.UserRepository;
 import com.nutzycraft.backend.entity.Notification;
 import com.nutzycraft.backend.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class ProposalController {
     }
 
     @GetMapping("/{id}")
-    public Proposal getProposalById(@PathVariable Long id) {
+    public Proposal getProposalById(@PathVariable @NonNull Long id) {
         return proposalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proposal not found"));
     }
@@ -59,7 +60,7 @@ public class ProposalController {
         if (request.getJobId() == null) {
             throw new IllegalArgumentException("Job ID cannot be null");
         }
-        Long jobId = request.getJobId();
+        @NonNull Long jobId = request.getJobId();
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
@@ -80,7 +81,7 @@ public class ProposalController {
     }
 
     @PostMapping("/{id}/accept")
-    public void acceptProposal(@PathVariable Long id) {
+    public void acceptProposal(@PathVariable @NonNull Long id) {
         Proposal proposal = proposalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proposal not found"));
 

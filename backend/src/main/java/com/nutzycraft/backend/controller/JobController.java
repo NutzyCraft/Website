@@ -3,6 +3,7 @@ package com.nutzycraft.backend.controller;
 import com.nutzycraft.backend.entity.Job;
 import com.nutzycraft.backend.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public Job getJobById(@PathVariable Long id) {
+    public Job getJobById(@PathVariable @NonNull Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
     }
@@ -97,7 +98,7 @@ public class JobController {
     }
 
     @PutMapping("/{id}/step")
-    public Job updateJobStep(@PathVariable Long id, @RequestParam Integer step) {
+    public Job updateJobStep(@PathVariable @NonNull Long id, @RequestParam Integer step) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
         // 1=Started, 2=Concepts, 3=Revisions, 4=Delivery
         if (step < 1 || step > 4) {
@@ -130,7 +131,7 @@ public class JobController {
 
     @PostMapping("/{id}/review")
     public Job addReview(
-            @PathVariable Long id,
+            @PathVariable @NonNull Long id,
             @RequestParam String reviewerEmail,
             @RequestParam Integer rating,
             @RequestParam String reviewText,

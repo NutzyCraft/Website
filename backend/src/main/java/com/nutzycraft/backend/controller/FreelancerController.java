@@ -5,11 +5,11 @@ import com.nutzycraft.backend.repository.FreelancerRepository;
 import com.nutzycraft.backend.dto.FreelancerDTO;
 import com.nutzycraft.backend.dto.UserSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.Stream;
 
 @RestController
@@ -36,7 +36,7 @@ public class FreelancerController {
 
     // Get specific profile
     @GetMapping("/{id}")
-    public Freelancer getFreelancer(@PathVariable Long id) {
+    public Freelancer getFreelancer(@PathVariable @NonNull Long id) {
         return freelancerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
     }
@@ -56,7 +56,7 @@ public class FreelancerController {
 
     @PutMapping("/me")
     public Freelancer updateMyProfile(@RequestParam String email, @RequestBody Freelancer updatedFreelancer) {
-        Freelancer existing = freelancerRepository.findByUser_Email(email)
+        @NonNull Freelancer existing = freelancerRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
 
         if (updatedFreelancer.getTitle() != null)

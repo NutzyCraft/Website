@@ -2,6 +2,7 @@ package com.nutzycraft.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,12 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    private String fromEmail;
+    private @NonNull String fromEmail;
 
     @Value("${app.url:http://localhost:8080}")
     private String appUrl;
 
-    public void sendVerificationEmail(String toEmail, String verificationCode) {
+    public void sendVerificationEmail(@NonNull String toEmail, @NonNull String verificationCode) {
         logger.info("=== ATTEMPTING TO SEND EMAIL ===");
         logger.info("To: {}", toEmail);
         logger.info("From: {}", fromEmail);
@@ -37,7 +38,7 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("NutzyCraft - Verify Your Email");
 
-            String htmlContent = buildVerificationEmailHtml(toEmail, verificationCode);
+            @NonNull String htmlContent = buildVerificationEmailHtml(toEmail, verificationCode);
             helper.setText(htmlContent, true);
 
             logger.info("Sending email via SMTP...");
@@ -55,7 +56,7 @@ public class EmailService {
         }
     }
 
-    private String buildVerificationEmailHtml(String email, String code) {
+    private @NonNull String buildVerificationEmailHtml(@NonNull String email, @NonNull String code) {
         String verifyUrl = appUrl + "/verify-email.html?email=" + email;
 
         return """
@@ -116,9 +117,9 @@ public class EmailService {
                                     """;
     }
 
-    public void sendPasswordResetEmail(String toEmail, String token) {
+    public void sendPasswordResetEmail(@NonNull String toEmail, @NonNull String token) {
         String resetUrl = appUrl + "/reset-password.html?token=" + token;
-        String html = """
+        @NonNull String html = """
                 <!DOCTYPE html>
                 <html>
                 <body style="font-family: Arial, sans-serif; padding: 20px;">

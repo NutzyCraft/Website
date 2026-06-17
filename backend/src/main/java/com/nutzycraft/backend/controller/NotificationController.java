@@ -3,6 +3,7 @@ package com.nutzycraft.backend.controller;
 import com.nutzycraft.backend.entity.Notification;
 import com.nutzycraft.backend.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,10 +34,9 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}/read")
-    public void markAsRead(@PathVariable Long id) {
+    public void markAsRead(@PathVariable @NonNull Long id) {
         notificationRepository.findById(id).ifPresent(notification -> {
             notification.setRead(true);
-            notificationRepository.save(notification);
             notificationRepository.save(notification);
         });
     }
