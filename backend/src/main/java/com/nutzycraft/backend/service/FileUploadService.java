@@ -16,16 +16,16 @@ public class FileUploadService {
     private Cloudinary cloudinary;
 
     public String uploadFile(MultipartFile file) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         return (String) uploadResult.get("secure_url");
     }
 
     /**
      * Upload file and return detailed information including public_id for deletion
      */
+    @SuppressWarnings("unchecked")
     public Map<String, Object> uploadFileWithDetails(MultipartFile file) throws IOException {
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult;
+        return (Map<String, Object>) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
     }
 
     /**
