@@ -3,9 +3,11 @@ package com.nutzycraft.backend.config;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
+@Profile("dev")
 public class SchemaFixer implements CommandLineRunner {
 
     @Autowired
