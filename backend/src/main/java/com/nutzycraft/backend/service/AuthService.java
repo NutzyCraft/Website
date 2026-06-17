@@ -8,7 +8,6 @@ import com.nutzycraft.backend.repository.ClientRepository;
 import com.nutzycraft.backend.repository.FreelancerRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,17 +33,17 @@ public class AuthService {
     @Transactional
     public User registerFreelancer(FreelancerRegisterRequest request) {
         validatePassword(request.getPassword());
-        
+
         // Check if email is in use by active user
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
-        
+
         // Check if email belongs to a soft-deleted account
         if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
         }
-        
+
         User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.FREELANCER);
 
         Freelancer freelancer = new Freelancer();
@@ -58,17 +57,17 @@ public class AuthService {
     @Transactional
     public User registerClient(ClientRegisterRequest request) {
         validatePassword(request.getPassword());
-        
+
         // Check if email is in use by active user
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
-        
+
         // Check if email belongs to a soft-deleted account
         if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
         }
-        
+
         User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.CLIENT);
 
         Client client = new Client();
@@ -102,12 +101,13 @@ public class AuthService {
         return userRepository.save(user);
     }
 
+    @SuppressWarnings("null")
     private void sendVerification(User user) {
         String code = String.valueOf((int) (Math.random() * 9000) + 1000);
         user.setVerificationCode(code);
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(24));
         userRepository.save(user);
-        
+
         String email = user.getEmail();
         if (email == null) {
             throw new IllegalStateException("User email cannot be null");
@@ -135,12 +135,13 @@ public class AuthService {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            
+
             // Check if account has been deleted
             if (user.isDeleted() || user.getDeletedAt() != null) {
-                throw new RuntimeException("This account has been deleted. Please contact support if you believe this is an error.");
+                throw new RuntimeException(
+                        "This account has been deleted. Please contact support if you believe this is an error.");
             }
-            
+
             if (password.equals(user.getPassword())) { // Simple check, should use Encoder matches
                 if (!user.isVerified()) {
                     throw new RuntimeException("Account not verified. Please check your email.");
@@ -167,13 +168,14 @@ public class AuthService {
         return user;
     }
 
+    @SuppressWarnings("null")
     public void forgotPassword(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
             String token = UUID.randomUUID().toString();
             user.setResetToken(token);
             user.setResetTokenExpiresAt(LocalDateTime.now().plusHours(1));
             userRepository.save(user);
-            
+
             String userEmail = user.getEmail();
             if (userEmail == null) {
                 throw new IllegalStateException("User email cannot be null");
@@ -266,7 +268,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         com.nutzycraft.backend.dto.UserProfileDTO dto = new com.nutzycraft.backend.dto.UserProfileDTO();
-        
+
         // Only set primitive/String fields explicitly
         dto.setFullName(user.getFullName() != null ? user.getFullName() : "");
         dto.setEmail(user.getEmail() != null ? user.getEmail() : "");

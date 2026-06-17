@@ -3,7 +3,6 @@ package com.nutzycraft.backend.controller;
 import com.nutzycraft.backend.entity.Job;
 import com.nutzycraft.backend.entity.Proposal;
 import com.nutzycraft.backend.repository.JobRepository;
-import com.nutzycraft.backend.entity.User;
 
 import com.nutzycraft.backend.service.ChatService;
 import com.nutzycraft.backend.dto.ConversationDTO;
@@ -36,7 +35,7 @@ public class DashboardController {
 
     @GetMapping("/client")
     public ClientDashboardDTO getClientDashboard(@RequestParam String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Fetch jobs for client with eager loading to prevent N+1 queries
         List<Job> jobs = jobRepository.findByClientEmailWithUsers(email);
@@ -71,7 +70,7 @@ public class DashboardController {
 
     @GetMapping("/freelancer")
     public FreelancerStatsDTO getFreelancerStats(@RequestParam String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Fetch proposals to calc stats
         List<Proposal> proposals = proposalRepository.findByFreelancerEmail(email);

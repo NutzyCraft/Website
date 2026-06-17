@@ -121,6 +121,7 @@ public class EmailService {
                                     """;
     }
 
+    @SuppressWarnings("null")
     public void sendPasswordResetEmail(@NonNull String toEmail, @NonNull String token) {
         String resetUrl = appUrl + "/reset-password.html?token=" + token;
         String html = """
