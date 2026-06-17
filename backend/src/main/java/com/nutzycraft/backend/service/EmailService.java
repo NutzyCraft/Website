@@ -19,7 +19,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    private @NonNull String fromEmail;
+    private String fromEmail;
 
     @Value("${app.url:http://localhost:8080}")
     private String appUrl;
@@ -34,11 +34,15 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom(fromEmail);
+            String from = this.fromEmail;
+            if (from == null) {
+                throw new IllegalStateException("SMTP sender email address is not configured");
+            }
+            helper.setFrom(from);
             helper.setTo(toEmail);
             helper.setSubject("NutzyCraft - Verify Your Email");
 
-            @NonNull String htmlContent = buildVerificationEmailHtml(toEmail, verificationCode);
+            String htmlContent = buildVerificationEmailHtml(toEmail, verificationCode);
             helper.setText(htmlContent, true);
 
             logger.info("Sending email via SMTP...");
@@ -119,7 +123,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(@NonNull String toEmail, @NonNull String token) {
         String resetUrl = appUrl + "/reset-password.html?token=" + token;
-        @NonNull String html = """
+        String html = """
                 <!DOCTYPE html>
                 <html>
                 <body style="font-family: Arial, sans-serif; padding: 20px;">
@@ -135,7 +139,11 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
+            String from = this.fromEmail;
+            if (from == null) {
+                throw new IllegalStateException("SMTP sender email address is not configured");
+            }
+            helper.setFrom(from);
             helper.setTo(toEmail);
             helper.setSubject("NutzyCraft - Reset Your Password");
             helper.setText(html, true);

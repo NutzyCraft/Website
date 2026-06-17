@@ -120,9 +120,8 @@ public class ChatService {
 
         List<ConversationDTO> conversations = new ArrayList<>();
         for (Map.Entry<Long, ChatMessage> entry : latestMessages.entrySet()) {
-            Long otherIdRaw = entry.getKey();
-            if (otherIdRaw == null) continue;
-            @NonNull Long otherId = otherIdRaw;
+            Long otherId = entry.getKey();
+            if (otherId == null) continue;
             ChatMessage lastMsg = entry.getValue();
             
             Optional<User> otherUserOpt = userRepository.findById(otherId);

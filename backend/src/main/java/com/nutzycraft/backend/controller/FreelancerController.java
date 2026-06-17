@@ -56,8 +56,11 @@ public class FreelancerController {
 
     @PutMapping("/me")
     public Freelancer updateMyProfile(@RequestParam String email, @RequestBody Freelancer updatedFreelancer) {
-        @NonNull Freelancer existing = freelancerRepository.findByUser_Email(email)
+        Freelancer existing = freelancerRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+        if (existing == null) {
+            throw new RuntimeException("Freelancer not found");
+        }
 
         if (updatedFreelancer.getTitle() != null)
             existing.setTitle(updatedFreelancer.getTitle());

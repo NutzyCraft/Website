@@ -34,11 +34,10 @@ public class MilestoneController {
 
     @PostMapping
     public Milestone createMilestone(@RequestBody MilestoneRequest request) {
-        Long jobIdRaw = request.getJobId();
-        if (jobIdRaw == null) {
+        Long jobId = request.getJobId();
+        if (jobId == null) {
             throw new IllegalArgumentException("Job ID is required");
         }
-        @NonNull Long jobId = jobIdRaw;
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 

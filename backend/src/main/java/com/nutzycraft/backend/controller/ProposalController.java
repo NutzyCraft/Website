@@ -57,10 +57,10 @@ public class ProposalController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // request.getJobId() is checked for null above
-        if (request.getJobId() == null) {
+        Long jobId = request.getJobId();
+        if (jobId == null) {
             throw new IllegalArgumentException("Job ID cannot be null");
         }
-        @NonNull Long jobId = request.getJobId();
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));

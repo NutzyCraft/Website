@@ -29,11 +29,10 @@ public class DisputeController {
         User client = userRepository.findByEmail(clientEmail)
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        Long freelancerIdRaw = request.getFreelancerId();
-        if (freelancerIdRaw == null) {
+        Long freelancerId = request.getFreelancerId();
+        if (freelancerId == null) {
             return ResponseEntity.badRequest().body("Freelancer ID is required");
         }
-        @NonNull Long freelancerId = freelancerIdRaw;
 
         User freelancer = userRepository.findById(freelancerId)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));

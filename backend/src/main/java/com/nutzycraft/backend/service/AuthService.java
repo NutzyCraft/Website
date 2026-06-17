@@ -112,9 +112,7 @@ public class AuthService {
         if (email == null) {
             throw new IllegalStateException("User email cannot be null");
         }
-        @NonNull String toEmail = email;
-        @NonNull String verificationCode = code;
-        emailService.sendVerificationEmail(toEmail, verificationCode);
+        emailService.sendVerificationEmail(email, code);
     }
 
     public boolean verifyUser(String email, String code) {
@@ -180,9 +178,7 @@ public class AuthService {
             if (userEmail == null) {
                 throw new IllegalStateException("User email cannot be null");
             }
-            @NonNull String toEmail = userEmail;
-            @NonNull String resetToken = token;
-            emailService.sendPasswordResetEmail(toEmail, resetToken);
+            emailService.sendPasswordResetEmail(userEmail, token);
         });
     }
 
