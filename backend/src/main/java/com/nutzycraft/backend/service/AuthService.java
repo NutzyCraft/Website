@@ -8,6 +8,7 @@ import com.nutzycraft.backend.repository.ClientRepository;
 import com.nutzycraft.backend.repository.FreelancerRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,7 +107,14 @@ public class AuthService {
         user.setVerificationCode(code);
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(24));
         userRepository.save(user);
-        emailService.sendVerificationEmail(user.getEmail(), code);
+        
+        String email = user.getEmail();
+        if (email == null) {
+            throw new IllegalStateException("User email cannot be null");
+        }
+        @NonNull String toEmail = email;
+        @NonNull String verificationCode = code;
+        emailService.sendVerificationEmail(toEmail, verificationCode);
     }
 
     public boolean verifyUser(String email, String code) {
@@ -167,7 +175,14 @@ public class AuthService {
             user.setResetToken(token);
             user.setResetTokenExpiresAt(LocalDateTime.now().plusHours(1));
             userRepository.save(user);
-            emailService.sendPasswordResetEmail(user.getEmail(), token);
+            
+            String userEmail = user.getEmail();
+            if (userEmail == null) {
+                throw new IllegalStateException("User email cannot be null");
+            }
+            @NonNull String toEmail = userEmail;
+            @NonNull String resetToken = token;
+            emailService.sendPasswordResetEmail(toEmail, resetToken);
         });
     }
 

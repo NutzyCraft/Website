@@ -4,9 +4,9 @@ import com.nutzycraft.backend.dto.AdminJobDTO;
 import com.nutzycraft.backend.dto.AdminUserDTO;
 import com.nutzycraft.backend.dto.DashboardStatsDTO;
 import com.nutzycraft.backend.service.AdminService;
-import com.nutzycraft.backend.service.UserDeletionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +19,6 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
-
-    @Autowired
-    private UserDeletionService userDeletionService;
 
     @GetMapping("/dashboard/stats")
     public ResponseEntity<DashboardStatsDTO> getDashboardStats() {
@@ -124,7 +121,7 @@ public class AdminController {
      * Restore a soft-deleted user account
      */
     @PutMapping("/users/{id}/restore")
-    public ResponseEntity<?> restoreUser(@PathVariable Long id) {
+    public ResponseEntity<?> restoreUser(@PathVariable @NonNull Long id) {
         try {
             adminService.restoreUser(id);
             return ResponseEntity.ok(Map.of("message", "User restored successfully"));
@@ -138,7 +135,7 @@ public class AdminController {
      * Admin can delete at their discretion (no 30-day enforcement)
      */
     @DeleteMapping("/users/{id}/permanent")
-    public ResponseEntity<?> permanentlyDeleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> permanentlyDeleteUser(@PathVariable @NonNull Long id) {
         try {
             adminService.permanentlyDeleteUser(id);
             return ResponseEntity.ok(Map.of("message", "User permanently deleted"));

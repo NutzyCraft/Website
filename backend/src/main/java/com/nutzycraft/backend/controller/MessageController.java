@@ -5,6 +5,7 @@ import com.nutzycraft.backend.dto.MessageRequest;
 import com.nutzycraft.backend.dto.MessageResponse;
 import com.nutzycraft.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class MessageController {
 
     // Get chat history with a specific user
     @GetMapping("/{otherUserId}")
-    public List<MessageResponse> getChatHistory(@RequestParam String email, @PathVariable Long otherUserId) {
+    public List<MessageResponse> getChatHistory(@RequestParam String email, @PathVariable @NonNull Long otherUserId) {
         return chatService.getChatHistory(email, otherUserId);
     }
 
