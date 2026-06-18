@@ -24,6 +24,7 @@ public class AuthService {
      */
     private static final Set<String> ALLOWED_EMAILS = Set.of(
             "nutzycraft@gmail.com",
+            "soeshcooray@gmail.com",
             "client@test.com",
             "freelancer@test.com");
 
