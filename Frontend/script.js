@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isProtected) {
             // Check authentication status
-            const isLoggedIn = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            const isLoggedIn = (localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail')) && (typeof NeonAuth !== 'undefined' ? NeonAuth.isAuthenticated() : true);
 
             if (!isLoggedIn) {
                 e.preventDefault();

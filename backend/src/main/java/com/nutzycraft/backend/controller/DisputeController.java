@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/disputes")
-@CrossOrigin(origins = "*")
 public class DisputeController {
 
     @Autowired

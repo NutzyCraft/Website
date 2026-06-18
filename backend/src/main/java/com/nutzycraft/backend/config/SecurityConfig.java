@@ -1,0 +1,61 @@
+package com.nutzycraft.backend.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final CorsConfigurationSource corsConfigurationSource;
+
+    public SecurityConfig(CorsConfigurationSource corsConfigurationSource) {
+        this.corsConfigurationSource = corsConfigurationSource;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // CORS — use the centralized CorsConfigurationSource from CorsConfig
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+
+                // CSRF disabled — stateless JWT-based API, no cookies
+                .csrf(csrf -> csrf.disable())
+
+                // Stateless sessions — no server-side session
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Authorization rules
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints — no token required
+                        .requestMatchers("/actuator/health").permitAll()
+                        // Static frontend resources
+                        .requestMatchers(
+                                "/", "/*.html", "/*.css", "/*.js", "/*.jpg", "/*.png",
+                                "/*.ico", "/*.svg", "/*.json", "/*.woff", "/*.woff2"
+                        ).permitAll()
+                        // Public API endpoints that should remain accessible
+                        .requestMatchers("/api/jobs/search/**").permitAll()
+                        .requestMatchers("/api/freelancers/search/**").permitAll()
+                        .requestMatchers("/api/contact/**").permitAll()
+                        .requestMatchers("/api/portfolio/**").permitAll()
+                        // All other API endpoints require authentication
+                        .requestMatchers("/api/**").authenticated()
+                        // Everything else (static files served by Spring) is public
+                        .anyRequest().permitAll()
+                )
+
+                // OAuth2 Resource Server — validate JWTs against Neon Auth JWKS
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt -> {})
+                );
+
+        return http.build();
+    }
+}

@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/freelancers")
-@CrossOrigin(origins = "*")
 public class FreelancerController {
 
     @Autowired

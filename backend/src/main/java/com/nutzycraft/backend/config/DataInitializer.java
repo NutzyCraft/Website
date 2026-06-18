@@ -17,14 +17,12 @@ public class DataInitializer {
                                       com.nutzycraft.backend.repository.DisputeRepository disputeRepository,
                                       com.nutzycraft.backend.repository.SupportMessageRepository supportMessageRepository) {
         return args -> {
-            // 1. Admin User
+            // 1. Admin User — providerId will be linked on first Neon Auth login
             String adminEmail = "nutzycraft@gmail.com";
             User admin = userRepository.findByEmail(adminEmail).orElseGet(User::new);
             admin.setEmail(adminEmail);
             admin.setFullName("Super Admin");
-            admin.setPassword("NutzyCraft@123");
             admin.setRole(User.Role.ADMIN);
-            admin.setVerified(true);
             userRepository.save(admin);
 
             // 2. Dummy Client
@@ -33,9 +31,7 @@ public class DataInitializer {
             if (client.getId() == null) {
                 client.setEmail(clientEmail);
                 client.setFullName("Test Client");
-                client.setPassword("password");
                 client.setRole(User.Role.CLIENT);
-                client.setVerified(true);
                 userRepository.save(client);
             }
 
@@ -45,9 +41,7 @@ public class DataInitializer {
             if (freelancer.getId() == null) {
                 freelancer.setEmail(freelancerEmail);
                 freelancer.setFullName("Test Freelancer");
-                freelancer.setPassword("password");
                 freelancer.setRole(User.Role.FREELANCER);
-                freelancer.setVerified(true);
                 userRepository.save(freelancer);
             }
 

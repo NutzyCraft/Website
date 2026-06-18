@@ -1,89 +1,51 @@
 package com.nutzycraft.backend.controller;
 
-import com.nutzycraft.backend.entity.User;
-import com.nutzycraft.backend.repository.UserRepository;
+import com.nutzycraft.backend.dto.AuthDTOs.SyncRequest;
+import com.nutzycraft.backend.dto.AuthDTOs.SyncResponse;
+import com.nutzycraft.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
-    private com.nutzycraft.backend.service.AuthService authService;
+    private AuthService authService;
 
-    @Autowired
-    private UserRepository userRepository;
+    /**
+     * Synchronize a Neon Auth identity with the local database.
+     *
+     * This is the ONLY auth endpoint. It requires a valid Neon Auth JWT.
+     * The JWT is validated by Spring Security's OAuth2 Resource Server filter
+     * before this method is invoked.
+     *
+     * Flow:
+     * 1. Frontend signs in/up via Neon Auth (email/password or Google OAuth)
+     * 2. Frontend calls POST /api/auth/sync with the JWT and desired role
+     * 3. Backend extracts sub/email/name from the JWT, syncs with local DB
+     * 4. Returns the user's local profile (id, email, fullName, role, isNew)
+     */
+    @PostMapping("/sync")
+    public ResponseEntity<SyncResponse> syncUser(
+            @AuthenticationPrincipal Jwt jwt,
+            @RequestBody(required = false) SyncRequest request) {
 
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
+        String providerId = jwt.getSubject(); // Neon Auth user ID
+        String email = jwt.getClaimAsString("email");
+        String name = jwt.getClaimAsString("name");
+
+        // Fall back to sub if email claim is not present
+        if (email == null || email.isBlank()) {
+            throw new RuntimeException("JWT does not contain an email claim.");
         }
-        // In a real app, hash the password!
-        return userRepository.save(user);
-    }
 
-    @PostMapping("/register-freelancer")
-    public User registerFreelancer(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.FreelancerRegisterRequest request) {
-        return authService.registerFreelancer(request);
-    }
+        String role = (request != null) ? request.getRole() : null;
 
-    @PostMapping("/verify")
-    public org.springframework.http.ResponseEntity<?> verifyUser(
-            @RequestBody com.nutzycraft.backend.dto.AuthDTOs.VerifyRequest request) {
-        boolean verified = authService.verifyUser(request.getEmail(), request.getCode());
-        if (verified) {
-            return org.springframework.http.ResponseEntity.ok("User verified successfully");
-        } else {
-            return org.springframework.http.ResponseEntity.badRequest().body("Invalid verification code");
-        }
-    }
-
-    @PostMapping("/register-client")
-    public User registerClient(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.ClientRegisterRequest request) {
-        return authService.registerClient(request);
-    }
-
-    @PostMapping("/login")
-    public User login(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.LoginRequest request) {
-        return authService.login(request.getEmail(), request.getPassword());
-    }
-
-    @PostMapping("/login/freelancer")
-    public User loginFreelancer(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.LoginRequest request) {
-        return authService.loginFreelancer(request.getEmail(), request.getPassword());
-    }
-
-    @PostMapping("/login/client")
-    public User loginClient(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.LoginRequest request) {
-        return authService.loginClient(request.getEmail(), request.getPassword());
-    }
-
-    @PostMapping("/forgot-password")
-    public org.springframework.http.ResponseEntity<?> forgotPassword(
-            @RequestBody com.nutzycraft.backend.dto.AuthDTOs.ForgotPasswordRequest request) {
-        authService.forgotPassword(request.getEmail());
-        return org.springframework.http.ResponseEntity.ok("If email exists, reset link sent.");
-    }
-
-    @PostMapping("/reset-password")
-    public org.springframework.http.ResponseEntity<?> resetPassword(
-            @RequestBody com.nutzycraft.backend.dto.AuthDTOs.ResetPasswordRequest request) {
-        authService.resetPassword(request.getToken(), request.getNewPassword());
-        return org.springframework.http.ResponseEntity.ok("Password reset successfully.");
-    }
-
-    @PostMapping("/google")
-    public User googleLogin(@RequestBody com.nutzycraft.backend.dto.AuthDTOs.GoogleLoginRequest request) {
-        return authService.loginOrRegisterWithGoogle(request.getToken(), request.getRole());
-    }
-
-    @PostMapping("/resend-verification")
-    public org.springframework.http.ResponseEntity<?> resendVerification(
-            @RequestBody com.nutzycraft.backend.dto.AuthDTOs.ForgotPasswordRequest request) {
-        authService.resendVerificationCode(request.getEmail());
-        return org.springframework.http.ResponseEntity.ok("Verification code sent.");
+        SyncResponse response = authService.syncUser(providerId, email, name, role);
+        return ResponseEntity.ok(response);
     }
 }

@@ -86,7 +86,8 @@ public class AdminService {
         // The DTO has 'active', let's map it to isVerified for simplicity or handle
         // banning differently.
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setVerified(active); // Using verification as a proxy for active status for now
+        // TODO: Add an 'active' boolean field to User entity if user banning is needed.
+        // For now, this is a no-op since isVerified was removed in the Neon Auth migration.
         userRepository.save(user);
     }
 
@@ -99,7 +100,7 @@ public class AdminService {
                 user.getEmail(),
                 user.getRole() != null ? user.getRole().name() : "UNKNOWN",
                 java.time.LocalDateTime.now(), // Placeholder as joinedAt is missing
-                user.isVerified());
+                true); // All Neon Auth users are considered active
     }
 
     private AdminJobDTO convertToJobDTO(Job job) {

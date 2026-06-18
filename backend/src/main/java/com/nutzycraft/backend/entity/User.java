@@ -14,23 +14,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
-
     private String fullName;
+
+    @Column(unique = true)
+    private String providerId; // Neon Auth subject ID (sub claim)
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private String profilePictureUrl;
-
-    private String verificationCode;
-
-    private boolean isVerified = false;
-
-    private String resetToken;
-    private java.time.LocalDateTime verificationCodeExpiresAt;
-    private java.time.LocalDateTime resetTokenExpiresAt;
 
     public enum Role {
         CLIENT, FREELANCER, ADMIN

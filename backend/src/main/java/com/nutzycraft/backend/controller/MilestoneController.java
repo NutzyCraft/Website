@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/milestones")
-@CrossOrigin(origins = "*")
 public class MilestoneController {
 
     @Autowired
