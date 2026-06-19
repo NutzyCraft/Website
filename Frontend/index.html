@@ -383,7 +383,28 @@
             </div>
         </footer>
 
-        <script src="neon-auth.js"></script> `r`n    <script src="script.js"></script>
+        <script src="config.js"></script>
+        <script src="neon-auth.js"></script>
+        <script src="script.js"></script>
+        <script>
+            // If the user lands on index after a Google OAuth redirect,
+            // redirect them to the correct page based on oauthSource
+            (function() {
+                const oauthSource = localStorage.getItem('oauthSource');
+                if (!oauthSource) return;
+                
+                const redirectMap = {
+                    'register': 'register.html',
+                    'client-login': 'client-login.html',
+                    'freelancer-login': 'freelancer-login.html'
+                };
+                
+                const target = redirectMap[oauthSource];
+                if (target) {
+                    window.location.href = target;
+                }
+            })();
+        </script>
 </body>
 
 </html>

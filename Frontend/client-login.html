@@ -230,42 +230,51 @@
             }
         });
 
-        // Google OAuth via Neon Auth
+        // ─── Google OAuth Sign-In ─────────────────────────────────────
         document.getElementById('google-btn').addEventListener('click', () => {
-            localStorage.setItem('pendingRole', 'CLIENT');
-            localStorage.setItem('pendingRedirect', 'client-dashboard.html');
+            localStorage.setItem('oauthSource', 'client-login');
             NeonAuth.signInGoogle(window.location.origin + '/client-login.html');
         });
 
         // Handle Google OAuth callback
         (async function handleOAuthCallback() {
-            const pendingRole = localStorage.getItem('pendingRole');
-            const pendingRedirect = localStorage.getItem('pendingRedirect');
+            const oauthSource = localStorage.getItem('oauthSource');
+            if (oauthSource !== 'client-login') return;
 
-            if (pendingRole && pendingRedirect) {
-                try {
-                    const session = await NeonAuth.getSession();
-                    if (session && session.user) {
-                        const token = NeonAuth.getStoredToken();
-                        if (token || session.session) {
-                            const syncResult = await NeonAuth.syncWithBackend(pendingRole);
+            try {
+                const session = await NeonAuth.getSession();
+                if (!session || !session.user) return;
 
-                            localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
-                            localStorage.removeItem('pendingRole');
-                            localStorage.removeItem('pendingRedirect');
+                const token = NeonAuth.getStoredToken();
+                if (!token && !session.session) return;
 
-                            window.location.href = pendingRedirect;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    console.log('No OAuth callback to process');
+                // Sync with backend - don't force a role for login, let backend return existing role
+                const syncResult = await NeonAuth.syncWithBackend(null);
+
+                if (syncResult.role !== 'CLIENT' && syncResult.role !== 'ADMIN') {
+                    showError('This Google account is registered as a ' + syncResult.role + '. Please use the Freelancer Login portal.');
+                    localStorage.removeItem('oauthSource');
+                    return;
                 }
+
+                localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
+                localStorage.removeItem('oauthSource');
+                window.location.href = 'client-dashboard.html';
+
+            } catch (e) {
+                console.error('OAuth callback error:', e);
+                // If user doesn't exist yet, redirect to register
+                if (e.message && (e.message.includes('role') || e.message.includes('not found'))) {
+                    showError('No account found with this Google account. Please register first.');
+                } else {
+                    showError(e.message || 'Google sign-in failed.');
+                }
+                localStorage.removeItem('oauthSource');
             }
         })();
     </script>
 
-    <script src="neon-auth.js"></script> `r`n    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

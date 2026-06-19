@@ -202,32 +202,26 @@
             document.getElementById('auth-error').style.display = 'none';
 
             try {
-                // 1. Sign in via Neon Auth
                 const authResult = await NeonAuth.signInEmail(email, password);
                 
-                // Store token with remember-me preference
                 if (authResult.token) {
                     NeonAuth.storeToken(authResult.token, remember);
                 }
 
-                // 2. Sync with NutzyCraft backend
                 const syncResult = await NeonAuth.syncWithBackend('FREELANCER');
                 
-                // Verify the user is a freelancer
                 if (syncResult.role !== 'FREELANCER' && syncResult.role !== 'ADMIN') {
                     showError('This account is registered as a ' + syncResult.role + '. Please use the correct login portal.');
                     form.classList.remove('auth-loading');
                     return;
                 }
 
-                // 3. Store email for backward compatibility with existing pages
                 if (remember) {
                     localStorage.setItem('loggedInEmail', email);
                 } else {
                     sessionStorage.setItem('loggedInEmail', email);
                 }
 
-                // 4. Redirect to dashboard
                 window.location.href = 'freelancer-dashboard.html';
 
             } catch (err) {
@@ -237,48 +231,50 @@
             }
         });
 
-        // Google OAuth via Neon Auth
+        // ─── Google OAuth Sign-In ─────────────────────────────────────
         document.getElementById('google-btn').addEventListener('click', () => {
-            // Store the intended role so we can use it after the OAuth callback
-            localStorage.setItem('pendingRole', 'FREELANCER');
-            localStorage.setItem('pendingRedirect', 'freelancer-dashboard.html');
+            localStorage.setItem('oauthSource', 'freelancer-login');
             NeonAuth.signInGoogle(window.location.origin + '/freelancer-login.html');
         });
 
-        // Handle Google OAuth callback (when redirected back with session)
+        // Handle Google OAuth callback
         (async function handleOAuthCallback() {
-            const pendingRole = localStorage.getItem('pendingRole');
-            const pendingRedirect = localStorage.getItem('pendingRedirect');
-            
-            // Check if we have a session (coming back from OAuth)
-            if (pendingRole && pendingRedirect) {
-                try {
-                    const session = await NeonAuth.getSession();
-                    if (session && session.user) {
-                        // We have a valid session from OAuth
-                        const token = NeonAuth.getStoredToken();
-                        if (token || session.session) {
-                            // Sync with backend
-                            const syncResult = await NeonAuth.syncWithBackend(pendingRole);
-                            
-                            localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
-                            localStorage.removeItem('pendingRole');
-                            localStorage.removeItem('pendingRedirect');
-                            
-                            window.location.href = pendingRedirect;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    console.log('No OAuth callback to process');
+            const oauthSource = localStorage.getItem('oauthSource');
+            if (oauthSource !== 'freelancer-login') return;
+
+            try {
+                const session = await NeonAuth.getSession();
+                if (!session || !session.user) return;
+
+                const token = NeonAuth.getStoredToken();
+                if (!token && !session.session) return;
+
+                // Sync with backend - don't force a role for login, let backend return existing role
+                const syncResult = await NeonAuth.syncWithBackend(null);
+
+                if (syncResult.role !== 'FREELANCER' && syncResult.role !== 'ADMIN') {
+                    showError('This Google account is registered as a ' + syncResult.role + '. Please use the Client Login portal.');
+                    localStorage.removeItem('oauthSource');
+                    return;
                 }
-                // Clean up if it's been too long (stale pendingRole)
-                // Don't clean up immediately as user might just be visiting the page
+
+                localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
+                localStorage.removeItem('oauthSource');
+                window.location.href = 'freelancer-dashboard.html';
+
+            } catch (e) {
+                console.error('OAuth callback error:', e);
+                if (e.message && (e.message.includes('role') || e.message.includes('not found'))) {
+                    showError('No account found with this Google account. Please register first.');
+                } else {
+                    showError(e.message || 'Google sign-in failed.');
+                }
+                localStorage.removeItem('oauthSource');
             }
         })();
     </script>
 
-    <script src="neon-auth.js"></script> `r`n    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
