@@ -131,9 +131,16 @@
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div style="position: relative;">
-                        <input type="password" class="form-input" id="password" placeholder="Create a password (min 8 chars)" style="padding-right: 40px;" required minlength="8">
+                        <input type="password" class="form-input" id="password" placeholder="Create a password" style="padding-right: 40px;" required>
                         <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
                     </div>
+                    <ul class="password-requirements" id="password-reqs">
+                        <li id="req-length" class="invalid"><i class="fa-solid fa-circle-xmark"></i> At least 8 characters</li>
+                        <li id="req-upper" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One uppercase letter</li>
+                        <li id="req-lower" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One lowercase letter</li>
+                        <li id="req-num" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One number</li>
+                        <li id="req-special" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One special character</li>
+                    </ul>
                 </div>
 
                 <div class="form-group">
@@ -173,7 +180,6 @@
                     </a>
                 </div>
             </div>
-        </div>
     </div>
 
     <script>
@@ -197,11 +203,53 @@
             this.classList.toggle('fa-eye');
         });
 
+        // Live Password Verification
+        const passwordInput = document.getElementById('password');
+        const reqsList = document.getElementById('password-reqs');
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqLower = document.getElementById('req-lower');
+        const reqNum = document.getElementById('req-num');
+        const reqSpecial = document.getElementById('req-special');
+
+        passwordInput.addEventListener('focus', () => {
+            reqsList.classList.add('show');
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+            
+            // Helper function to update requirement UI
+            const updateReq = (el, isValid) => {
+                const icon = el.querySelector('i');
+                if (isValid) {
+                    el.classList.remove('invalid');
+                    el.classList.add('valid');
+                    icon.classList.remove('fa-circle-xmark');
+                    icon.classList.add('fa-circle-check');
+                } else {
+                    el.classList.remove('valid');
+                    el.classList.add('invalid');
+                    icon.classList.remove('fa-circle-check');
+                    icon.classList.add('fa-circle-xmark');
+                }
+            };
+
+            // Validations
+            updateReq(reqLength, val.length >= 8);
+            updateReq(reqUpper, /[A-Z]/.test(val));
+            updateReq(reqLower, /[a-z]/.test(val));
+            updateReq(reqNum, /\d/.test(val));
+            updateReq(reqSpecial, /[^A-Za-z0-9]/.test(val));
+        });
+
         function showError(msg) {
             const el = document.getElementById('auth-error');
             el.textContent = msg;
             el.style.display = 'block';
             document.getElementById('auth-success').style.display = 'none';
+            // Scroll to the top of the page smoothly so the error is visible
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showSuccess(msg) {
@@ -226,6 +274,18 @@
                 return;
             }
 
+            // Check if password meets all requirements before submitting
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNum = /\d/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            
+            if (!(hasLength && hasUpper && hasLower && hasNum && hasSpecial)) {
+                showError('Please ensure your password meets all requirements.');
+                return;
+            }
+
             if (!termsAccepted) {
                 showError('Please accept the Terms & Privacy policy');
                 return;
@@ -239,25 +299,23 @@
                 const authResult = await NeonAuth.signUpEmail(email, password, fullName);
 
                 if (authResult.token) {
+                    // Registration complete and no verification required!
                     NeonAuth.storeToken(authResult.token, true);
+                    
+                    try {
+                        const syncResult = await NeonAuth.syncWithBackend(role);
+                        localStorage.setItem('loggedInEmail', syncResult.email);
+                        const redirectUrl = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+                        window.location.href = redirectUrl;
+                    } catch (e) {
+                        showError(e.message || 'Failed to sync with backend');
+                    }
+                } else {
+                    // Verification is required! Redirect to verify-email page, passing the role!
+                    window.location.href = `verify-email.html?email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`;
                 }
-
-                // 2. Sync with NutzyCraft backend (creates User + Client/Freelancer records)
-                const syncResult = await NeonAuth.syncWithBackend(role);
-
-                // 3. Store email for backward compatibility
-                localStorage.setItem('loggedInEmail', email);
-
-                // 4. Redirect based on role
-                const redirectUrl = syncResult.role === 'FREELANCER'
-                    ? 'freelancer-dashboard.html'
-                    : 'client-dashboard.html';
-
-                showSuccess('Account created successfully! Redirecting...');
-                setTimeout(() => {
-                    window.location.href = redirectUrl;
-                }, 1000);
-
+                
+                form.classList.remove('auth-loading');
             } catch (err) {
                 console.error('Registration error:', err);
                 showError(err.message || 'Registration failed. Please try again.');
@@ -267,42 +325,9 @@
 
         // Google OAuth Sign-Up
         document.getElementById('google-btn').addEventListener('click', () => {
-            const role = document.getElementById('roleSelect').value;
-            const redirectUrl = role === 'FREELANCER'
-                ? 'freelancer-dashboard.html'
-                : 'client-dashboard.html';
-
-            localStorage.setItem('pendingRole', role);
-            localStorage.setItem('pendingRedirect', redirectUrl);
-            NeonAuth.signInGoogle(window.location.origin + '/register.html');
+            // We'll come back to this later
+            alert('Google Sign Up is temporarily disabled while we finalize Email Registration.');
         });
-
-        // Handle Google OAuth callback
-        (async function handleOAuthCallback() {
-            const pendingRole = localStorage.getItem('pendingRole');
-            const pendingRedirect = localStorage.getItem('pendingRedirect');
-
-            if (pendingRole && pendingRedirect) {
-                try {
-                    const session = await NeonAuth.getSession();
-                    if (session && session.user) {
-                        const token = NeonAuth.getStoredToken();
-                        if (token || session.session) {
-                            const syncResult = await NeonAuth.syncWithBackend(pendingRole);
-
-                            localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
-                            localStorage.removeItem('pendingRole');
-                            localStorage.removeItem('pendingRedirect');
-
-                            window.location.href = pendingRedirect;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    console.log('No OAuth callback to process');
-                }
-            }
-        })();
     </script>
 
     <script src="script.js"></script>
