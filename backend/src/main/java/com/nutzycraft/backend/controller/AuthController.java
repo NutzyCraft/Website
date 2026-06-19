@@ -6,8 +6,8 @@ import com.nutzycraft.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,22 +30,29 @@ public class AuthController {
      * 4. Returns the user's local profile (id, email, fullName, role, isNew)
      */
     @PostMapping("/sync")
-    public ResponseEntity<SyncResponse> syncUser(
-            @AuthenticationPrincipal Jwt jwt,
+    public ResponseEntity<?> syncUser(
+            org.springframework.security.core.Authentication authentication,
             @RequestBody(required = false) SyncRequest request) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, String> principal = (Map<String, String>) authentication.getPrincipal();
 
-        String providerId = jwt.getSubject(); // Neon Auth user ID
-        String email = jwt.getClaimAsString("email");
-        String name = jwt.getClaimAsString("name");
+            String providerId = principal.get("providerId"); // Neon Auth user ID
+            String email = principal.get("email");
+            String name = principal.get("name");
 
-        // Fall back to sub if email claim is not present
-        if (email == null || email.isBlank()) {
-            throw new RuntimeException("JWT does not contain an email claim.");
+            // Fall back to sub if email claim is not present
+            if (email == null || email.isBlank()) {
+                throw new RuntimeException("Session does not contain an email.");
+            }
+
+            String role = (request != null) ? request.getRole() : null;
+
+            SyncResponse response = authService.syncUser(providerId, email, name, role);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", e.getClass().getSimpleName(), "message", e.getMessage() != null ? e.getMessage() : "Unknown error"));
         }
-
-        String role = (request != null) ? request.getRole() : null;
-
-        SyncResponse response = authService.syncUser(providerId, email, name, role);
-        return ResponseEntity.ok(response);
     }
 }

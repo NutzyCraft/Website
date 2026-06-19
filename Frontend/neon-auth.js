@@ -47,7 +47,7 @@
      * @returns {Promise<{token: string, user: object}>}
      */
     async function signInEmail(email, password) {
-        const res = await fetch(`${NEON_AUTH_URL}/api/auth/sign-in/email`, {
+        const res = await fetch(`${NEON_AUTH_URL}/sign-in/email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -77,7 +77,7 @@
      * @returns {Promise<{token: string, user: object}>}
      */
     async function signUpEmail(email, password, name) {
-        const res = await fetch(`${NEON_AUTH_URL}/api/auth/sign-up/email`, {
+        const res = await fetch(`${NEON_AUTH_URL}/sign-up/email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, name }),
@@ -102,14 +102,69 @@
     }
 
     /**
-     * Sign in via Google OAuth (redirects the browser).
+     * Verify Email OTP
+     * @param {string} email
+     * @param {string} otp
+     */
+    async function verifyEmailOtp(email, otp) {
+        const res = await fetch(`${NEON_AUTH_URL}/email-otp/verify-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp, type: 'email-verification' }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || data.error || 'Failed to verify OTP');
+        }
+        
+        const headerToken = res.headers.get('set-auth-token');
+        const token = headerToken || data.token || null;
+        if (token) {
+            storeToken(token, true);
+        }
+        return { token, user: data.user || data };
+    }
+
+    /**
+     * Resend Email OTP
+     * @param {string} email
+     */
+    async function resendVerificationOtp(email) {
+        const res = await fetch(`${NEON_AUTH_URL}/email-otp/send-verification-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, type: 'email-verification' }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || data.error || 'Failed to resend OTP');
+        }
+        return data;
+    }
+
+    /**
+     * Sign in via Google OAuth.
      * @param {string} callbackURL - Where to redirect after Google OAuth
      */
-    function signInGoogle(callbackURL) {
-        const params = new URLSearchParams({
-            callbackURL: callbackURL || window.location.href
-        });
-        window.location.href = `${NEON_AUTH_URL}/api/auth/sign-in/social?provider=google&${params.toString()}`;
+    async function signInGoogle(callbackURL) {
+        try {
+            const res = await fetch(`${NEON_AUTH_URL}/sign-in/social`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    provider: 'google',
+                    callbackURL: callbackURL || window.location.href
+                })
+            });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('Failed to get Google OAuth URL', data);
+            }
+        } catch (e) {
+            console.error('Failed to sign in with Google', e);
+        }
     }
 
     /**
@@ -118,7 +173,7 @@
      */
     async function getSession() {
         try {
-            const res = await fetch(`${NEON_AUTH_URL}/api/auth/get-session`, {
+            const res = await fetch(`${NEON_AUTH_URL}/get-session`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -128,15 +183,19 @@
 
             if (!res.ok) return null;
 
-            const data = await res.json();
-
-            // Update stored token if a new one is issued
-            const headerToken = res.headers.get('set-auth-token');
-            if (headerToken) {
-                storeToken(headerToken, true);
+            const data = await res.json().catch(() => null);
+            if (data && data.session) {
+                // Update stored token if a new one is issued
+                const headerToken = res.headers.get('set-auth-token');
+                const bodyToken = data.session.token || null;
+                const tokenToStore = headerToken || bodyToken;
+                
+                if (tokenToStore) {
+                    storeToken(tokenToStore, true);
+                }
+                return data;
             }
-
-            return data;
+            return null;
         } catch (e) {
             console.error('Failed to get session:', e);
             return null;
@@ -148,7 +207,7 @@
      */
     async function signOut() {
         try {
-            await fetch(`${NEON_AUTH_URL}/api/auth/sign-out`, {
+            await fetch(`${NEON_AUTH_URL}/sign-out`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -254,6 +313,8 @@
     window.NeonAuth = {
         signInEmail,
         signUpEmail,
+        verifyEmailOtp,
+        resendVerificationOtp,
         signInGoogle,
         getSession,
         signOut,

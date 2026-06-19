@@ -13,9 +13,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
+    private final NeonAuthFilter neonAuthFilter;
 
-    public SecurityConfig(CorsConfigurationSource corsConfigurationSource) {
+    public SecurityConfig(CorsConfigurationSource corsConfigurationSource, NeonAuthFilter neonAuthFilter) {
         this.corsConfigurationSource = corsConfigurationSource;
+        this.neonAuthFilter = neonAuthFilter;
     }
 
     @Bean
@@ -24,7 +26,7 @@ public class SecurityConfig {
                 // CORS — use the centralized CorsConfigurationSource from CorsConfig
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
 
-                // CSRF disabled — stateless JWT-based API, no cookies
+                // CSRF disabled — stateless API
                 .csrf(csrf -> csrf.disable())
 
                 // Stateless sessions — no server-side session
@@ -51,10 +53,8 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
 
-                // OAuth2 Resource Server — validate JWTs against Neon Auth JWKS
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> {})
-                );
+                // Add Custom Neon Auth Introspection Filter
+                .addFilterBefore(neonAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -54,12 +54,6 @@ public class AuthService {
      */
     @Transactional
     public SyncResponse syncUser(String providerId, String email, String name, String roleStr) {
-        // Enforce allowlist during early testing
-        if (!ALLOWED_EMAILS.contains(email.toLowerCase())) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.FORBIDDEN,
-                    "Registration is currently restricted to approved accounts only.");
-        }
         SyncResponse response = new SyncResponse();
 
         // 1. Look up by providerId (fastest path for returning users)

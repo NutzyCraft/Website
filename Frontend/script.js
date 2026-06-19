@@ -229,7 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.__profileLoading = true;
 
         try {
-            const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
+            // Fallback in case window.API_CONFIG is missing due to caching or loading errors
+            const baseUrl = (window.API_CONFIG && window.API_CONFIG.BASE_URL) ? window.API_CONFIG.BASE_URL : 'http://localhost:8080';
+            const res = await fetch(`${baseUrl}/api/users/profile?email=${email}`);
             if (res.ok) {
                 const profile = await res.json();
 
