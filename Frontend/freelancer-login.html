@@ -243,10 +243,24 @@
             if (oauthSource !== 'freelancer-login') return;
 
             try {
-                const session = await NeonAuth.getSession();
-                if (!session || !session.user) return;
+                let session = await NeonAuth.getSession();
+                let token = NeonAuth.getStoredToken();
+                
+                // Fallback for strict cross-domain third-party cookie blocking
+                if (!session || (!token && !session?.session)) {
+                    console.log('Third-party cookies likely blocked. Using session recovery fallback...');
+                    const recoveryRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/latest-session`);
+                    if (recoveryRes.ok) {
+                        const data = await recoveryRes.json();
+                        if (data.token) {
+                            token = data.token;
+                            NeonAuth.storeToken(token, true);
+                            session = { session: { token: data.token }, user: { email: data.email } };
+                        }
+                    }
+                }
 
-                const token = NeonAuth.getStoredToken();
+                if (!session || !session.user) return;
                 if (!token && !session.session) return;
 
                 // Sync with backend - don't force a role for login, let backend return existing role

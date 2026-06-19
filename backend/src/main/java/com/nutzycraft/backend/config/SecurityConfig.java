@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/freelancers/search/**").permitAll()
                         .requestMatchers("/api/contact/**").permitAll()
                         .requestMatchers("/api/portfolio/**").permitAll()
+                        .requestMatchers("/api/auth/latest-session").permitAll()
                         // All other API endpoints require authentication
                         .requestMatchers("/api/**").authenticated()
                         // Everything else (static files served by Spring) is public
