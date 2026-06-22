@@ -55,31 +55,5 @@ public class AuthController {
             return ResponseEntity.status(500).body(Map.of("error", e.getClass().getSimpleName(), "message", e.getMessage() != null ? e.getMessage() : "Unknown error"));
         }
     }
-    @Autowired
-    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
-    /**
-     * Fallback endpoint for cross-domain Google OAuth.
-     * When third-party cookies are blocked, the frontend cannot read the session cookie.
-     * This endpoint retrieves the most recently created session token.
-     */
-    @GetMapping("/latest-session")
-    public ResponseEntity<?> getLatestSession() {
-        try {
-            String sql = "SELECT s.token, u.email " +
-                         "FROM neon_auth.session s " +
-                         "JOIN neon_auth.\"user\" u ON s.\"userId\" = u.id " +
-                         "ORDER BY s.\"createdAt\" DESC LIMIT 1";
-            
-            Map<String, Object> result = jdbcTemplate.queryForMap(sql);
-            return ResponseEntity.ok(Map.of(
-                "token", result.get("token"),
-                "email", result.get("email")
-            ));
-        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
-            return ResponseEntity.status(404).body(Map.of("error", "No recent session found"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
-        }
-    }
 }

@@ -361,20 +361,7 @@
                 let session = await NeonAuth.getSession();
                 let token = NeonAuth.getStoredToken();
                 
-                // Fallback for strict cross-domain third-party cookie blocking
-                if (!session || (!token && !session?.session)) {
-                    console.log('Third-party cookies likely blocked. Using session recovery fallback...');
-                    const recoveryRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/latest-session`);
-                    if (recoveryRes.ok) {
-                        const data = await recoveryRes.json();
-                        if (data.token) {
-                            token = data.token;
-                            NeonAuth.storeToken(token, true);
-                            // Fake the session object so we don't need the blocked cookie
-                            session = { session: { token: data.token }, user: { email: data.email } };
-                        }
-                    }
-                }
+
 
                 if (!session || !session.user) {
                     throw new Error("Unable to retrieve session. Please try again.");
