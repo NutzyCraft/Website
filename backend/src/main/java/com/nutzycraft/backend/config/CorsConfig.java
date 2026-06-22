@@ -23,8 +23,8 @@ public class CorsConfig {
                 "http://127.0.0.1:8080",
                 "https://nutzy-craft.vercel.app",
                 "https://nutzycraft.com",
-                "https://www.nutzycraft.com"
-        ));
+                "https://nutzy-craft-5s0q2n36n-soesh-coorays-projects.vercel.app",
+                "https://www.nutzycraft.com"));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
@@ -32,8 +32,7 @@ public class CorsConfig {
                 "Content-Type",
                 "Accept",
                 "Origin",
-                "X-Requested-With"
-        ));
+                "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
