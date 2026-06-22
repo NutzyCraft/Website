@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -103,7 +105,7 @@
                             </div>
                             <button class="btn btn-outline" type="button"
                                 style="margin-top: 10px; font-size: 0.8rem; padding: 5px 10px;"
-                                onclick="document.getElementById('settings-avatar-upload').click()">Change</button>
+                                onclick="document.getElementById('settings-avatar-upload').click()">Change()</button>
                             <input type="file" id="settings-avatar-upload" hidden accept="image/*">
                         </div>
                         <div style="flex: 1;">
@@ -166,6 +168,50 @@
                 </form>
             </div>
 
+            <!-- Danger Zone -->
+            <div class="glass-card" style="max-width: 800px; border: 2px solid #dc3545;">
+                <h3 style="margin-bottom: 20px; font-size: 1.2rem; border-bottom: 1px solid #dc3545; padding-bottom: 10px; color: #dc3545;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+                </h3>
+                <p style="color: #666; margin-bottom: 20px;">
+                    Once you delete your account, there is no going back. All your data will be permanently removed from our servers, including:
+                </p>
+                <ul style="color: #666; margin-bottom: 20px; padding-left: 20px;">
+                    <li>Your profile information and settings</li>
+                    <li>All your jobs, proposals, and work history</li>
+                    <li>All your messages and conversations</li>
+                    <li>All uploaded files and images</li>
+                </ul>
+                <button type="button" class="btn" id="deleteAccountBtn" 
+                    style="background: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                    <i class="fa-solid fa-trash"></i> Delete My Account
+                </button>
+            </div>
+
+            <!-- Delete Account Modal -->
+            <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; max-width: 450px; width: 90%; text-align: center;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #dc3545; margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px; color: #333;">Delete Your Account?</h3>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        This action <strong>cannot be undone</strong>. All your data will be permanently deleted.
+                    </p>
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; font-weight: 700; margin-bottom: 8px;">Enter your password to confirm:</label>
+                        <input type="password" id="deleteConfirmPassword" 
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;"
+                            placeholder="Your password">
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button type="button" id="cancelDeleteBtn" class="btn btn-outline" style="padding: 12px 24px;">Cancel</button>
+                        <button type="button" id="confirmDeleteBtn" class="btn" 
+                            style="background: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 8px;">
+                            Delete Forever
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
@@ -176,7 +222,7 @@
                     }
 
                     // Populate
-                    fetch(`/api/freelancers/me?email=${email}`)
+                    fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${encodeURIComponent(email)}`)
                         .then(res => res.json())
                         .then(data => {
                             if (data) {
@@ -185,12 +231,29 @@
                                 document.getElementById('hourlyRate').value = data.hourlyRate || '';
                                 document.getElementById('bio').value = data.bio || '';
                                 document.getElementById('skills').value = (data.skills || []).join(', ');
-                                document.getElementById('skills').value = (data.skills || []).join(', ');
 
-                                if (data.profileImage) {
-                                    document.getElementById('settings-avatar-preview').src = data.profileImage;
+                                // Robust Image Loading: Check Freelancer -> User -> Fetch User Profile
+                                let validImage = data.profileImage;
+                                if (!validImage && data.user && data.user.profilePictureUrl) {
+                                    validImage = data.user.profilePictureUrl;
+                                }
+
+                                if (validImage) {
+                                     document.getElementById('settings-avatar-preview').src = validImage;
                                 } else {
-                                    document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${data.user.fullName}&background=random&size=200`;
+                                     // Fallback: Try fetching User Profile directly (Source of Truth for Sidebar)
+                                     fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(email)}`)
+                                        .then(r => r.json())
+                                        .then(uProfile => {
+                                            if (uProfile && uProfile.profileImage) {
+                                                document.getElementById('settings-avatar-preview').src = uProfile.profileImage;
+                                            } else {
+                                                document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.fullName)}&background=random&size=200`;
+                                            }
+                                        })
+                                        .catch(() => {
+                                            document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user.fullName)}&background=random&size=200`;
+                                        });
                                 }
 
                                 if (data.bannerImage) {
@@ -199,7 +262,7 @@
                                     coverPreview.src = data.bannerImage;
                                     coverPreview.style.display = 'block';
                                 }
-                            }
+                             }
                         })
                         .catch(err => console.error(err));
 
@@ -207,7 +270,7 @@
                     const uploadFile = async (file) => {
                         const formData = new FormData();
                         formData.append('file', file);
-                        const res = await fetch('/api/upload', {
+                        const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/upload`, {
                             method: 'POST',
                             body: formData
                         });
@@ -224,9 +287,7 @@
                         const bio = document.getElementById('bio').value;
                         const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
 
-                        let profileImage = document.getElementById('profilePictureUrl').value; // Default to existing code hidden input if any, though we don't have one in this file originally, let's look at how we get it.
-                        // Actually the original code didn't use a hidden input for existing value. It checked the preview src or fetched again.
-                        // Let's rely on the variables.
+                        let profileImage = null; // Will be set if user uploads a new image
                         
                         let bannerImage = null; // We verify existence logic below
 
@@ -284,7 +345,7 @@
                              payload.bannerImage = bannerImage;
                         }
 
-                        fetch(`/api/freelancers/me?email=${email}`, {
+                        fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me?email=${encodeURIComponent(email)}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
@@ -300,6 +361,68 @@
                                 document.getElementById('saveBtn').textContent = 'Save Changes';
                                 document.getElementById('saveBtn').disabled = false;
                             });
+                    });
+
+                    // Delete Account Functionality
+                    const deleteModal = document.getElementById('deleteModal');
+                    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+                    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+                    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+                    deleteAccountBtn.addEventListener('click', function() {
+                        deleteModal.style.display = 'flex';
+                        document.getElementById('deleteConfirmPassword').value = '';
+                    });
+
+                    cancelDeleteBtn.addEventListener('click', function() {
+                        deleteModal.style.display = 'none';
+                    });
+
+                    deleteModal.addEventListener('click', function(e) {
+                        if (e.target === deleteModal) {
+                            deleteModal.style.display = 'none';
+                        }
+                    });
+
+                    confirmDeleteBtn.addEventListener('click', async function() {
+                        const password = document.getElementById('deleteConfirmPassword').value;
+                        
+                        if (!password) {
+                            alert('Please enter your password to confirm deletion.');
+                            return;
+                        }
+
+                        confirmDeleteBtn.disabled = true;
+                        confirmDeleteBtn.textContent = 'Deleting...';
+
+                        try {
+                            const response = await fetch(
+                                `${window.API_CONFIG.BASE_URL}/api/users/account?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+                                { method: 'DELETE' }
+                            );
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                // Clear all stored data
+                                localStorage.removeItem('loggedInEmail');
+                                sessionStorage.removeItem('loggedInEmail');
+                                localStorage.removeItem('userRole');
+                                sessionStorage.removeItem('userRole');
+                                
+                                alert('Your account has been deleted successfully. You will be redirected to the home page.');
+                                window.location.href = 'index.html';
+                            } else {
+                                alert(data.error || 'Failed to delete account. Please check your password and try again.');
+                                confirmDeleteBtn.disabled = false;
+                                confirmDeleteBtn.textContent = 'Delete Forever';
+                            }
+                        } catch (err) {
+                            console.error('Delete error:', err);
+                            alert('An error occurred while deleting your account. Please try again.');
+                            confirmDeleteBtn.disabled = false;
+                            confirmDeleteBtn.textContent = 'Delete Forever';
+                        }
                     });
                 });
             </script>

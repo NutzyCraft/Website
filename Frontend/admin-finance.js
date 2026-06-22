@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/finance';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/finance`;
     const tableBody = document.querySelector('.dashboard-table tbody');
 
     // Stats Elements
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
-            window.location.href = '/api/admin/finance/export';
+            window.location.href = `${API_CONFIG.BASE_URL}/api/admin/finance/export`;
         });
     }
 

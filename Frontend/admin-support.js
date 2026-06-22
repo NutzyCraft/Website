@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/support';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/support`;
     const tableBody = document.querySelector('.dashboard-table tbody');
 
     async function fetchSupport() {

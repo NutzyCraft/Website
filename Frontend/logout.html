@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
 </head>
 
 <body>
@@ -26,11 +28,18 @@
         </div>
     </div>
     <script>
-        // Clear all authentication data
-        localStorage.removeItem('loggedInEmail');
-        sessionStorage.removeItem('loggedInEmail');
-        // Clear any other potential keys just in case
-        localStorage.removeItem('pendingEmail');
+        // Sign out from Neon Auth and clear all local authentication data
+        (async function () {
+            if (typeof NeonAuth !== 'undefined') {
+                await NeonAuth.signOut();
+            }
+            // Clear legacy storage keys
+            localStorage.removeItem('loggedInEmail');
+            sessionStorage.removeItem('loggedInEmail');
+            localStorage.removeItem('pendingEmail');
+            localStorage.removeItem('pendingRole');
+            localStorage.removeItem('pendingRedirect');
+        })();
     </script>
 </body>
 

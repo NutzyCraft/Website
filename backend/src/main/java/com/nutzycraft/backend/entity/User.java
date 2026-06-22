@@ -19,30 +19,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @JsonIgnore
-    @Column(nullable = false)
-    private String password;
-
     private String fullName;
+
+    @Column(unique = true)
+    private String providerId; // Neon Auth subject ID (sub claim)
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private String profilePictureUrl;
-
-    @JsonIgnore
-    private String verificationCode;
-
-    private boolean isVerified = false;
-
-    @JsonIgnore
-    private String resetToken;
-    
-    @JsonIgnore
-    private java.time.LocalDateTime verificationCodeExpiresAt;
-    
-    @JsonIgnore
-    private java.time.LocalDateTime resetTokenExpiresAt;
 
     private boolean deleted = false;
 
@@ -50,7 +35,6 @@ public class User {
     private LocalDateTime deletedAt;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-
     public enum Role {
         CLIENT, FREELANCER, ADMIN
     }

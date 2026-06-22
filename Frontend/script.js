@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isProtected) {
             // Check authentication status
-            const isLoggedIn = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            const isLoggedIn = (localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail')) && (typeof NeonAuth !== 'undefined' ? NeonAuth.isAuthenticated() : true);
 
             if (!isLoggedIn) {
                 e.preventDefault();
@@ -206,18 +206,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Global User Profile Sync
+    // Global User Profile Sync (only if not already loading)
     const updateSidebarProfile = async () => {
         const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
         if (!email) return;
 
+        // Check if already loading or loaded
+        if (window.__profileLoading || window.__profileLoaded) return;
+        
+        // Check if sidebar already has content (another script populated it)
+        const sidebarUserContainer = document.querySelector('.sidebar-user');
+        if (sidebarUserContainer) {
+            const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
+            // detailed check: if it's "Loading..." OR it's a non-breaking space (placeholder), we should proceed to update
+            const currentText = nameEl.textContent;
+            // Char code 160 is &nbsp;
+            if (currentText !== 'Loading...' && currentText.trim().length > 0 && currentText.charCodeAt(0) !== 160) {
+                return; // Already populated by page-specific script
+            }
+        }
+
+        window.__profileLoading = true;
+
         try {
-            const res = await fetch(`/api/users/profile?email=${email}`);
+            // Fallback in case window.API_CONFIG is missing due to caching or loading errors
+            const baseUrl = (window.API_CONFIG && window.API_CONFIG.BASE_URL) ? window.API_CONFIG.BASE_URL : 'http://localhost:8080';
+            const res = await fetch(`${baseUrl}/api/users/profile?email=${email}`);
             if (res.ok) {
                 const profile = await res.json();
 
                 // Update Sidebar User Info
-                const sidebarUserContainer = document.querySelector('.sidebar-user');
                 if (sidebarUserContainer) {
                     const nameEl = sidebarUserContainer.querySelector('div > div:first-child');
                     const roleEl = sidebarUserContainer.querySelector('div > div:last-child');
@@ -238,11 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
+                window.__profileLoaded = true;
             }
         } catch (err) {
             console.error('Failed to sync profile:', err);
+        } finally {
+            window.__profileLoading = false;
         }
     };
 
-    updateSidebarProfile();
+    // Delay execution slightly to let page-specific scripts run first
+    setTimeout(updateSidebarProfile, 100);
 });

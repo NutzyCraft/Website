@@ -12,6 +12,78 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
     <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
+    <style>
+        .auth-error {
+            background: #fff0f0;
+            color: #d32f2f;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .auth-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .auth-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .google-btn:hover {
+            border-color: #4285f4;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .divider::before { margin-right: 15px; }
+        .divider::after { margin-left: 15px; }
+    </style>
 </head>
 
 <body>
@@ -44,134 +116,61 @@
                 <p>Create your account to start building.</p>
             </div>
 
-            <form class="auth-form">
+            <div class="auth-error" id="auth-error"></div>
+            <div class="auth-success" id="auth-success"></div>
+
+            <form class="auth-form" id="register-form">
                 <div class="form-group">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" placeholder="John Doe">
+                    <input type="text" class="form-input" id="fullName" placeholder="John Doe" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" placeholder="you@example.com">
+                    <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div style="position: relative;">
-                        <input type="password" class="form-input" id="password" placeholder="Create a password" style="padding-right: 40px;">
+                        <input type="password" class="form-input" id="password" placeholder="Create a password" style="padding-right: 40px;" required>
                         <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
                     </div>
+                    <ul class="password-requirements" id="password-reqs">
+                        <li id="req-length" class="invalid"><i class="fa-solid fa-circle-xmark"></i> At least 8 characters</li>
+                        <li id="req-upper" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One uppercase letter</li>
+                        <li id="req-lower" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One lowercase letter</li>
+                        <li id="req-num" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One number</li>
+                        <li id="req-special" class="invalid"><i class="fa-solid fa-circle-xmark"></i> One special character</li>
+                    </ul>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">I want to...</label>
                     <select class="form-select" id="roleSelect">
-                        <option value="client">Hire Freelancers</option>
-                        <option value="freelancer">Work as a Freelancer</option>
+                        <option value="CLIENT">Hire Freelancers</option>
+                        <option value="FREELANCER">Work as a Freelancer</option>
                     </select>
                 </div>
-                <!-- ... checkbox ... -->
-
-                <!-- Script to handle URL params -->
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const role = urlParams.get('role');
-                        if (role) {
-                            const select = document.getElementById('roleSelect');
-                            if (role === 'client') select.value = 'client';
-                            if (role === 'freelancer') select.value = 'freelancer';
-                        }
-                    });
-                </script>
 
                 <div class="auth-options">
                     <label class="checkbox-container">
-                        <input type="checkbox">
+                        <input type="checkbox" id="terms-checkbox">
                         <span class="custom-checkbox"></span>
                         I agree to Terms & Privacy
                     </label>
                 </div>
 
-                <button type="button" class="btn btn-primary" id="register-btn">Create Account</button>
+                <button type="submit" class="btn btn-primary" id="register-btn">Create Account</button>
             </form>
 
-            <script>
-                document.getElementById('register-btn').addEventListener('click', async () => {
-                    const inputs = document.querySelectorAll('.form-input');
-                    const fullName = inputs[0].value;
-                    const email = inputs[1].value;
-                    const password = inputs[2].value;
+            <div class="divider">or</div>
 
-                    // Client specific fields (mocked for now as form is simple)
-                    const companyName = ""; // Default to empty, allow user to set in settings
-                    const industry = "Tech";
-
-                    if (!fullName || !email || !password) {
-                        alert('Please fill in all fields');
-                        return;
-                    }
-
-                    // Password Validation
-                    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{8,}$/;
-                    if (!passwordRegex.test(password)) {
-                        alert('Password must be at least 8 characters long and contain at least one number and one special character.');
-                        return;
-                    }
-
-                    try {
-                        let endpoint;
-                        let bodyData;
-                        let redirectUrl;
-                        const role = document.getElementById('roleSelect').value;
-
-                        if (role === 'client') {
-                            endpoint = `${window.API_CONFIG.BASE_URL}/api/auth/register-client`;
-                            bodyData = { fullName, email, password, companyName, industry };
-                            redirectUrl = 'client-dashboard.html';
-                        } else {
-                            endpoint = `${window.API_CONFIG.BASE_URL}/api/auth/register-freelancer`;
-                            bodyData = { fullName, email, password };
-                            redirectUrl = 'freelancer-dashboard.html';
-                        }
-
-                        const response = await fetch(endpoint, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(bodyData)
-                        });
-
-                        if (response.ok) {
-                            localStorage.setItem('pendingEmail', email);
-                            localStorage.setItem('redirectAfterVerify', redirectUrl);
-                            window.location.href = '/verify-email';
-                        } else {
-                            const errorData = await response.json();
-                            alert(errorData.error || 'Registration failed');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Something went wrong');
-                    }
-                });
-
-                // Toggle Password Visibility
-                const togglePassword = document.querySelector('#togglePassword');
-                const password = document.querySelector('#password');
-
-                togglePassword.addEventListener('click', function (e) {
-                    // toggle the type attribute
-                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                    password.setAttribute('type', type);
-                    // toggle the eye slash icon
-                    this.classList.toggle('fa-eye-slash');
-                    this.classList.toggle('fa-eye');
-                });
-            </script>
+            <button class="google-btn" id="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Sign up with Google
+            </button>
 
             <div class="social-login">
-
-
-
-                <p style="margin-top: 20px;">Already have an account? <a href="/login"
+                <p style="margin-top: 20px;">Already have an account? <a href="login.html"
                         style="color: var(--primary); font-weight: 700;">Log In</a></p>
 
                 <div style="margin-top: 20px; text-align: center;">
@@ -181,9 +180,229 @@
                     </a>
                 </div>
             </div>
-        </div>
+    </div>
 
-        <script src="script.js"></script>
+    <!-- Role Selection Modal for Google OAuth (shown BEFORE going to Google) -->
+    <div id="oauth-role-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+        <div class="glass-card" style="max-width: 420px; width: 90%; background: white; padding: 35px; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🎯</div>
+            <h3 style="margin-bottom: 10px; color: var(--text-main); font-size: 1.4rem;">Before we continue...</h3>
+            <p style="margin-bottom: 25px; color: #666; font-size: 0.95rem;">How do you want to use Nutzy Craft?</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-primary" id="pick-client-btn" style="width: 100%; padding: 14px; font-size: 1rem;">
+                    <i class="fa-solid fa-briefcase" style="margin-right: 8px;"></i> I want to Hire Freelancers
+                </button>
+                <button class="btn btn-secondary" id="pick-freelancer-btn" style="width: 100%; padding: 14px; font-size: 1rem;">
+                    <i class="fa-solid fa-laptop-code" style="margin-right: 8px;"></i> I want to Work as a Freelancer
+                </button>
+            </div>
+
+            <button onclick="document.getElementById('oauth-role-modal').style.display='none'" style="margin-top: 18px; background: none; border: none; color: #999; cursor: pointer; font-size: 0.9rem;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Pre-select role from URL params
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role');
+            if (role) {
+                const select = document.getElementById('roleSelect');
+                if (role.toLowerCase() === 'client') select.value = 'CLIENT';
+                if (role.toLowerCase() === 'freelancer') select.value = 'FREELANCER';
+            }
+        });
+
+        // Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const pwd = document.getElementById('password');
+            const type = pwd.getAttribute('type') === 'password' ? 'text' : 'password';
+            pwd.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+            this.classList.toggle('fa-eye');
+        });
+
+        // Live Password Verification
+        const passwordInput = document.getElementById('password');
+        const reqsList = document.getElementById('password-reqs');
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqLower = document.getElementById('req-lower');
+        const reqNum = document.getElementById('req-num');
+        const reqSpecial = document.getElementById('req-special');
+
+        passwordInput.addEventListener('focus', () => {
+            reqsList.classList.add('show');
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+            const updateReq = (el, isValid) => {
+                const icon = el.querySelector('i');
+                if (isValid) {
+                    el.classList.remove('invalid');
+                    el.classList.add('valid');
+                    icon.classList.remove('fa-circle-xmark');
+                    icon.classList.add('fa-circle-check');
+                } else {
+                    el.classList.remove('valid');
+                    el.classList.add('invalid');
+                    icon.classList.remove('fa-circle-check');
+                    icon.classList.add('fa-circle-xmark');
+                }
+            };
+            updateReq(reqLength, val.length >= 8);
+            updateReq(reqUpper, /[A-Z]/.test(val));
+            updateReq(reqLower, /[a-z]/.test(val));
+            updateReq(reqNum, /\d/.test(val));
+            updateReq(reqSpecial, /[^A-Za-z0-9]/.test(val));
+        });
+
+        function showError(msg) {
+            const el = document.getElementById('auth-error');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('auth-success').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('auth-success');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('auth-error').style.display = 'none';
+        }
+
+        // Registration via Neon Auth (Email/Password)
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('roleSelect').value;
+            const termsAccepted = document.getElementById('terms-checkbox').checked;
+            const form = document.getElementById('register-form');
+
+            if (!fullName || !email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNum = /\d/.test(password);
+            const hasSpecial = /[^A-Za-z0-9]/.test(password);
+            
+            if (!(hasLength && hasUpper && hasLower && hasNum && hasSpecial)) {
+                showError('Please ensure your password meets all requirements.');
+                return;
+            }
+
+            if (!termsAccepted) {
+                showError('Please accept the Terms & Privacy policy');
+                return;
+            }
+
+            form.classList.add('auth-loading');
+            document.getElementById('auth-error').style.display = 'none';
+
+            try {
+                const authResult = await NeonAuth.signUpEmail(email, password, fullName);
+
+                if (authResult.token) {
+                    NeonAuth.storeToken(authResult.token, true);
+                    try {
+                        const syncResult = await NeonAuth.syncWithBackend(role);
+                        localStorage.setItem('loggedInEmail', syncResult.email);
+                        const redirectUrl = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+                        window.location.href = redirectUrl;
+                    } catch (e) {
+                        showError(e.message || 'Failed to sync with backend');
+                    }
+                } else {
+                    window.location.href = `verify-email.html?email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`;
+                }
+                
+                form.classList.remove('auth-loading');
+            } catch (err) {
+                console.error('Registration error:', err);
+                showError(err.message || 'Registration failed. Please try again.');
+                form.classList.remove('auth-loading');
+            }
+        });
+
+        // ─── Google OAuth Sign-Up (Role FIRST, then Google) ───────────
+        
+        // Step 1: Click Google button → show role popup
+        document.getElementById('google-btn').addEventListener('click', () => {
+            document.getElementById('oauth-role-modal').style.display = 'flex';
+        });
+
+        // Step 2: User picks a role → store it and redirect to Google
+        function startGoogleWithRole(role) {
+            localStorage.setItem('oauthSource', 'register');
+            localStorage.setItem('oauthRole', role);
+            NeonAuth.signInGoogle(window.location.origin + '/register.html');
+        }
+
+        document.getElementById('pick-client-btn').addEventListener('click', () => startGoogleWithRole('CLIENT'));
+        document.getElementById('pick-freelancer-btn').addEventListener('click', () => startGoogleWithRole('FREELANCER'));
+
+        // Step 3: Handle callback when Google redirects back
+        (async function handleOAuthCallback() {
+            const oauthSource = localStorage.getItem('oauthSource');
+            const oauthRole = localStorage.getItem('oauthRole');
+            
+            if (oauthSource !== 'register' || !oauthRole) return;
+
+            try {
+                let session = await NeonAuth.getSession();
+                let token = NeonAuth.getStoredToken();
+                
+                // Fallback for strict cross-domain third-party cookie blocking
+                if (!session || (!token && !session?.session)) {
+                    console.log('Third-party cookies likely blocked. Using session recovery fallback...');
+                    const recoveryRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/latest-session`);
+                    if (recoveryRes.ok) {
+                        const data = await recoveryRes.json();
+                        if (data.token) {
+                            token = data.token;
+                            NeonAuth.storeToken(token, true);
+                            // Fake the session object so we don't need the blocked cookie
+                            session = { session: { token: data.token }, user: { email: data.email } };
+                        }
+                    }
+                }
+
+                if (!session || !session.user) {
+                    throw new Error("Unable to retrieve session. Please try again.");
+                }
+
+                // Sync with backend using the role they chose BEFORE going to Google
+                const syncResult = await NeonAuth.syncWithBackend(oauthRole);
+                
+                localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
+                localStorage.removeItem('oauthSource');
+                localStorage.removeItem('oauthRole');
+                
+                const redirectUrl = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+                showSuccess('Account created successfully! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1000);
+
+            } catch (e) {
+                console.error('OAuth callback failed:', e);
+                showError(e.message || 'Google sign-up failed. Please try again.');
+                localStorage.removeItem('oauthSource');
+                localStorage.removeItem('oauthRole');
+            }
+        })();
+    </script>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

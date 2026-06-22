@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
     <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <style>
         .client-auth-card {
             border-top: 5px solid var(--primary);
@@ -27,6 +28,66 @@
             display: inline-block;
             margin-bottom: 10px;
         }
+
+        .auth-error {
+            background: #fff0f0;
+            color: #d32f2f;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .auth-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .google-btn:hover {
+            border-color: #4285f4;
+            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.2);
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .divider::before { margin-right: 15px; }
+        .divider::after { margin-left: 15px; }
     </style>
 </head>
 
@@ -61,128 +122,44 @@
                 <p>Login to manage your projects and hires.</p>
             </div>
 
-            <form class="auth-form">
+            <div class="auth-error" id="auth-error"></div>
+
+            <form class="auth-form" id="login-form">
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" placeholder="you@example.com">
+                    <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
                     <div style="position: relative;">
-                        <input type="password" class="form-input" id="password" placeholder="Enter your password" style="padding-right: 40px;">
+                        <input type="password" class="form-input" id="password" placeholder="Enter your password" style="padding-right: 40px;" required>
                         <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
                     </div>
                 </div>
 
                 <div class="auth-options">
                     <label class="checkbox-container">
-                        <input type="checkbox">
+                        <input type="checkbox" id="remember-me">
                         <span class="custom-checkbox"></span>
                         Remember me
                     </label>
-                    <a href="/forgot-password" style="color: var(--primary);">Forgot Password?</a>
                 </div>
 
-                <button type="button" class="btn btn-primary" id="login-btn" style="width: 100%;">Log In as
-                    Client</button>
-
+                <button type="submit" class="btn btn-primary" id="login-btn" style="width: 100%;">Log In as Client</button>
             </form>
 
-            <div class="social-login" style="margin-top: 20px; text-align: center;">
-                <div id="g_id_onload"
-                    data-client_id="395279487546-l48b8apos5dpa0fctvltp6hhsfl10o83.apps.googleusercontent.com"
-                    data-callback="handleCredentialResponse">
-                </div>
-                <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-                    data-text="sign_in_with" data-size="large" data-logo_alignment="left" data-width="100%"></div>
-            </div>
+            <div class="divider">or</div>
 
-            <script>
-                function handleCredentialResponse(response) {
-                    fetch(`${window.API_CONFIG.BASE_URL}/api/auth/google`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ token: response.credential, role: "CLIENT" })
-                    })
-                        .then(res => {
-                            if (!res.ok) return res.json().then(err => { throw new Error(err.message || "Login failed") });
-                            return res.json();
-                        })
-                        .then(data => {
-                            localStorage.setItem('loggedInEmail', data.email);
-                            // Ensure we redirect to client dashboard
-                            if (data.role === 'CLIENT') {
-                                window.location.href = "client-dashboard.html";
-                            } else {
-                                alert("This Google account is registered as a " + data.role + ". Please login via the " + (data.role === 'FREELANCER' ? 'Freelancer' : 'Client') + " portal.");
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert("Google Sign-In Failed: " + err.message);
-                        });
-                }
-            </script>
-            <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-            <script>
-                document.getElementById('login-btn').addEventListener('click', async () => {
-                    const inputs = document.querySelectorAll('.form-input');
-                    const email = inputs[0].value;
-                    const password = inputs[1].value;
-                    const rememberMe = document.querySelector('.checkbox-container input[type="checkbox"]').checked;
-
-                    if (!email || !password) {
-                        alert('Please enter email and password');
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/login/client`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, password })
-                        });
-
-                        if (response.ok) {
-                            const user = await response.json();
-
-                            if (rememberMe) {
-                                localStorage.setItem('loggedInEmail', email);
-                                sessionStorage.removeItem('loggedInEmail');
-                            } else {
-                                sessionStorage.setItem('loggedInEmail', email);
-                                localStorage.removeItem('loggedInEmail');
-                            }
-
-                            window.location.href = "client-dashboard.html";
-                        } else {
-                            const err = await response.text();
-                            alert('Login failed: ' + (err || 'Invalid credentials or you are not a Client.'));
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Login failed');
-                    }
-                });
-
-                // Toggle Password Visibility
-                const togglePassword = document.querySelector('#togglePassword');
-                const password = document.querySelector('#password');
-
-                togglePassword.addEventListener('click', function (e) {
-                    // toggle the type attribute
-                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                    password.setAttribute('type', type);
-                    // toggle the eye slash icon
-                    this.classList.toggle('fa-eye-slash');
-                    this.classList.toggle('fa-eye');
-                });
-            </script>
+            <button class="google-btn" id="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Sign in with Google
+            </button>
 
             <div style="margin-top: 20px; text-align: center;">
                 <p style="margin-bottom: 10px;">Not a Client? <a href="freelancer-login.html"
                         style="color: var(--secondary); font-weight: 700;">Freelancer Login</a></p>
+                <p style="margin-bottom: 10px;">New here? <a href="register.html?role=client"
+                        style="color: var(--primary); font-weight: 700;">Create an Account</a></p>
                 <a href="index.html"
                     style="color: var(--text-muted); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-arrow-left"></i> Return to Home Page
@@ -190,6 +167,126 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Toggle Password Visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const pwd = document.getElementById('password');
+            const type = pwd.getAttribute('type') === 'password' ? 'text' : 'password';
+            pwd.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+            this.classList.toggle('fa-eye');
+        });
+
+        function showError(msg) {
+            const el = document.getElementById('auth-error');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        // Email/Password Login via Neon Auth
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember-me').checked;
+            const form = document.getElementById('login-form');
+
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+
+            form.classList.add('auth-loading');
+            document.getElementById('auth-error').style.display = 'none';
+
+            try {
+                const authResult = await NeonAuth.signInEmail(email, password);
+
+                if (authResult.token) {
+                    NeonAuth.storeToken(authResult.token, remember);
+                }
+
+                const syncResult = await NeonAuth.syncWithBackend('CLIENT');
+
+                if (syncResult.role !== 'CLIENT' && syncResult.role !== 'ADMIN') {
+                    showError('This account is registered as a ' + syncResult.role + '. Please use the correct login portal.');
+                    form.classList.remove('auth-loading');
+                    return;
+                }
+
+                if (remember) {
+                    localStorage.setItem('loggedInEmail', email);
+                } else {
+                    sessionStorage.setItem('loggedInEmail', email);
+                }
+
+                window.location.href = 'client-dashboard.html';
+
+            } catch (err) {
+                console.error('Login error:', err);
+                showError(err.message || 'Login failed. Please check your credentials.');
+                form.classList.remove('auth-loading');
+            }
+        });
+
+        // ─── Google OAuth Sign-In ─────────────────────────────────────
+        document.getElementById('google-btn').addEventListener('click', () => {
+            localStorage.setItem('oauthSource', 'client-login');
+            NeonAuth.signInGoogle(window.location.origin + '/client-login.html');
+        });
+
+        // Handle Google OAuth callback
+        (async function handleOAuthCallback() {
+            const oauthSource = localStorage.getItem('oauthSource');
+            if (oauthSource !== 'client-login') return;
+
+            try {
+                let session = await NeonAuth.getSession();
+                let token = NeonAuth.getStoredToken();
+                
+                // Fallback for strict cross-domain third-party cookie blocking
+                if (!session || (!token && !session?.session)) {
+                    console.log('Third-party cookies likely blocked. Using session recovery fallback...');
+                    const recoveryRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/latest-session`);
+                    if (recoveryRes.ok) {
+                        const data = await recoveryRes.json();
+                        if (data.token) {
+                            token = data.token;
+                            NeonAuth.storeToken(token, true);
+                            session = { session: { token: data.token }, user: { email: data.email } };
+                        }
+                    }
+                }
+
+                if (!session || !session.user) return;
+                if (!token && !session.session) return;
+
+                // Sync with backend - don't force a role for login, let backend return existing role
+                const syncResult = await NeonAuth.syncWithBackend(null);
+
+                if (syncResult.role !== 'CLIENT' && syncResult.role !== 'ADMIN') {
+                    showError('This Google account is registered as a ' + syncResult.role + '. Please use the Freelancer Login portal.');
+                    localStorage.removeItem('oauthSource');
+                    return;
+                }
+
+                localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
+                localStorage.removeItem('oauthSource');
+                window.location.href = 'client-dashboard.html';
+
+            } catch (e) {
+                console.error('OAuth callback error:', e);
+                // If user doesn't exist yet, redirect to register
+                if (e.message && (e.message.includes('role') || e.message.includes('not found'))) {
+                    showError('No account found with this Google account. Please register first.');
+                } else {
+                    showError(e.message || 'Google sign-in failed.');
+                }
+                localStorage.removeItem('oauthSource');
+            }
+        })();
+    </script>
 
     <script src="script.js"></script>
 </body>

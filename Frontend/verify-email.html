@@ -5,220 +5,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Email | Nutzy Craft</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="auth.css">
     <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <style>
-        body {
-            background-color: #FFF9F5;
+        .otp-inputs {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .auth-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .otp-input-group {
-            display: flex;
             gap: 10px;
-            justify-content: center;
-            margin: 30px 0;
+            margin-bottom: 20px;
         }
-
         .otp-input {
-            width: 50px;
-            height: 60px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            font-size: 1.5rem;
+            width: 45px;
+            height: 55px;
+            font-size: 24px;
             text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-weight: 700;
-            color: #1a237e;
-            transition: 0.3s;
+            color: #333;
         }
-
         .otp-input:focus {
-            border-color: #ffb74d;
-            border: 2px solid #ffb74d;
+            border-color: var(--primary);
             outline: none;
-            box-shadow: 0 4px 12px rgba(255, 183, 77, 0.2);
+            box-shadow: 0 0 0 3px rgba(255, 183, 77, 0.2);
         }
-
-        .resend-text {
-            color: #888;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
+        .resend-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            text-decoration: underline;
         }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: 1;
-        }
-
-        .blob-1 {
-            width: 300px;
-            height: 300px;
-            background: #FFF3E0;
-            top: -50px;
-            right: -50px;
-        }
-
-        .blob-2 {
-            width: 300px;
-            height: 300px;
-            background: #E3F2FD;
-            bottom: -50px;
-            left: -50px;
+        .resend-btn:disabled {
+            color: #999;
+            cursor: not-allowed;
+            text-decoration: none;
         }
     </style>
 </head>
 
 <body>
-
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <div class="auth-card">
-        <a href="index.html" style="text-decoration: none;">
-            <img src="logo.jpg" alt="Logo" style="width: 60px; border-radius: 50%; margin-bottom: 20px;">
-        </a>
-        <h2 style="color: #1a237e; margin-bottom: 10px; font-weight: 800;">Verify Your Email 📧</h2>
-        <p style="color: #666; font-size: 0.95rem;">We've sent a 4-digit verification code to your email. Please enter
-            it below.</p>
-
-        <form id="verify-form">
-            <div class="otp-input-group">
-                <input type="text" class="otp-input" maxlength="1" required>
-                <input type="text" class="otp-input" maxlength="1" required>
-                <input type="text" class="otp-input" maxlength="1" required>
-                <input type="text" class="otp-input" maxlength="1" required>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="index.html">
+                    <img src="logo.jpg" alt="Nutzy Craft Logo" style="max-width: 80px; height: auto;">
+                </a>
+                <h2>Verify Your Email</h2>
+                <p>We've sent a 6-digit code to <br><strong id="display-email"></strong></p>
             </div>
 
-            <button type="submit" class="btn btn-primary"
-                style="width: 100%; padding: 14px; background: #ffb74d; color: white; border-radius: 12px; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer;">
-                Verify & Proceed
-            </button>
-        </form>
+            <div id="auth-error" class="auth-error"></div>
 
-        <p class="resend-text" style="margin-top: 20px;">
-            Didn't receive the code?
-            <span id="countdown-text">Resend in <span id="timer">30</span>s</span>
-            <a href="#" id="resend-link" style="color: #ffb74d; font-weight: 700; display: none;">Resend Code</a>
-        </p>
+            <form id="verify-form">
+                <div class="otp-inputs" id="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Verify Account</button>
+            </form>
+
+            <button type="button" class="resend-btn" id="resend-btn">Resend Code</button>
+        </div>
     </div>
 
     <script>
-        // Auto-focus next input
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const role = urlParams.get('role');
+
+        if (!email) {
+            window.location.href = 'register.html';
+        }
+
+        document.getElementById('display-email').textContent = email;
+
+        const errorEl = document.getElementById('auth-error');
+        const form = document.getElementById('verify-form');
+        const resendBtn = document.getElementById('resend-btn');
         const inputs = document.querySelectorAll('.otp-input');
+
+        function showError(msg) {
+            errorEl.textContent = msg;
+            errorEl.style.display = 'block';
+        }
+
+        // OTP Input navigation logic
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
-                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                if (e.target.value && index < inputs.length - 1) {
                     inputs[index + 1].focus();
                 }
             });
             input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
                     inputs[index - 1].focus();
+                }
+            });
+            // Handle paste
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                for (let i = 0; i < pastedData.length; i++) {
+                    if (inputs[i]) {
+                        inputs[i].value = pastedData[i];
+                        if (i < 5) inputs[i + 1].focus();
+                    }
                 }
             });
         });
 
-        // Verification Logic
-        document.getElementById('verify-form').addEventListener('submit', async function (e) {
+        // Submit Logic
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            let code = '';
-            inputs.forEach(input => code += input.value);
+            errorEl.style.display = 'none';
 
-            const email = localStorage.getItem('pendingEmail');
-            if (!email) {
-                alert("No email found to verify. Please register again.");
-                window.location.href = "register.html";
+            const otp = Array.from(inputs).map(i => i.value).join('');
+            if (otp.length !== 6) {
+                showError('Please enter a valid 6-digit code');
                 return;
             }
 
+            form.classList.add('auth-loading');
+
             try {
-                const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, code })
-                });
-
-                if (response.ok) {
-                    alert('Email Verified Successfully!');
-                    // Save verified email for session
-                    localStorage.setItem('loggedInEmail', email);
-
-                    localStorage.removeItem('pendingEmail'); // Cleanup
-                    const redirect = localStorage.getItem('redirectAfterVerify') || 'freelancer-dashboard.html';
-                    localStorage.removeItem('redirectAfterVerify');
-                    window.location.href = redirect;
-                } else {
-                    alert('Invalid Verification Code');
+                const authResult = await NeonAuth.verifyEmailOtp(email, otp);
+                
+                // Store token explicitly just to be safe
+                if (authResult.token) {
+                    NeonAuth.storeToken(authResult.token, true);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Verification failed. Check console.');
+
+                // Sync with our backend using the stored role
+                const syncResult = await NeonAuth.syncWithBackend(role);
+                localStorage.setItem('loggedInEmail', syncResult.email);
+                
+                // Redirect to the correct dashboard
+                const redirectUrl = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+                window.location.href = redirectUrl;
+            } catch (err) {
+                console.error(err);
+                showError(err.message || 'Verification failed. Invalid code.');
+                form.classList.remove('auth-loading');
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
             }
         });
 
         // Resend Logic
-        const timerSpan = document.getElementById('timer');
-        const countdownText = document.getElementById('countdown-text');
-        const resendLink = document.getElementById('resend-link');
-        let timeLeft = 30;
-
-        const countdownInterval = setInterval(() => {
-            timeLeft--;
-            timerSpan.textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(countdownInterval);
-                countdownText.style.display = 'none';
-                resendLink.style.display = 'inline';
-            }
-        }, 1000);
-
-        resendLink.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = localStorage.getItem('pendingEmail');
-            if (!email) return;
+        resendBtn.addEventListener('click', async () => {
+            resendBtn.disabled = true;
+            resendBtn.textContent = 'Sending...';
+            errorEl.style.display = 'none';
 
             try {
-                const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/auth/resend-verification`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
-
-                if (response.ok) {
-                    alert('Verification code resent!');
-                    location.reload();
-                } else {
-                    alert('Failed to resend code');
-                }
-            } catch (error) {
-                console.error('Error:', error);
+                await NeonAuth.resendVerificationOtp(email);
+                resendBtn.textContent = 'Code Sent!';
+                setTimeout(() => {
+                    resendBtn.textContent = 'Resend Code';
+                    resendBtn.disabled = false;
+                }, 30000); // 30 second cooldown
+            } catch (err) {
+                console.error(err);
+                showError(err.message || 'Failed to resend code');
+                resendBtn.textContent = 'Resend Code';
+                resendBtn.disabled = false;
             }
         });
     </script>
-
 </body>
-
 </html>

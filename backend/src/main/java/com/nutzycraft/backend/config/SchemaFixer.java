@@ -24,6 +24,12 @@ public class SchemaFixer implements CommandLineRunner {
             // Add banner_image if missing
             jdbcTemplate.execute("ALTER TABLE clients ADD COLUMN IF NOT EXISTS banner_image TEXT");
 
+            // Drop legacy password column since Neon Auth handles passwords now
+            jdbcTemplate.execute("ALTER TABLE users DROP COLUMN IF EXISTS password");
+
+            // Drop legacy is_verified column since Neon Auth handles verification now
+            jdbcTemplate.execute("ALTER TABLE users DROP COLUMN IF EXISTS is_verified");
+
             System.out.println("SchemaFixer completed successfully.");
         } catch (Exception e) {
             System.err.println("SchemaFixer warning (can be ignored if columns exist): " + e.getMessage());

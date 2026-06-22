@@ -41,8 +41,8 @@
                 <a href="/contact">Contact Us</a>
             </div>
             <div class="nav-actions">
-                <a href="comingsoon.html" class="btn btn-secondary">Log In</a>
-                <a href="comingsoon.html" class="btn btn-primary">Join Now</a>
+                <a href="/login" class="btn btn-secondary">Log In</a>
+                <a href="/register" class="btn btn-primary">Join Now</a>
             </div>
             <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
         </div>
@@ -388,7 +388,28 @@
             </div>
         </footer>
 
+        <script src="config.js"></script>
+        <script src="neon-auth.js"></script>
         <script src="script.js"></script>
+        <script>
+            // If the user lands on index after a Google OAuth redirect,
+            // redirect them to the correct page based on oauthSource
+            (function() {
+                const oauthSource = localStorage.getItem('oauthSource');
+                if (!oauthSource) return;
+                
+                const redirectMap = {
+                    'register': 'register.html',
+                    'client-login': 'client-login.html',
+                    'freelancer-login': 'freelancer-login.html'
+                };
+                
+                const target = redirectMap[oauthSource];
+                if (target) {
+                    window.location.href = target;
+                }
+            })();
+        </script>
 </body>
 
 </html>

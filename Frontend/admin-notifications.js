@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/notifications';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/notifications`;
     const listContainer = document.querySelector('.notification-list');
 
     async function fetchNotifications() {

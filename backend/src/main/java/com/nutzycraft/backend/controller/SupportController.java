@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/support")
-@CrossOrigin(origins = "*")
 public class SupportController {
 
     @Autowired

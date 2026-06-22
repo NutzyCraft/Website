@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -109,7 +111,7 @@
                     }
 
                     try {
-                        const response = await fetch(`/api/proposals/job/${jobId}`);
+                        const response = await fetch(`${API_CONFIG.BASE_URL}/api/proposals/job/${jobId}`);
                         if (response.ok) {
                             const proposals = await response.json();
 
@@ -118,15 +120,17 @@
                                 return;
                             }
 
-                            tbody.innerHTML = proposals.map(p => `
+                            tbody.innerHTML = proposals.map(p => {
+                                const freelancerName = p.freelancer.deletedAt ? 'User Deleted' : p.freelancer.fullName;
+                                return `
                                 <tr>
                                     <td>
                                         <div style="display: flex; align-items: center; gap: 10px;">
                                             <a href="client-view-freelancer.html?id=${p.freelancer.id}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
-                                                <img id="avatar-freelancer-${p.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.freelancer.fullName)}&background=random" 
+                                                <img id="avatar-freelancer-${p.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(freelancerName)}&background=random" 
                                                      style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                                                 <div>
-                                                    <div style="font-weight: 600; color: var(--primary);">${p.freelancer.fullName}</div>
+                                                    <div style="font-weight: 600; color: var(--primary);">${freelancerName}</div>
                                                     <div style="font-size: 0.8rem; color: #888;">${p.freelancer.email}</div>
                                                 </div>
                                             </a>
@@ -164,11 +168,11 @@
                                 }
                                     </td>
                                 </tr>
-                            `).join('');
+                            `}).join('');
 
                             // Fetch real avatars
                             proposals.forEach(p => {
-                                fetch(`/api/users/${p.freelancer.id}/avatar`)
+                                fetch(`${API_CONFIG.BASE_URL}/api/users/${p.freelancer.id}/avatar`)
                                     .then(res => res.text())
                                     .then(url => {
                                         if (url) document.getElementById(`avatar-freelancer-${p.id}`).src = url;
@@ -190,7 +194,7 @@
                         }
 
                         try {
-                            const response = await fetch(`/api/proposals/${proposalId}/accept`, {
+                            const response = await fetch(`${API_CONFIG.BASE_URL}/api/proposals/${proposalId}/accept`, {
                                 method: 'POST'
                             });
 

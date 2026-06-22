@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/users';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/users`;
     const tableBody = document.querySelector('.dashboard-table tbody');
 
     async function fetchUsers() {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm(`Are you sure you want to ${active ? 'activate' : 'ban'} this user?`)) return;
 
         try {
-            const response = await fetch(`/api/admin/users/${userId}/status?active=${active}`, {
+            const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/users/${userId}/status?active=${active}`, {
                 method: 'PUT'
             });
             if (response.ok) {

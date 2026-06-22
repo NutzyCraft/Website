@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="jobs.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -124,7 +126,7 @@
                     const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
                     if (email) {
                         try {
-                            const profileRes = await fetch(`/api/users/profile?email=${email}`);
+                            const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
                             if (profileRes.ok) {
                                 const profile = await profileRes.json();
                                 const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
@@ -149,7 +151,7 @@
                             </div>
                         `;
                         try {
-                            const url = query ? `/api/jobs?search=${encodeURIComponent(query)}` : '/api/jobs';
+                            const url = query ? `${window.API_CONFIG.BASE_URL}/api/jobs?search=${encodeURIComponent(query)}` : `${window.API_CONFIG.BASE_URL}/api/jobs`;
                             const response = await fetch(url);
                             if (response.ok) {
                                 const jobs = await response.json();
@@ -162,10 +164,12 @@
 
                                 document.getElementById('job-count-label').innerText = `${jobs.length} new jobs for you`;
 
-                                container.innerHTML = jobs.map(job => `
+                                container.innerHTML = jobs.map(job => {
+                                    const clientName = job.client ? (job.client.deletedAt ? 'User Deleted' : job.client.fullName) : 'Client';
+                                    return `
                                     <div class="glass-card" style="margin-bottom: 20px; display: flex; gap: 20px; align-items: start;">
                                         <div class="job-icon" style="flex-shrink: 0; cursor: pointer;" onclick="if(event.target.tagName !== 'A') window.location.href='freelancer-view-client.html?id=${job.client ? job.client.id : ''}'">
-                                            <img id="avatar-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(job.client ? job.client.fullName : 'Client')}&background=random" 
+                                            <img id="avatar-job-${job.id}" src="https://ui-avatars.com/api/?name=${encodeURIComponent(clientName)}&background=random" 
                                                  style="width: 60px; height: 60px; border-radius: 12px; object-fit: cover;">
                                         </div>
                                         <div style="flex: 1;">
@@ -191,12 +195,13 @@
                                         <a href="freelancer-apply.html?jobId=${job.id}" class="btn btn-primary"
                                             style="padding: 8px 20px; height: fit-content; text-decoration: none;">Apply Now</a>
                                     </div>
+                                `}).join('');
                                 `).join('');
 
                                 // Fetch real avatars for jobs
                                 jobs.forEach(job => {
                                     if (job.client) {
-                                        fetch(`/api/users/${job.client.id}/avatar`)
+                                        fetch(`${window.API_CONFIG.BASE_URL}/api/users/${job.client.id}/avatar`)
                                             .then(res => res.text())
                                             .then(url => {
                                                 if (url) document.getElementById(`avatar-job-${job.id}`).src = url;

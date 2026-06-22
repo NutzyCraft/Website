@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -283,7 +285,7 @@
 
             if (jobId) {
                 try {
-                    const response = await fetch('/api/jobs');
+                    const response = await fetch(`${window.API_CONFIG.BASE_URL}/api/jobs`);
                     if (response.ok) {
                         const jobs = await response.json();
                         const job = jobs.find(j => j.id == jobId);
@@ -295,8 +297,8 @@
 
                             // Populate Client Info
                             if (job.client) {
-                                document.getElementById('job-client-name').textContent = job.client.fullName;
-                                document.getElementById('job-client-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.fullName)}&background=random`;
+                                document.getElementById('job-client-name').textContent = job.client.deletedAt ? 'User Deleted' : job.client.fullName;
+                                document.getElementById('job-client-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.client.deletedAt ? 'User Deleted' : job.client.fullName)}&background=random`;
 
                                 // Click to view profile
                                 document.getElementById('client-info-card').onclick = () => {
@@ -354,7 +356,7 @@
                             const formData = new FormData();
                             formData.append('file', file);
                             
-                            const uploadRes = await fetch('/api/upload', {
+                            const uploadRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/upload`, {
                                 method: 'POST',
                                 body: formData
                             });
@@ -390,7 +392,7 @@
                 };
 
                 try {
-                    const res = await fetch('/api/proposals', {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/proposals`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(proposalData)

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_URL = '/api/admin/dashboard/stats';
+    const API_URL = `${API_CONFIG.BASE_URL}/api/admin/dashboard/stats`;
 
     async function fetchDashboardStats() {
         try {

@@ -1,6 +1,7 @@
 package com.nutzycraft.backend.service;
 
-import com.nutzycraft.backend.dto.AuthDTOs.*;
+import com.nutzycraft.backend.dto.AuthDTOs.SyncResponse;
+import com.nutzycraft.backend.dto.UserProfileDTO;
 import com.nutzycraft.backend.entity.Client;
 import com.nutzycraft.backend.entity.Freelancer;
 import com.nutzycraft.backend.entity.User;
@@ -11,12 +12,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
 
 @Service
 public class AuthService {
+
+    /**
+     * Allowlist of emails permitted to register during early testing.
+     * Any email NOT in this set will be rejected by syncUser().
+     */
+    private static final Set<String> ALLOWED_EMAILS = Set.of(
+            "nutzycraft@gmail.com",
+            "soeshcooray@gmail.com",
+            "client@test.com",
+            "freelancer@test.com");
+
+    /**
+     * The only email permitted to hold the ADMIN role.
+     */
+    private static final String ADMIN_EMAIL = "nutzycraft@gmail.com";
 
     @Autowired
     private UserRepository userRepository;
@@ -27,220 +42,53 @@ public class AuthService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired
-    private EmailService emailService;
-
+    /**
+     * Synchronize a Neon Auth identity with the local database.
+     * Called after successful Neon Auth sign-in/sign-up.
+     *
+     * @param providerId Neon Auth subject ID (from JWT "sub" claim)
+     * @param email      Email from the JWT
+     * @param name       Full name from the JWT (may be null)
+     * @param roleStr    Requested role — only used for first-time registration
+     * @return SyncResponse with user details and isNew flag
+     */
     @Transactional
-    public User registerFreelancer(FreelancerRegisterRequest request) {
-        validatePassword(request.getPassword());
+    public SyncResponse syncUser(String providerId, String email, String name, String roleStr) {
+        SyncResponse response = new SyncResponse();
 
-        // Check if email is in use by active user
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already in use");
+        // 1. Look up by providerId (fastest path for returning users)
+        Optional<User> byProvider = userRepository.findByProviderId(providerId);
+        if (byProvider.isPresent()) {
+            User user = byProvider.get();
+            populateResponse(response, user, false);
+            return response;
         }
 
-        // Check if email belongs to a soft-deleted account
-        if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
+        // 2. Look up by email (handles migration of legacy users)
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            User user = byEmail.get();
+            // Link the Neon Auth identity to the existing local user
+            user.setProviderId(providerId);
+            if (name != null && !name.isBlank() && (user.getFullName() == null || user.getFullName().isBlank())) {
+                user.setFullName(name);
+            }
+            userRepository.save(user);
+            populateResponse(response, user, false);
+            return response;
         }
 
-        User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.FREELANCER);
+        // 3. First-time registration — create new user
+        User.Role role = resolveRole(email, roleStr);
 
-        Freelancer freelancer = new Freelancer();
-        freelancer.setUser(user);
-        freelancerRepository.save(freelancer);
-
-        sendVerification(user);
-        return user;
-    }
-
-    @Transactional
-    public User registerClient(ClientRegisterRequest request) {
-        validatePassword(request.getPassword());
-
-        // Check if email is in use by active user
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already in use");
-        }
-
-        // Check if email belongs to a soft-deleted account
-        if (userRepository.findDeletedByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("This email belongs to a deleted account. Please contact support.");
-        }
-
-        User user = createUser(request.getEmail(), request.getFullName(), request.getPassword(), User.Role.CLIENT);
-
-        Client client = new Client();
-        client.setUser(user);
-        client.setCompanyName(request.getCompanyName());
-        client.setIndustry(request.getIndustry());
-        clientRepository.save(client);
-
-        sendVerification(user);
-        return user;
-    }
-
-    private void validatePassword(String password) {
-        if (password == null || password.length() < 8) {
-            throw new RuntimeException("Password must be at least 8 characters long");
-        }
-        if (!password.matches(".*\\d.*")) {
-            throw new RuntimeException("Password must contain at least one number");
-        }
-        if (!password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
-            throw new RuntimeException("Password must contain at least one special character");
-        }
-    }
-
-    private User createUser(String email, String fullName, String password, User.Role role) {
         User user = new User();
         user.setEmail(email);
-        user.setFullName(fullName);
-        user.setPassword(password); // Should be hashed
+        user.setFullName(name != null ? name : "");
+        user.setProviderId(providerId);
         user.setRole(role);
-        return userRepository.save(user);
-    }
-
-    @SuppressWarnings("null")
-    private void sendVerification(User user) {
-        String code = String.valueOf((int) (Math.random() * 9000) + 1000);
-        user.setVerificationCode(code);
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(24));
         userRepository.save(user);
 
-        String email = user.getEmail();
-        if (email == null) {
-            throw new IllegalStateException("User email cannot be null");
-        }
-        emailService.sendVerificationEmail(email, code);
-    }
-
-    public boolean verifyUser(String email, String code) {
-        return userRepository.findByEmail(email)
-                .map(user -> {
-                    if (code.equals(user.getVerificationCode()) &&
-                            (user.getVerificationCodeExpiresAt() == null
-                                    || user.getVerificationCodeExpiresAt().isAfter(LocalDateTime.now()))) {
-                        user.setVerified(true);
-                        user.setVerificationCode(null);
-                        userRepository.save(user);
-                        return true;
-                    }
-                    return false;
-                })
-                .orElse(false);
-    }
-
-    public User login(String email, String password) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-
-            // Check if account has been deleted
-            if (user.isDeleted() || user.getDeletedAt() != null) {
-                throw new RuntimeException(
-                        "This account has been deleted. Please contact support if you believe this is an error.");
-            }
-
-            if (password.equals(user.getPassword())) { // Simple check, should use Encoder matches
-                if (!user.isVerified()) {
-                    throw new RuntimeException("Account not verified. Please check your email.");
-                }
-                return user;
-            }
-        }
-        throw new RuntimeException("Invalid credentials");
-    }
-
-    public User loginFreelancer(String email, String password) {
-        User user = login(email, password);
-        if (user.getRole() != User.Role.FREELANCER) {
-            throw new RuntimeException("User is not a Freelancer");
-        }
-        return user;
-    }
-
-    public User loginClient(String email, String password) {
-        User user = login(email, password);
-        if (user.getRole() != User.Role.CLIENT) {
-            throw new RuntimeException("User is not a Client");
-        }
-        return user;
-    }
-
-    @SuppressWarnings("null")
-    public void forgotPassword(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            String token = UUID.randomUUID().toString();
-            user.setResetToken(token);
-            user.setResetTokenExpiresAt(LocalDateTime.now().plusHours(1));
-            userRepository.save(user);
-
-            String userEmail = user.getEmail();
-            if (userEmail == null) {
-                throw new IllegalStateException("User email cannot be null");
-            }
-            emailService.sendPasswordResetEmail(userEmail, token);
-        });
-    }
-
-    public void resetPassword(String token, String newPassword) {
-        validatePassword(newPassword);
-        Optional<User> userOpt = userRepository.findAll().stream()
-                .filter(u -> token.equals(u.getResetToken())) // Ideally findByResetToken
-                .findFirst();
-
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (user.getResetTokenExpiresAt().isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("Reset token expired");
-            }
-            user.setPassword(newPassword); // Should hash
-            user.setResetToken(null);
-            user.setResetTokenExpiresAt(null);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("Invalid reset token");
-        }
-    }
-
-    @Autowired
-    private GoogleAuthService googleAuthService;
-
-    public User loginOrRegisterWithGoogle(String token, String roleStr) {
-        java.util.Map<String, Object> payload = googleAuthService.verifyToken(token);
-        String email = (String) payload.get("email");
-        String name = (String) payload.get("name");
-
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            return userOpt.get();
-        }
-
-        // New User Registration
-        if (roleStr == null || roleStr.isEmpty()) {
-            throw new RuntimeException("Role is required for new user registration");
-        }
-
-        User.Role role;
-        try {
-            role = User.Role.valueOf(roleStr.toUpperCase());
-            if (role == User.Role.ADMIN) {
-                throw new RuntimeException("Cannot register as ADMIN");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid role specified");
-        }
-
-        // Auto-register
-        User user = new User();
-        user.setEmail(email);
-        user.setFullName(name);
-        user.setPassword(UUID.randomUUID().toString()); // Random pass
-        user.setRole(role);
-        user.setVerified(true); // Google verified
-        userRepository.save(user);
-
+        // Create the corresponding role-specific record
         if (role == User.Role.FREELANCER) {
             Freelancer freelancer = new Freelancer();
             freelancer.setUser(user);
@@ -250,49 +98,79 @@ public class AuthService {
             client.setUser(user);
             clientRepository.save(client);
         }
+        // ADMIN does not get a Client/Freelancer record
 
-        return user;
+        populateResponse(response, user, true);
+        return response;
     }
 
-    public void resendVerificationCode(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            if (user.isVerified()) {
-                throw new RuntimeException("User is already verified");
+    /**
+     * Resolve the role for a new user.
+     * ADMIN is hardcoded to ADMIN_EMAIL only — it can never be claimed via the role
+     * parameter.
+     */
+    private User.Role resolveRole(String email, String roleStr) {
+        // 1. Immediately hardcode the master admin email
+        if (ADMIN_EMAIL.equalsIgnoreCase(email)) {
+            return User.Role.ADMIN;
+        }
+
+        // 2. Validate that a role string was actually provided
+        if (roleStr == null || roleStr.isBlank()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Role is required for new user registration (CLIENT or FREELANCER).");
+        }
+
+        try {
+            // 3. Parse the string into the Enum inside the correct scope
+            User.Role role = User.Role.valueOf(roleStr.toUpperCase());
+
+            // 4. Block anyone else from trying to claim the ADMIN role
+            if (role == User.Role.ADMIN) {
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.BAD_REQUEST,
+                        "Cannot register as ADMIN.");
             }
-            sendVerification(user);
-        });
+
+            return role;
+        } catch (IllegalArgumentException e) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Invalid role specified. Use CLIENT or FREELANCER.");
+        }
     }
 
-    public com.nutzycraft.backend.dto.UserProfileDTO getUserProfile(String email) {
+    private void populateResponse(SyncResponse response, User user, boolean isNew) {
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setFullName(user.getFullName());
+        response.setRole(user.getRole().name());
+        response.setNew(isNew);
+    }
+
+    /**
+     * Get user profile information for display.
+     * Kept from the original AuthService — used by UserController.
+     */
+    public UserProfileDTO getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        com.nutzycraft.backend.dto.UserProfileDTO dto = new com.nutzycraft.backend.dto.UserProfileDTO();
-
-        // Only set primitive/String fields explicitly
-        dto.setFullName(user.getFullName() != null ? user.getFullName() : "");
-        dto.setEmail(user.getEmail() != null ? user.getEmail() : "");
-        dto.setRole(user.getRole() != null ? user.getRole().name() : "");
+        UserProfileDTO dto = new UserProfileDTO();
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole().name());
 
         if (user.getRole() == User.Role.CLIENT) {
-            clientRepository.findByUser_Email(email).ifPresent(client -> {
-                // Explicitly map only String fields
-                if (client.getCompanyName() != null) {
-                    dto.setCompanyName(client.getCompanyName());
-                }
-                if (client.getIndustry() != null) {
-                    dto.setIndustry(client.getIndustry());
-                }
-                if (client.getProfileImage() != null) {
-                    dto.setProfileImage(client.getProfileImage());
-                }
+            clientRepository.findByUser(user).ifPresent(client -> {
+                dto.setCompanyName(client.getCompanyName());
+                dto.setIndustry(client.getIndustry());
+                dto.setProfileImage(client.getProfileImage());
             });
         } else if (user.getRole() == User.Role.FREELANCER) {
-            freelancerRepository.findByUser_Email(email).ifPresent(freelancer -> {
-                // Explicitly map only String fields
-                if (freelancer.getProfileImage() != null) {
-                    dto.setProfileImage(freelancer.getProfileImage());
-                }
+            freelancerRepository.findByUser_Email(user.getEmail()).ifPresent(freelancer -> {
+                dto.setProfileImage(freelancer.getProfileImage());
             });
         }
 

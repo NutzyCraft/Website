@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="profile.css">
+    <script src="config.js"></script>
+    <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -147,7 +149,11 @@
                     // Populate Header
                     document.getElementById('profile-name').textContent = freelancer.user?.fullName || "Unknown";
                     document.getElementById('profile-title').textContent = freelancer.title || "Freelancer";
-                    document.getElementById('profile-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(freelancer.user?.fullName || 'User')}&background=random&size=200`;
+                    if (freelancer.profileImage) {
+                        document.getElementById('profile-avatar').src = freelancer.profileImage;
+                    } else {
+                        document.getElementById('profile-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(freelancer.user?.fullName || 'User')}&background=random&size=200`;
+                    }
                     document.getElementById('profile-rate').textContent = freelancer.hourlyRate || '0';
                     document.getElementById('profile-bio').innerHTML = (freelancer.bio || "No bio available.").replace(/\n/g, '<br>');
 

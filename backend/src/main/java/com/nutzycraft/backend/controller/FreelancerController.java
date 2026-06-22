@@ -2,10 +2,7 @@ package com.nutzycraft.backend.controller;
 
 import com.nutzycraft.backend.entity.Freelancer;
 import com.nutzycraft.backend.repository.FreelancerRepository;
-import com.nutzycraft.backend.dto.FreelancerDTO;
-import com.nutzycraft.backend.dto.UserSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +11,6 @@ import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/freelancers")
-@CrossOrigin(origins = "*") // Allow all origins explicitly
 public class FreelancerController {
 
     @Autowired
@@ -36,7 +32,7 @@ public class FreelancerController {
 
     // Get specific profile
     @GetMapping("/{id}")
-    public Freelancer getFreelancer(@PathVariable @NonNull Long id) {
+    public Freelancer getFreelancer(@PathVariable Long id) {
         return freelancerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
     }
@@ -48,19 +44,15 @@ public class FreelancerController {
     }
 
     @GetMapping("/me")
-    public FreelancerDTO getMyProfile(@RequestParam String email) {
-        Freelancer freelancer = freelancerRepository.findByUser_Email(email)
+    public Freelancer getMyProfile(@RequestParam String email) {
+        return freelancerRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
-        return mapToDTO(freelancer);
     }
 
     @PutMapping("/me")
     public Freelancer updateMyProfile(@RequestParam String email, @RequestBody Freelancer updatedFreelancer) {
         Freelancer existing = freelancerRepository.findByUser_Email(email)
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
-        if (existing == null) {
-            throw new RuntimeException("Freelancer not found");
-        }
 
         if (updatedFreelancer.getTitle() != null)
             existing.setTitle(updatedFreelancer.getTitle());
@@ -84,25 +76,5 @@ public class FreelancerController {
         }
 
         return freelancerRepository.save(existing);
-    }
-
-    private FreelancerDTO mapToDTO(Freelancer freelancer) {
-        FreelancerDTO dto = new FreelancerDTO();
-        dto.setId(freelancer.getId());
-        dto.setTitle(freelancer.getTitle());
-        dto.setBio(freelancer.getBio());
-        dto.setHourlyRate(freelancer.getHourlyRate());
-        dto.setSkills(freelancer.getSkills());
-        dto.setRating(freelancer.getRating());
-        
-        if (freelancer.getUser() != null) {
-            UserSummaryDTO userDto = new UserSummaryDTO();
-            userDto.setId(freelancer.getUser().getId());
-            userDto.setFullName(freelancer.getUser().getFullName());
-            userDto.setEmail(freelancer.getUser().getEmail());
-            // No profile picture here
-            dto.setUser(userDto);
-        }
-        return dto;
     }
 }
