@@ -7,7 +7,7 @@ const API_CONFIG = {
       : 'https://nutzy-backend-dev-gefkm.ondigitalocean.app',
 
   // Neon Auth base URL for authentication
-  NEON_AUTH_URL: 'https://ep-snowy-hat-a1duupft.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth'
+  NEON_AUTH_URL: 'https://ep-silent-heart-a1y7v8lg.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth'
 };
 
 // Export for use in other files
