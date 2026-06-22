@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Component
-@Profile("dev")
 public class SchemaFixer implements CommandLineRunner {
 
     @Autowired
@@ -18,10 +17,9 @@ public class SchemaFixer implements CommandLineRunner {
         try {
             System.out.println("Running SchemaFixer to ensure columns exist...");
 
-            // Add profile_image if missing
+            // Add missing columns
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted BOOLEAN DEFAULT false");
             jdbcTemplate.execute("ALTER TABLE clients ADD COLUMN IF NOT EXISTS profile_image TEXT");
-
-            // Add banner_image if missing
             jdbcTemplate.execute("ALTER TABLE clients ADD COLUMN IF NOT EXISTS banner_image TEXT");
 
             // Drop legacy password column since Neon Auth handles passwords now
