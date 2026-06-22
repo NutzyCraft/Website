@@ -4,7 +4,7 @@ const API_CONFIG = {
   // Automatically detect development vs production environment
   BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:8080'
-      : 'https://nutzycraft-backend-pynth.ondigitalocean.app',
+      : 'https://nutzy-backend-dev-gefkm.ondigitalocean.app/',
 
   // Neon Auth base URL for authentication
   NEON_AUTH_URL: 'https://ep-snowy-hat-a1duupft.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth'
