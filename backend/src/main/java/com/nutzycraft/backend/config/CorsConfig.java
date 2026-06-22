@@ -24,6 +24,7 @@ public class CorsConfig {
                 "https://nutzy-craft.vercel.app",
                 "https://nutzycraft.com",
                 "https://nutzy-craft-5s0q2n36n-soesh-coorays-projects.vercel.app",
+                "https://nutzy-craft-git-dev-soesh-coorays-projects.vercel.app",
                 "https://www.nutzycraft.com"));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
