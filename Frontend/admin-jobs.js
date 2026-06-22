@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.style.borderBottom = '1px solid #f0f0f0';
 
             const statusBadge = getStatusBadge(job.status);
-            const value = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.value);
+            const value = new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(job.value);
 
             row.innerHTML = `
                 <td style="padding: 15px;">#JOB-${job.id}</td>
