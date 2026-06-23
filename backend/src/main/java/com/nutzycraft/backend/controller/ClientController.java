@@ -34,7 +34,7 @@ public class ClientController {
                     client,
                     totalHires,
                     totalSpent != null ? totalSpent : 0.0,
-                    client.getUser().getCreatedAt().getYear(), // Replaced Stub
+                    (client.getUser() != null && client.getUser().getCreatedAt() != null) ? client.getUser().getCreatedAt().getYear() : 2026, // Safely replaced Stub
                     avgRating != null ? avgRating : 0.0));
         } catch (Exception e) {
             e.printStackTrace();
