@@ -335,39 +335,22 @@
                     </div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);" id="job-budget">$0.00</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);" id="job-budget">Rs 0.00</div>
                     <div style="font-size: 0.85rem; color: #666;">Fixed Price</div>
                 </div>
             </div>
 
             <!-- Timeline -->
             <div class="glass-card" style="margin-bottom: 30px; padding: 40px;">
-                <h3 style="margin-bottom: 30px;">Project Timeline</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h3>Project Timeline</h3>
+                </div>
+
                 <div class="timeline-container">
                     <div class="timeline-progress-bar">
                         <div class="timeline-progress-fill" style="width: 0%;"></div>
                     </div>
-                    <div class="timeline-steps">
-                        <div class="timeline-step">
-                            <div class="step-circle">1</div>
-                            <div class="step-label">Project Started</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="step-circle">2</div>
-                            <div class="step-label">Initial Concepts</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="step-circle">3</div>
-                            <div class="step-label">Revisions</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
-                        </div>
-                        <div class="timeline-step">
-                            <div class="step-circle">4</div>
-                            <div class="step-label">Final Delivery</div>
-                            <div style="font-size: 0.75rem; color: #999; margin-top: 5px;">-</div>
-                        </div>
+                    <div class="timeline-steps" id="timeline-steps-container">
                     </div>
                 </div>
             </div>
@@ -445,7 +428,7 @@
                     <textarea id="milestone-description" placeholder="Describe the milestone..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Amount ($)</label>
+                    <label>Amount (Rs)</label>
                     <input type="number" id="milestone-amount" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group">
@@ -462,6 +445,7 @@
 
     <script>
         let currentJobId = null;
+        let currentTimelineLabels = ['Project Started', 'Initial Concepts', 'Revisions', 'Final Delivery'];
 
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -481,7 +465,7 @@
 
                 // Populate Job Header
                 document.getElementById('track-job-subtitle').textContent = `Job: ${job.title}`;
-                document.getElementById('job-budget').textContent = `$${job.budget}`;
+                document.getElementById('job-budget').textContent = `Rs ${job.budget}`;
 
                 // Populate Freelancer Info
                 if (job.freelancer) {
@@ -527,7 +511,14 @@
                 }
 
                 // Render Timeline based on currentStep
+                
+                if (job.timelineLabels) {
+                    currentTimelineLabels = job.timelineLabels.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                    if(currentTimelineLabels.length === 0) currentTimelineLabels = ['Project Started', 'Initial Concepts', 'Revisions', 'Final Delivery'];
+                }
+                buildTimelineHTML();
                 renderTimeline(job.currentStep || 1);
+    
 
                 // 2. Fetch Milestones
                 const milestonesRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/job/${jobId}`);
@@ -552,7 +543,7 @@
                                         <h4 style="margin-bottom: 5px;">${m.title}</h4>
                                         <p style="color: #666; font-size: 0.9rem;">${m.description || ''}</p>
                                         <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">
-                                            Due: ${m.dueDate || 'N/A'} • $${m.amount || '0'} • Created by: ${m.createdBy || 'Unknown'}
+                                            Due: ${m.dueDate || 'N/A'} • Rs ${m.amount || '0'} • Created by: ${m.createdBy || 'Unknown'}
                                         </div>
                                     </div>
                                 </div>
@@ -923,12 +914,27 @@
             }
         }
 
+        
+        function buildTimelineHTML() {
+            const container = document.getElementById('timeline-steps-container');
+            if(!container) return;
+            container.innerHTML = currentTimelineLabels.map((label, index) => {
+                return `
+                    <div class="timeline-step">
+                        <div class="step-circle">${index + 1}</div>
+                        <div class="step-label">${label}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    
         function renderTimeline(currentStep) {
             const steps = document.querySelectorAll('.timeline-step');
             const progressFill = document.querySelector('.timeline-progress-fill');
+            if(!progressFill) return;
 
-            // Calculate progress percentage: (step-1) / 3 * 100
-            const percent = ((currentStep - 1) / 3) * 100;
+            const total = currentTimelineLabels.length;
+            const percent = total > 1 ? ((currentStep - 1) / (total - 1)) * 100 : 100;
             progressFill.style.width = `${percent}%`;
 
             steps.forEach((stepEl, index) => {
@@ -945,7 +951,7 @@
                     stepEl.querySelector('.step-circle').textContent = stepNum;
                 }
             });
-        }
+    }
     </script>
 </body>
 

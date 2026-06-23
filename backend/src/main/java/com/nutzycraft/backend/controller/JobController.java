@@ -99,12 +99,17 @@ public class JobController {
     @PutMapping("/{id}/step")
     public Job updateJobStep(@PathVariable @NonNull Long id, @RequestParam Integer step) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
-        // 1=Started, 2=Concepts, 3=Revisions, 4=Delivery
-        if (step < 1 || step > 4) {
+        
+        int maxSteps = 4;
+        if (job.getTimelineLabels() != null && !job.getTimelineLabels().trim().isEmpty()) {
+            maxSteps = job.getTimelineLabels().split(",").length;
+        }
+
+        if (step < 1 || step > maxSteps) {
             throw new IllegalArgumentException("Invalid step");
         }
         job.setCurrentStep(step);
-        if (step == 4) {
+        if (step == maxSteps) {
             job.setStatus("COMPLETED");
             
             // Automatically delete all shared files when job is completed
@@ -122,6 +127,13 @@ public class JobController {
                 System.err.println("Error deleting shared files for job " + id + ": " + e.getMessage());
             }
         }
+        return jobRepository.save(job);
+    }
+
+    @PutMapping("/{id}/timeline")
+    public Job updateTimeline(@PathVariable @NonNull Long id, @RequestBody java.util.Map<String, String> payload) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        job.setTimelineLabels(payload.get("labels"));
         return jobRepository.save(job);
     }
 

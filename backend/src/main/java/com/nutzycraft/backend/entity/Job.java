@@ -39,8 +39,12 @@ public class Job {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private java.util.List<Milestone> milestones;
 
-    // Timeline Step: 1=Started, 2=Concepts, 3=Revisions, 4=Delivery
+    // Timeline Step index
     private Integer currentStep = 1;
+
+    // Custom Timeline Labels (comma-separated). If null, defaults to 4 steps.
+    @Column(columnDefinition = "TEXT")
+    private String timelineLabels;
 
     // Mutual Reviews
     // Rating given BY Freelancer TO Client
