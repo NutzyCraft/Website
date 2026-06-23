@@ -62,6 +62,10 @@ public class FreelancerController {
             existing.setHourlyRate(updatedFreelancer.getHourlyRate());
         if (updatedFreelancer.getSkills() != null)
             existing.setSkills(updatedFreelancer.getSkills());
+        if (updatedFreelancer.getLanguages() != null)
+            existing.setLanguages(updatedFreelancer.getLanguages());
+        if (updatedFreelancer.getWorkStyle() != null)
+            existing.setWorkStyle(updatedFreelancer.getWorkStyle());
         if (updatedFreelancer.getProfileImage() != null)
             existing.setProfileImage(updatedFreelancer.getProfileImage());
         if (updatedFreelancer.getBannerImage() != null)

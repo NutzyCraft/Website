@@ -33,5 +33,9 @@ public class Freelancer {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> skills;
 
+    private String languages;
+
+    private String workStyle;
+
     private Double rating = 0.0;
 }

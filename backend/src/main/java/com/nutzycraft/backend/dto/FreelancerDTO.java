@@ -10,6 +10,8 @@ public class FreelancerDTO {
     private String bio;
     private Double hourlyRate;
     private List<String> skills;
+    private String languages;
+    private String workStyle;
     private Double rating;
     private UserSummaryDTO user;
 }
