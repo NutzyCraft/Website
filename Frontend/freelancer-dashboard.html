@@ -200,7 +200,21 @@
                     if (profileRes.ok) {
                         const profile = await profileRes.json();
                         const titleEl = document.querySelector('.dashboard-title');
-                        if (titleEl) titleEl.innerText = `Good Morning, ${profile.fullName.split(' ')[0]}! ☀️`;
+                        if (titleEl) {
+                            const options = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false };
+                            const formatter = new Intl.DateTimeFormat([], options);
+                            const currentHour = parseInt(formatter.format(new Date()), 10);
+                            let greeting = "Good Morning";
+                            let emoji = "☀️";
+                            if (currentHour >= 12 && currentHour < 17) {
+                                greeting = "Good Afternoon";
+                                emoji = "🌤️";
+                            } else if (currentHour >= 17 || currentHour < 5) {
+                                greeting = "Good Evening";
+                                emoji = "🌙";
+                            }
+                            titleEl.innerText = `${greeting}, ${profile.fullName.split(' ')[0]}! ${emoji}`;
+                        }
 
                         const sidebarUserEl = document.querySelector('.sidebar-user div:nth-child(2)');
                         if (sidebarUserEl) {

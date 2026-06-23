@@ -104,7 +104,7 @@ public class DashboardController {
                                                                                   // assignment not fully used
         stats.setCompletedJobs(completedJobsVal);
         stats.setTotalEarnings(totalEarnings);
-        stats.setRating(5.0);
+        stats.setRating(0.0);
         stats.setActiveOrders(activeOrders);
         stats.setRecentMessages(messages);
         stats.setRecommendedJobs(recommended);
