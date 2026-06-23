@@ -143,7 +143,7 @@
                                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                         </div>
                         <div>
-                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Hourly Rate ($)</label>
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Hourly Rate (Rs)</label>
                             <input type="number" id="hourlyRate" placeholder="45"
                                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
                         </div>
@@ -161,6 +161,19 @@
                         <textarea id="bio"
                             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; min-height: 100px; resize: vertical;"
                             placeholder="Tell us about yourself..."></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Languages</label>
+                            <input type="text" id="languages" placeholder="English (Fluent), Sinhala (Native)"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 700; margin-bottom: 8px;">Work Style</label>
+                            <input type="text" id="workStyle" placeholder="Solo & Team"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary" id="saveBtn">Save Changes</button>
@@ -231,6 +244,8 @@
                                 document.getElementById('hourlyRate').value = data.hourlyRate || '';
                                 document.getElementById('bio').value = data.bio || '';
                                 document.getElementById('skills').value = (data.skills || []).join(', ');
+                                document.getElementById('languages').value = data.languages || '';
+                                document.getElementById('workStyle').value = data.workStyle || '';
 
                                 // Robust Image Loading: Check Freelancer -> User -> Fetch User Profile
                                 let validImage = data.profileImage;
@@ -281,11 +296,18 @@
                     // Save
                     document.getElementById('profileSettingsForm').addEventListener('submit', async function (e) {
                         e.preventDefault();
+                        const saveBtn = document.getElementById('saveBtn');
+                        const originalBtnText = saveBtn.innerHTML;
+                        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+                        saveBtn.disabled = true;
+
                         const fullName = document.getElementById('fullName').value;
                         const title = document.getElementById('profTitle').value;
                         const hourlyRate = document.getElementById('hourlyRate').value;
                         const bio = document.getElementById('bio').value;
                         const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s);
+                        const languages = document.getElementById('languages').value;
+                        const workStyle = document.getElementById('workStyle').value;
 
                         let profileImage = null; // Will be set if user uploads a new image
                         
@@ -295,25 +317,21 @@
                              // Handle Profile Image Upload
                             const avatarInput = document.getElementById('settings-avatar-upload');
                             if (avatarInput.files.length > 0) {
-                                const btn = document.getElementById('saveBtn');
-                                btn.textContent = 'Uploading images...';
-                                btn.disabled = true;
+                                saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading images...';
                                 profileImage = await uploadFile(avatarInput.files[0]);
                             }
 
                              // Handle Banner Image Upload
                             const coverInput = document.getElementById('settings-cover-upload');
                             if (coverInput.files.length > 0) {
-                                const btn = document.getElementById('saveBtn');
-                                btn.textContent = 'Uploading images...';
-                                btn.disabled = true;
+                                saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading images...';
                                 bannerImage = await uploadFile(coverInput.files[0]);
                             }
                         } catch(err) {
                             console.error("Error uploading images", err);
                             alert("Failed to upload images. Please try again.");
-                            document.getElementById('saveBtn').textContent = 'Save Changes';
-                            document.getElementById('saveBtn').disabled = false;
+                            saveBtn.innerHTML = originalBtnText;
+                            saveBtn.disabled = false;
                             return;
                         }
 
@@ -324,6 +342,8 @@
                             hourlyRate: parseFloat(hourlyRate),
                             bio: bio,
                             skills: skills,
+                            languages: languages,
+                            workStyle: workStyle,
                             profileImage: profileImage, // Send the URL (new or null/undefined if not changed? API needs to handle nulls)
                             bannerImage: bannerImage
                             // Note: Backend code: if (updatedFreelancer.getProfileImage() != null) existing.set...
@@ -352,14 +372,33 @@
                         })
                             .then(res => res.json())
                             .then(data => {
-                                alert("Profile updated successfully!");
-                                window.location.reload();
+                                const notification = document.createElement('div');
+                                notification.style.position = 'fixed';
+                                notification.style.bottom = '20px';
+                                notification.style.right = '20px';
+                                notification.style.background = '#4CAF50';
+                                notification.style.color = 'white';
+                                notification.style.padding = '15px 25px';
+                                notification.style.borderRadius = '8px';
+                                notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                                notification.style.zIndex = '10000';
+                                notification.style.transition = 'opacity 0.3s';
+                                notification.innerHTML = '<i class="fa-solid fa-check-circle"></i> Profile updated successfully!';
+                                document.body.appendChild(notification);
+                                
+                                setTimeout(() => {
+                                    notification.style.opacity = '0';
+                                    setTimeout(() => {
+                                        notification.remove();
+                                        window.location.reload();
+                                    }, 300);
+                                }, 1500);
                             })
                             .catch(err => {
                                 console.error(err);
                                 alert("Failed to update.");
-                                document.getElementById('saveBtn').textContent = 'Save Changes';
-                                document.getElementById('saveBtn').disabled = false;
+                                saveBtn.innerHTML = originalBtnText;
+                                saveBtn.disabled = false;
                             });
                     });
 

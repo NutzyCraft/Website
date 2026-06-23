@@ -181,9 +181,9 @@
                                 const available = totalEarnings - debits;
 
                                 if (stats.length >= 3) {
-                                    stats[0].innerText = `$${totalEarnings.toFixed(2)}`;
-                                    stats[1].innerText = `$${available.toFixed(2)}`;
-                                    stats[2].innerText = `$${pending.toFixed(2)}`;
+                                    stats[0].innerText = `Rs ${totalEarnings.toFixed(2)}`;
+                                    stats[1].innerText = `Rs ${available.toFixed(2)}`;
+                                    stats[2].innerText = `Rs ${pending.toFixed(2)}`;
                                 }
 
                                 // Render Table
@@ -203,7 +203,7 @@
                                            <td style="padding: 15px;">${new Date(t.date).toLocaleDateString()}</td>
                                            <td style="font-weight: 600;">${t.description}</td>
                                            <td>${t.type === 'CREDIT' ? 'Payment' : 'Withdrawal'}</td>
-                                           <td style="color: ${color}; font-weight: 700;">${sign}$${t.amount.toFixed(2)}</td>
+                                           <td style="color: ${color}; font-weight: 700;">${sign}Rs ${t.amount.toFixed(2)}</td>
                                            <td><span class="status-badge ${statusClass}">${t.status}</span></td>
                                        </tr>
                                        `;

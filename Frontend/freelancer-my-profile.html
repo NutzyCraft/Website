@@ -173,14 +173,12 @@
                                     style="font-size: 0.8rem; color: #ccc; cursor: pointer;"
                                     onclick="window.location.href='settings.html'"></i></p>
                             <div class="profile-meta">
-                                <div class="meta-item"><i class="fa-solid fa-location-dot"></i> ...</div>
-                                <div class="meta-item"><i class="fa-solid fa-clock"></i> ...</div>
                                 <div class="status-badge"><span
                                         style="width: 8px; height: 8px; background: #2e7d32; border-radius: 50%; display: inline-block; margin-right: 5px;"></span>
                                     Available</div>
                             </div>
                             <div style="margin-top: 15px; display: flex; align-items: center; gap: 15px;">
-                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">$45<span
+                                <span style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">Rs 2000<span
                                         style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span></span>
                                 <i class="fa-solid fa-pen" style="font-size: 0.9rem; color: #ccc; cursor: pointer;"
                                     onclick="window.location.href='settings.html'"></i>
@@ -206,8 +204,8 @@
                                 Loading bio...
                             </p>
                             <div style="margin-top: 20px; display: flex; gap: 20px;">
-                                <div><strong>languages:</strong> English (Fluent), Sinhala (Native)</div>
-                                <div><strong>Work Style:</strong> Solo & Team</div>
+                                <div id="profile-languages"><strong>Languages:</strong> Loading...</div>
+                                <div id="profile-workstyle"><strong>Work Style:</strong> Loading...</div>
                             </div>
                         </div>
 
@@ -320,11 +318,17 @@
 
                     // Hourly Rate
                     const rateEl = document.querySelector('.profile-info span[style*="font-size: 1.5rem"]');
-                    if (rateEl) rateEl.innerHTML = `$${freelancer.hourlyRate || 0}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span>`;
+                    if (rateEl) rateEl.innerHTML = `Rs ${freelancer.hourlyRate || 0}<span style="font-size: 1rem; color: var(--text-muted); font-weight: 600;">/hr</span>`;
 
                     // About Me
                     const aboutSection = document.querySelector('.profile-main .profile-section:nth-child(1) p');
                     if (aboutSection) aboutSection.innerText = freelancer.bio || 'No bio provided.';
+
+                    const languagesSection = document.getElementById('profile-languages');
+                    if (languagesSection) languagesSection.innerHTML = `<strong>Languages:</strong> ${freelancer.languages || 'Not specified'}`;
+
+                    const workStyleSection = document.getElementById('profile-workstyle');
+                    if (workStyleSection) workStyleSection.innerHTML = `<strong>Work Style:</strong> ${freelancer.workStyle || 'Not specified'}`;
 
                     // Skills
                     const skillsContainer = document.querySelector('.skills-tags');

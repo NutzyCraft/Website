@@ -222,7 +222,7 @@
                         // Update Stat Cards (order: Total Earnings, Completed Jobs, Active Jobs, Rating)
                         const statValues = document.querySelectorAll('.stat-value');
                         if (statValues.length >= 4) {
-                            statValues[0].innerText = `$${stats.totalEarnings}`;
+                            statValues[0].innerText = `Rs ${stats.totalEarnings}`;
                             statValues[1].innerText = stats.completedJobs;
                             statValues[2].innerText = stats.activeJobs;
                             statValues[3].innerText = stats.rating;
@@ -247,7 +247,7 @@
                                         </td>
                                         <td><a href="freelancer-track-job.html?jobId=${job.id}" style="color: inherit; text-decoration: none; font-weight: 600;">${job.title}</a></td>
                                         <td style="color: #FF5252;">${job.duration}</td>
-                                        <td>$${job.budget}</td>
+                                        <td>Rs ${job.budget}</td>
                                         <td><a href="freelancer-track-job.html?jobId=${job.id}" class="status-badge status-active" style="text-decoration: none;">Track</a></td>
                                     </tr>
                                 `}).join('');
@@ -318,7 +318,7 @@
                                     div.innerHTML = `
                                          <a href="freelancer-apply.html?jobId=${job.id}"
                                              style="font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px;">${job.title}</a>
-                                         <div style="font-size: 0.8rem; color: #888;">Budget: $${job.budget}</div>
+                                         <div style="font-size: 0.8rem; color: #888;">Budget: Rs ${job.budget}</div>
                                          <span class="skill-tag"
                                              style="font-size: 0.7rem; margin-top: 5px; display: inline-block;">${job.category}</span>
                                      `;
