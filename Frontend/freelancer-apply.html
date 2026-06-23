@@ -98,9 +98,10 @@
                     <h3 style="margin-bottom: 10px;" id="job-summary-title">Job Details</h3>
                     <p style="color: #555; margin-bottom: 10px;" id="job-summary-description">Loading job details...</p>
                     <div style="display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600;">
-                        <span><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Budget: $<span
+                        <span><i class="fa-solid fa-wallet" style="color: var(--primary);"></i> Budget: Rs <span
                                 id="job-summary-budget">...</span></span>
                     </div>
+                    <div style="margin-top: 15px;" id="job-summary-attachments"></div>
                 </div>
 
                 <!-- Client Info -->
@@ -294,6 +295,17 @@
                             document.getElementById('job-summary-description').textContent = job.description;
                             document.getElementById('job-summary-budget').textContent = job.budget;
                             document.getElementById('apply-job-header').textContent = `Apply specifically for "${job.title}"`;
+                            
+                            const attachmentsDiv = document.getElementById('job-summary-attachments');
+                            if (job.attachments) {
+                                attachmentsDiv.innerHTML = `<div style="font-weight: 600; margin-bottom: 5px;">Client Attachments:</div>` + 
+                                    job.attachments.split(',').map(url => {
+                                        let name = url.split('/').pop();
+                                        return `<a href="${url}" target="_blank" style="display: block; color: var(--primary); margin-bottom: 4px;"><i class="fa-solid fa-paperclip"></i> ${name}</a>`;
+                                    }).join('');
+                            } else {
+                                attachmentsDiv.innerHTML = '';
+                            }
 
                             // Populate Client Info
                             if (job.client) {
