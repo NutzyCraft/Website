@@ -136,11 +136,11 @@
                                     <td style="padding: 15px; font-weight: 600;">${p.job.title}</td>
                                     <td>
                                         <div style="display: flex; align-items: center; gap: 10px;">
-                                            <span style="font-size: 0.9rem;">Client #${p.job.client.id}</span>
+                                            <span style="font-size: 0.9rem;">${p.job.client.deletedAt ? 'User Deleted' : p.job.client.fullName}</span>
                                         </div>
                                     </td>
                                     <td>${new Date(p.createdAt).toLocaleDateString()}</td>
-                                    <td>$${p.bidAmount}</td>
+                                    <td>Rs ${p.bidAmount}</td>
                                     <td><span class="status-badge status-${p.status === 'PENDING' ? 'active' : (p.status === 'ACCEPTED' ? 'success' : 'error')}">${p.status}</span></td>
                                     <td><button class="btn btn-outline" onclick="window.location.href='freelancer-view-proposal.html?id=${p.id}'" style="padding: 4px 12px; font-size: 0.8rem;">View</button></td>
                                 </tr>

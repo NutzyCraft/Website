@@ -205,7 +205,7 @@
                                     <span>Total Spent:</span> <strong id="stat-spent">-</strong>
                                 </li>
                                 <li style="display: flex; justify-content: space-between;">
-                                    <span>Member Since:</span> <strong>2025</strong>
+                                    <span>Member Since:</span> <strong id="stat-since">-</strong>
                                 </li>
                             </ul>
                         </div>
@@ -232,13 +232,20 @@
                 .then(data => {
                     // Check if response is DTO or direct Entity (fallback)
                     const client = data.client || data;
+                    const user = client.user || {};
+                    
+                    let joinedYear = '2026';
+                    if (data.memberSince) {
+                        joinedYear = data.memberSince;
+                    } else if (user.createdAt) {
+                        joinedYear = new Date(user.createdAt).getFullYear();
+                    }
+
                     const stats = {
                         hires: data.totalHires !== undefined ? data.totalHires : '-',
                         spent: data.totalSpent !== undefined ? data.totalSpent : '-',
-                        since: data.memberSince !== undefined ? data.memberSince : '2025'
+                        since: joinedYear
                     };
-
-                    const user = client.user || {};
 
                     // Header
                     let displayName = client.companyName;
@@ -263,14 +270,20 @@
 
                     // Meta
                     document.getElementById('display-location').textContent = client.billingAddress || 'Location not set';
-                    document.getElementById('display-website').innerHTML = client.website ? `<a href="${client.website}" target="_blank" style="color: var(--primary);">${client.website}</a>` : 'No website';
+                    
+                    let websiteUrl = client.website;
+                    if (websiteUrl && !websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
+                        websiteUrl = 'https://' + websiteUrl;
+                    }
+                    document.getElementById('display-website').innerHTML = client.website ? `<a href="${websiteUrl}" target="_blank" style="color: var(--primary);">${client.website}</a>` : 'No website';
 
                     // Description
                     document.getElementById('display-description').innerText = client.description || 'No description provided.';
 
                     // Stats Population
                     document.getElementById('stat-hires').textContent = stats.hires;
-                    document.getElementById('stat-spent').textContent = stats.spent !== '-' ? `$${stats.spent.toFixed(2)}` : '-';
+                    document.getElementById('stat-spent').textContent = stats.spent !== '-' ? `Rs ${stats.spent.toFixed(2)}` : '-';
+                    document.getElementById('stat-since').textContent = stats.since;
 
                     // Display Rating
                     const rating = data.rating || 0;

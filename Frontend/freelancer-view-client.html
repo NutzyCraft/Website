@@ -205,6 +205,11 @@
                             document.getElementById('clientAvatar').src = client.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(client.user.fullName)}&background=random&size=200`;
                         }
 
+                        // Banner
+                        if (client.bannerImage) {
+                            document.querySelector('.profile-banner').style.background = `url('${client.bannerImage}') center/cover no-repeat`;
+                        }
+
                         // Message logic
                         const messageBtn = document.getElementById('messageBtn');
                         if (client.user) {
