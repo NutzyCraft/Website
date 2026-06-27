@@ -53,6 +53,7 @@ public class ChatService {
                 .id(saved.getId())
                 .content(saved.getContent())
                 .timestamp(saved.getTimestamp())
+                .receiverId(receiverId)
                 .sender(com.nutzycraft.backend.dto.MessageResponse.UserSummary.builder()
                         .id(sender.getId())
                         .email(sender.getEmail())
@@ -60,9 +61,9 @@ public class ChatService {
                         .build())
                 .build();
 
-        // Push to both parties via user destinations — only their authenticated sessions receive this
-        messagingTemplate.convertAndSendToUser(sender.getId().toString(), "/queue/messages", response);
-        messagingTemplate.convertAndSendToUser(receiverId.toString(), "/queue/messages", response);
+        // Push to both parties via user destinations — routed by email (principal name)
+        messagingTemplate.convertAndSendToUser(sender.getEmail(), "/queue/messages", response);
+        messagingTemplate.convertAndSendToUser(receiver.getEmail(), "/queue/messages", response);
 
         // Create Notification
         com.nutzycraft.backend.entity.Notification notification = new com.nutzycraft.backend.entity.Notification();

@@ -15,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,13 +62,10 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
                         throw new org.springframework.messaging.MessagingException("Unauthorized: invalid token");
                     }
 
-                    Map<String, String> principal = new HashMap<>();
-                    principal.put("providerId", userDetails.get("id") != null ? userDetails.get("id").toString() : null);
-                    principal.put("email", (String) userDetails.get("email"));
-                    principal.put("name", (String) userDetails.get("name"));
-
+                    String email = (String) userDetails.get("email");
+                    // Principal name must be a plain string so convertAndSendToUser(email, ...) resolves correctly
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                            principal, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                            email, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
 
                     accessor.setUser(auth);
                 } catch (EmptyResultDataAccessException e) {

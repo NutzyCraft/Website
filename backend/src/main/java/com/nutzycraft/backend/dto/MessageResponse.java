@@ -11,6 +11,7 @@ public class MessageResponse {
     private String content;
     private LocalDateTime timestamp;
     private UserSummary sender;
+    private Long receiverId;
 
     @Data
     @Builder

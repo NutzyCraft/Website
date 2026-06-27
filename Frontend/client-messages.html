@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="dashboard.css">
     <script src="config.js"></script>
     <script src="neon-auth.js"></script>
-    <script src="script.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -298,6 +298,10 @@
 
             // --- STOMP WebSocket ---
             function initStompClient() {
+                if (typeof StompJs === 'undefined') {
+                    startFallbackPoll();
+                    return;
+                }
                 const token = localStorage.getItem('neon_auth_token') || sessionStorage.getItem('neon_auth_token');
                 stompClient = new StompJs.Client({
                     webSocketFactory: () => new SockJS(API_CONFIG.BASE_URL + '/ws'),
@@ -326,7 +330,9 @@
 
             function handleIncomingMessage(msg) {
                 if (renderedMessageIds.has(msg.id)) return;
-                if (currentChatUserId && (String(msg.sender.id) === String(currentChatUserId) || String(msg.receiverId) === String(currentChatUserId))) {
+                // Message belongs in the open chat if the other party is currentChatUserId
+                const otherPartyId = String(msg.sender.email === email ? msg.receiverId : msg.sender.id);
+                if (currentChatUserId && otherPartyId === String(currentChatUserId)) {
                     appendMessages([msg]);
                 }
                 loadConversations();
