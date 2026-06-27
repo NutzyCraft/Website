@@ -7,19 +7,31 @@ import com.nutzycraft.backend.repository.ChatRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import com.nutzycraft.backend.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public ChatService(ChatRepository chatRepository,
+                       UserRepository userRepository,
+                       NotificationRepository notificationRepository,
+                       @Lazy SimpMessagingTemplate messagingTemplate) {
+        this.chatRepository = chatRepository;
+        this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     public com.nutzycraft.backend.dto.MessageResponse sendMessage(String senderEmail, Long receiverId, String content) {
         User sender = userRepository.findByEmail(senderEmail)
@@ -37,7 +49,22 @@ public class ChatService {
         
         ChatMessage saved = chatRepository.save(message);
 
-         // Create Notification
+        com.nutzycraft.backend.dto.MessageResponse response = com.nutzycraft.backend.dto.MessageResponse.builder()
+                .id(saved.getId())
+                .content(saved.getContent())
+                .timestamp(saved.getTimestamp())
+                .sender(com.nutzycraft.backend.dto.MessageResponse.UserSummary.builder()
+                        .id(sender.getId())
+                        .email(sender.getEmail())
+                        .fullName(sender.getFullName())
+                        .build())
+                .build();
+
+        // Push to both parties via user destinations — only their authenticated sessions receive this
+        messagingTemplate.convertAndSendToUser(sender.getId().toString(), "/queue/messages", response);
+        messagingTemplate.convertAndSendToUser(receiverId.toString(), "/queue/messages", response);
+
+        // Create Notification
         com.nutzycraft.backend.entity.Notification notification = new com.nutzycraft.backend.entity.Notification();
         notification.setRecipient(receiver);
         notification.setTitle("New Message from " + sender.getFullName());
@@ -57,16 +84,7 @@ public class ChatService {
         }
         notificationRepository.save(notification);
 
-        return com.nutzycraft.backend.dto.MessageResponse.builder()
-                .id(saved.getId())
-                .content(saved.getContent())
-                .timestamp(saved.getTimestamp())
-                .sender(com.nutzycraft.backend.dto.MessageResponse.UserSummary.builder()
-                        .id(sender.getId())
-                        .email(sender.getEmail())
-                        .fullName(sender.getFullName())
-                        .build())
-                .build();
+        return response;
     }
 
     public List<com.nutzycraft.backend.dto.MessageResponse> getChatHistory(String currentUserEmail, @NonNull Long otherUserId) {

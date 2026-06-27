@@ -42,6 +42,8 @@ public class SecurityConfig {
                                 "/", "/*.html", "/*.css", "/*.js", "/*.jpg", "/*.png",
                                 "/*.ico", "/*.svg", "/*.json", "/*.woff", "/*.woff2"
                         ).permitAll()
+                        // WebSocket upgrade — auth deferred to STOMP ChannelInterceptor
+                        .requestMatchers("/ws/**").permitAll()
                         // Public API endpoints that should remain accessible
                         .requestMatchers("/api/jobs/search/**").permitAll()
                         .requestMatchers("/api/freelancers/search/**").permitAll()

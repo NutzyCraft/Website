@@ -158,6 +158,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         UserProfileDTO dto = new UserProfileDTO();
+        dto.setId(user.getId());
         dto.setFullName(user.getFullName());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRole().name());

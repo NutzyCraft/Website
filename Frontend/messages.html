@@ -14,6 +14,8 @@
     <script src="config.js"></script>
     <script src="neon-auth.js"></script>
     <script src="script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
 </head>
 
 <body>
@@ -148,216 +150,230 @@
                             <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
                         `;
                     }
-                    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=D4B69D&color=fff`;
                     const sidebarImg = document.querySelector('.sidebar-user img');
-                    if (sidebarImg) sidebarImg.src = avatarUrl;
+                    if (sidebarImg) sidebarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=D4B69D&color=fff`;
                 }
             } catch (e) { console.error("Error fetching profile:", e); }
 
             let currentChatUserId = null;
             let currentChatUserName = null;
+            let lastMessageId = null;
+            let stompClient = null;
+            let stompSubscription = null;
+            let fallbackPollInterval = null;
+            const profilePicCache = {};
+            const renderedMessageIds = new Set();
 
-            // Load Conversations
+            const input = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+
+            // --- Profile pic helpers ---
+            async function getProfilePic(userId, name) {
+                if (profilePicCache[userId]) return profilePicCache[userId];
+                try {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${userId}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const pic = data.profileImage || (data.user && data.user.profilePictureUrl) || null;
+                        if (pic) { profilePicCache[userId] = pic; return pic; }
+                    }
+                } catch (e) {}
+                const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                profilePicCache[userId] = fallback;
+                return fallback;
+            }
+
+            // --- Conversations list ---
             async function loadConversations() {
                 try {
                     const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/messages?email=${encodeURIComponent(email)}`);
-                    if (res.ok) {
-                        const conversations = await res.json();
-                        renderConversations(conversations);
-
-                        // Check URL params for auto-open
-                        const params = new URLSearchParams(window.location.search);
-                        if (params.get('userId')) {
-                            loadChatHistory(params.get('userId'), params.get('name') || 'User');
-                        } else if (conversations.length > 0 && !currentChatUserId) {
-                            // Optional: Auto open first chat?
-                        }
-
-                    } else {
-                        console.error("Failed to load conversations");
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
+                    if (!res.ok) return;
+                    renderConversations(await res.json());
+                } catch (err) { console.error(err); }
             }
 
             async function renderConversations(conversations) {
                 const list = document.getElementById('conversations-list');
                 list.innerHTML = '';
                 if (conversations.length === 0) {
-                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No messages yet.</div>';
+                    list.innerHTML = '<div style="padding:20px;text-align:center;color:#888;">No messages yet.</div>';
                     return;
                 }
-
-                // Fetch profile pictures for all users in conversations
-                const userProfilePics = {};
-                await Promise.all(conversations.map(async (conv) => {
-                    try {
-                        // Try to fetch client profile first
-                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${conv.userId}`);
-                        if (clientRes.ok) {
-                            const client = await clientRes.json();
-                            userProfilePics[conv.userId] = client.profileImage || (client.user && client.user.profilePictureUrl) || null;
-                        }
-                    } catch (err) {
-                        console.log(`Could not fetch profile for user ${conv.userId}`);
-                    }
-                }));
-
-                conversations.forEach(c => {
+                for (const c of conversations) {
+                    const profilePic = await getProfilePic(c.userId, c.name);
                     const div = document.createElement('div');
-                    div.style.padding = '15px 20px';
-                    div.style.display = 'flex';
-                    div.style.gap = '15px';
-                    div.style.cursor = 'pointer';
-                    div.style.borderBottom = '1px solid #f0f0f0';
+                    div.style.cssText = 'padding:15px 20px;display:flex;gap:15px;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:background 0.2s;';
                     div.style.background = (currentChatUserId == c.userId) ? '#f0f9ff' : 'transparent';
-
-                    const profilePic = userProfilePics[c.userId] || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random`;
-
-                    div.onclick = () => loadChatHistory(c.userId, c.name, profilePic);
-
+                    div.onclick = () => openChat(c.userId, c.name, profilePic);
                     div.innerHTML = `
-                        <img src="${profilePic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-                        <div style="flex: 1; overflow: hidden;">
-                             <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                <span style="font-weight: 700; font-size: 0.95rem;">${c.name}</span>
-                                <span style="font-size: 0.8rem; color: #888;">${new Date(c.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <img src="${profilePic}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                        <div style="flex:1;overflow:hidden;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                                <span style="font-weight:700;font-size:0.95rem;">${c.name}</span>
+                                <span style="font-size:0.8rem;color:#888;">${new Date(c.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <p style="font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.lastMessage}</p>
+                            <p style="font-size:0.85rem;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.lastMessage}</p>
                         </div>
                     `;
                     list.appendChild(div);
-                });
+                }
             }
 
-            // Load Chat History
-            window.loadChatHistory = async function (userId, name, profilePic = null) {
+            // --- Open chat ---
+            window.openChat = async function(userId, name, profilePic = null) {
                 currentChatUserId = userId;
                 currentChatUserName = name;
-                
-                // Enable input
-                document.getElementById('message-input').disabled = false;
-                document.getElementById('send-btn').disabled = false;
+                lastMessageId = null;
+                renderedMessageIds.clear();
 
-                // Fetch profile picture if not provided
-                if (!profilePic) {
-                    try {
-                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${userId}`);
-                        if (clientRes.ok) {
-                            const client = await clientRes.json();
-                            profilePic = client.profileImage || (client.user && client.user.profilePictureUrl);
-                        }
-                    } catch (err) {
-                        console.log('Could not fetch profile picture');
-                    }
-                }
+                input.disabled = false;
+                sendBtn.disabled = false;
 
-                const finalProfilePic = profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
-
-                // Update Header
+                const finalProfilePic = profilePic || await getProfilePic(userId, name);
                 const header = document.getElementById('chat-header');
                 header.innerHTML = `
-                    <img src="${finalProfilePic}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    <img src="${finalProfilePic}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                     <div>
-                        <div style="font-weight: 700;">${name}</div>
+                        <div style="font-weight:700;">${name}</div>
                     </div>
                 `;
 
-                // Fetch Messages
-                try {
-                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/messages/${userId}?email=${encodeURIComponent(email)}`);
-                    if (res.ok) {
-                        const messages = await res.json();
-                        renderMessages(messages, userId);
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
-
-                // Refresh list highlight
+                await fetchAndRenderMessages(true);
                 loadConversations();
             }
 
-            async function renderMessages(messages, otherUserId) {
+            window.loadChatHistory = window.openChat;
+
+            // --- Message fetching ---
+            async function fetchAndRenderMessages(fullRender) {
+                try {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/messages/${currentChatUserId}?email=${encodeURIComponent(email)}`);
+                    if (!res.ok) return;
+                    const messages = await res.json();
+
+                    if (fullRender) {
+                        await renderMessages(messages);
+                    } else {
+                        const newMsgs = messages.filter(m => !renderedMessageIds.has(m.id));
+                        if (newMsgs.length > 0) {
+                            appendMessages(newMsgs);
+                            loadConversations();
+                        }
+                    }
+                    if (messages.length > 0) lastMessageId = messages[messages.length - 1].id;
+                } catch (err) { console.error(err); }
+            }
+
+            // --- Message rendering ---
+            function buildMessageEl(msg) {
+                const isMyMsg = msg.sender.email === email;
+                const senderPic = profilePicCache[msg.sender.id] || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
+                const div = document.createElement('div');
+                div.style.cssText = `display:flex;margin-bottom:20px;justify-content:${isMyMsg ? 'flex-end' : 'flex-start'};`;
+                if (isMyMsg) {
+                    div.innerHTML = `
+                        <div style="background:var(--primary);color:white;padding:12px 18px;border-radius:20px 0 20px 20px;max-width:70%;">
+                            <p style="font-size:0.95rem;">${msg.content}</p>
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <img src="${senderPic}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:10px;">
+                        <div style="background:white;padding:12px 18px;border-radius:0 20px 20px 20px;border:1px solid #eee;max-width:70%;">
+                            <p style="font-size:0.95rem;">${msg.content}</p>
+                        </div>
+                    `;
+                }
+                return div;
+            }
+
+            async function renderMessages(messages) {
+                const unknownSenders = [...new Set(
+                    messages.filter(m => m.sender.email !== email && !profilePicCache[m.sender.id]).map(m => m.sender.id)
+                )];
+                await Promise.all(unknownSenders.map(id => {
+                    const msg = messages.find(m => m.sender.id === id);
+                    return getProfilePic(id, msg.sender.fullName);
+                }));
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = '';
-
-                // Fetch profile pictures for all senders
-                const senderProfilePics = {};
-                const uniqueSenderIds = [...new Set(messages.filter(msg => msg.sender.email !== email).map(msg => msg.sender.id))];
-                
-                await Promise.all(uniqueSenderIds.map(async (senderId) => {
-                    try {
-                        const clientRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/clients/user/${senderId}`);
-                        if (clientRes.ok) {
-                            const client = await clientRes.json();
-                            senderProfilePics[senderId] = client.profileImage || (client.user && client.user.profilePictureUrl);
-                        }
-                    } catch (err) {
-                        console.log(`Could not fetch profile for sender ${senderId}`);
-                    }
-                }));
-
                 messages.forEach(msg => {
-                    const isMyMsg = (msg.sender.email === email);
-                    const senderProfilePic = senderProfilePics[msg.sender.id] || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
-
-                    const div = document.createElement('div');
-                    div.style.display = 'flex';
-                    div.style.marginBottom = '20px';
-                    div.style.justifyContent = isMyMsg ? 'flex-end' : 'flex-start';
-
-                    if (isMyMsg) {
-                        div.innerHTML = `
-                            <div style="background: var(--primary); color: white; padding: 12px 18px; border-radius: 20px 0 20px 20px; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">${msg.content}</p>
-                            </div>
-                        `;
-                    } else {
-                        div.innerHTML = `
-                            <img src="${senderProfilePic}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
-                            <div style="background: white; padding: 12px 18px; border-radius: 0 20px 20px 20px; border: 1px solid #eee; max-width: 70%;">
-                                <p style="font-size: 0.95rem;">${msg.content}</p>
-                            </div>
-                        `;
-                    }
-                    container.appendChild(div);
+                    renderedMessageIds.add(msg.id);
+                    container.appendChild(buildMessageEl(msg));
                 });
                 container.scrollTop = container.scrollHeight;
             }
 
-            // Send Message
-            const input = document.getElementById('message-input');
-            const sendBtn = document.getElementById('send-btn');
+            function appendMessages(messages) {
+                const container = document.getElementById('chat-messages');
+                const wasAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 60;
+                messages.forEach(msg => {
+                    renderedMessageIds.add(msg.id);
+                    container.appendChild(buildMessageEl(msg));
+                });
+                if (wasAtBottom) container.scrollTop = container.scrollHeight;
+            }
 
-            async function sendMessage() {
-                if (!currentChatUserId) {
-                    alert("Please select a chat first.");
-                    return;
+            // --- STOMP WebSocket ---
+            function initStompClient() {
+                const token = localStorage.getItem('neon_auth_token') || sessionStorage.getItem('neon_auth_token');
+                stompClient = new StompJs.Client({
+                    webSocketFactory: () => new SockJS(window.API_CONFIG.BASE_URL + '/ws'),
+                    connectHeaders: { Authorization: 'Bearer ' + token },
+                    reconnectDelay: 5000,
+                    onConnect: () => {
+                        clearInterval(fallbackPollInterval);
+                        if (stompSubscription) stompSubscription.unsubscribe();
+                        stompSubscription = stompClient.subscribe('/user/queue/messages', (frame) => {
+                            handleIncomingMessage(JSON.parse(frame.body));
+                        });
+                    },
+                    onStompError: () => startFallbackPoll(),
+                    onDisconnect: () => startFallbackPoll()
+                });
+                stompClient.activate();
+            }
+
+            function startFallbackPoll() {
+                clearInterval(fallbackPollInterval);
+                fallbackPollInterval = setInterval(() => {
+                    if (currentChatUserId) fetchAndRenderMessages(false);
+                    loadConversations();
+                }, 30000);
+            }
+
+            function handleIncomingMessage(msg) {
+                if (renderedMessageIds.has(msg.id)) return;
+                if (currentChatUserId && (String(msg.sender.id) === String(currentChatUserId) || String(msg.receiverId) === String(currentChatUserId))) {
+                    appendMessages([msg]);
                 }
+                loadConversations();
+            }
+
+            // --- Send message ---
+            async function sendMessage() {
+                if (!currentChatUserId) { alert("Please select a chat first."); return; }
                 if (!input.value.trim()) return;
+                const content = input.value;
+                input.value = '';
 
                 try {
                     const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/messages`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            senderEmail: email,
-                            receiverId: currentChatUserId,
-                            content: input.value
-                        })
+                        body: JSON.stringify({ senderEmail: email, receiverId: currentChatUserId, content })
                     });
 
-                    if (res.ok) {
-                        input.value = '';
-                        loadChatHistory(currentChatUserId, currentChatUserName);
-                    } else {
+                    if (!res.ok) {
                         alert("Failed to send message");
+                        input.value = content;
                     }
+                    // Message delivery handled by STOMP push — no manual re-fetch needed
+                    loadConversations();
                 } catch (err) {
                     console.error('Send Error:', err);
                     alert("Error sending message: " + err.message);
+                    input.value = content;
                 }
             }
 
@@ -366,7 +382,16 @@
                 if (e.key === 'Enter') sendMessage();
             });
 
-            loadConversations();
+            // Check URL params for auto-open
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('userId')) {
+                await loadConversations();
+                openChat(params.get('userId'), decodeURIComponent(params.get('name') || 'User'));
+            } else {
+                loadConversations();
+            }
+
+            initStompClient();
         });
     </script>
 </body>
