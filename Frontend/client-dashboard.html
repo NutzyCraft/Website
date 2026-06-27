@@ -178,13 +178,15 @@
                     <th style="padding: 15px">Project Title</th>
                     <th>Freelancer</th>
                     <th>Status</th>
+                    <th>Budget</th>
                     <th>Posted Date</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="active-projects-table-body">
                   <tr>
                     <td
-                      colspan="4"
+                      colspan="6"
                       style="text-align: center; padding: 20px; color: #888"
                     >
                       Loading projects...
@@ -241,7 +243,7 @@
               if (statValues.length >= 4) {
                 statValues[0].innerText = data.activeJobs;
                 statValues[1].innerText = data.totalHires;
-                statValues[2].innerText = `$${data.totalSpent}`;
+                statValues[2].innerText = `Rs ${data.totalSpent}`;
                 statValues[3].innerText = data.jobViews;
               }
 
@@ -286,6 +288,7 @@
                                         <td>${new Date(
                                           job.postedAt
                                         ).toLocaleDateString()}</td>
+                                        <td><a href="client-track-job.html?jobId=${job.id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;">Track</a></td>
                                     </tr>
                                 `;
                   })
@@ -307,7 +310,7 @@
                 });
               } else {
                 projectsTable.innerHTML =
-                  '<tr><td colspan="4" style="text-align: center; padding: 20px; color: #888;">No active projects found.</td></tr>';
+                  '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #888;">No active projects found.</td></tr>';
               }
 
               // Render Recent Messages
