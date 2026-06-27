@@ -316,7 +316,7 @@
                     <p style="color: #666;" id="track-job-subtitle">Job: Loading...</p>
                 </div>
                 <div class="topbar-actions">
-                    <a href="client-messages.html" class="btn btn-outline"><i class="fa-solid fa-envelope"></i> Message
+                    <a href="client-messages.html" class="btn btn-outline" id="message-freelancer-btn"><i class="fa-solid fa-envelope"></i> Message
                         Freelancer</a>
                     <a href="client-my-jobs.html" class="btn btn-outline" style="border: none;"><i
                             class="fa-solid fa-times"></i> Close</a>
@@ -470,6 +470,11 @@
                 // Populate Freelancer Info
                 if (job.freelancer) {
                     document.getElementById('freelancer-name').textContent = `Hired: ${job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName}`;
+
+                    if (!job.freelancer.deletedAt) {
+                        const msgBtn = document.getElementById('message-freelancer-btn');
+                        msgBtn.href = `client-messages.html?userId=${job.freelancer.id}&name=${encodeURIComponent(job.freelancer.fullName)}`;
+                    }
                     document.getElementById('review-freelancer-name').textContent = job.freelancer.deletedAt ? 'User Deleted' : job.freelancer.fullName;
 
                     // Fetch real avatar
