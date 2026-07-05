@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <script src="config.js"></script>
+    <script src="notify.js"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -206,7 +207,7 @@
         }
 
         async function restoreUser(userId) {
-            if (!confirm('Are you sure you want to restore this user account? The user will be able to log in again.')) {
+            if (!(await notify.confirm('Are you sure you want to restore this user account? The user will be able to log in again.'))) {
                 return;
             }
 
@@ -234,16 +235,16 @@
                 ? `WARNING: This account was deleted only ${daysAgo} days ago.\n\nAre you sure you want to PERMANENTLY delete ${userName}'s account? This action cannot be undone and will remove all associated data including jobs, proposals, and messages.`
                 : `Are you sure you want to PERMANENTLY delete ${userName}'s account? This action cannot be undone and will remove all associated data including jobs, proposals, and messages.`;
             
-            if (!confirm(message)) {
+            if (!(await notify.confirm(message))) {
                 return;
             }
 
             // Second confirmation for permanent deletion
-            if (!confirm('This is your last chance. Type DELETE in the next prompt to confirm.')) {
+            if (!(await notify.confirm('This is your last chance. Type DELETE in the next prompt to confirm.'))) {
                 return;
             }
 
-            const confirmation = prompt('Type DELETE to confirm permanent deletion:');
+            const confirmation = await notify.prompt('Type DELETE to confirm permanent deletion:', 'DELETE');
             if (confirmation !== 'DELETE') {
                 alert('Deletion cancelled - confirmation text did not match.');
                 return;

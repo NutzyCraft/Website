@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="dashboard.css">
     <script src="config.js"></script>
     <script src="neon-auth.js"></script>
+    <script src="notify.js"></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -408,7 +409,7 @@
 
                     // Delete Profile Photo
                     document.getElementById('deletePhotoBtn').addEventListener('click', async function () {
-                        if (!confirm('Are you sure you want to delete your profile photo?')) return;
+                        if (!(await notify.confirm('Are you sure you want to delete your profile photo?'))) return;
 
                         try {
                             const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me/photo?email=${encodeURIComponent(email)}`, {
@@ -471,7 +472,7 @@
                                 localStorage.removeItem('userRole');
                                 sessionStorage.removeItem('userRole');
                                 
-                                alert('Your account has been deleted successfully. You will be redirected to the home page.');
+                                await notify.alert('Your account has been deleted successfully. You will be redirected to the home page.');
                                 window.location.href = 'index.html';
                             } else {
                                 alert(data.error || 'Failed to delete account. Please check your password and try again.');

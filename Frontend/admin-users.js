@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.toggleStatus = async (userId, active) => {
-        if (!confirm(`Are you sure you want to ${active ? 'activate' : 'ban'} this user?`)) return;
+        if (!(await notify.confirm(`Are you sure you want to ${active ? 'activate' : 'ban'} this user?`))) return;
 
         try {
             const response = await fetch(`${API_CONFIG.BASE_URL}/api/admin/users/${userId}/status?active=${active}`, {

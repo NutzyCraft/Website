@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.resolveSupport = async function (id) {
-        if (!confirm('Mark this ticket as resolved?')) return;
+        if (!(await notify.confirm('Mark this ticket as resolved?'))) return;
         try {
             const response = await fetch(`${API_URL}/${id}/resolve`, { method: 'PUT' });
             if (response.ok) {

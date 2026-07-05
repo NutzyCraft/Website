@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.resolveDispute = async function (id) {
-        if (!confirm('Are you sure you want to mark this dispute as resolved?')) return;
+        if (!(await notify.confirm('Are you sure you want to mark this dispute as resolved?'))) return;
         try {
             const response = await fetch(`${API_URL}/${id}/resolve`, { method: 'PUT' });
             if (response.ok) {

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="dashboard.css">
     <script src="config.js"></script>
     <script src="neon-auth.js"></script>
+    <script src="notify.js"></script>
     <script src="script.js" defer></script>
     <style>
         /* Specific Styles for Tracking Page */
@@ -622,7 +623,7 @@
                 });
 
                 if (res.ok) {
-                    alert('Review submitted successfully!');
+                    await notify.alert('Review submitted successfully!');
                     window.location.reload();
                 } else {
                     const err = await res.json();
@@ -764,7 +765,7 @@
         }
 
         async function deleteSharedFile(fileId, jobId) {
-            if (!confirm('Are you sure you want to delete this file?')) return;
+            if (!(await notify.confirm('Are you sure you want to delete this file?'))) return;
 
             try {
                 const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/shared-files/${fileId}`, {
@@ -861,7 +862,7 @@
         }
 
         async function deleteMilestone(id) {
-            if (!confirm('Are you sure you want to delete this milestone?')) return;
+            if (!(await notify.confirm('Are you sure you want to delete this milestone?'))) return;
 
             try {
                 const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/milestones/${id}`, {
