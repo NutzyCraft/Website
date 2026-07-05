@@ -81,4 +81,15 @@ public class FreelancerController {
 
         return freelancerRepository.save(existing);
     }
+
+    @DeleteMapping("/me/photo")
+    public Freelancer deleteMyPhoto(@RequestParam String email) {
+        Freelancer existing = freelancerRepository.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Freelancer not found"));
+
+        existing.setProfileImage(null);
+        existing.getUser().setProfilePictureUrl(null);
+
+        return freelancerRepository.save(existing);
+    }
 }

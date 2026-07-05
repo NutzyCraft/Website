@@ -103,9 +103,13 @@
                                 <img src="https://ui-avatars.com/api/?name=User&background=random&size=200"
                                     id="settings-avatar-preview" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
-                            <button class="btn btn-outline" type="button"
-                                style="margin-top: 10px; font-size: 0.8rem; padding: 5px 10px;"
-                                onclick="document.getElementById('settings-avatar-upload').click()">Change()</button>
+                            <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: center;">
+                                <button class="btn btn-outline" type="button"
+                                    style="font-size: 0.8rem; padding: 5px 10px;"
+                                    onclick="document.getElementById('settings-avatar-upload').click()">Change</button>
+                                <button class="btn btn-outline" type="button" id="deletePhotoBtn"
+                                    style="font-size: 0.8rem; padding: 5px 10px; color: #dc3545; border-color: #dc3545;">Delete</button>
+                            </div>
                             <input type="file" id="settings-avatar-upload" hidden accept="image/*">
                         </div>
                         <div style="flex: 1;">
@@ -400,6 +404,24 @@
                                 saveBtn.innerHTML = originalBtnText;
                                 saveBtn.disabled = false;
                             });
+                    });
+
+                    // Delete Profile Photo
+                    document.getElementById('deletePhotoBtn').addEventListener('click', async function () {
+                        if (!confirm('Are you sure you want to delete your profile photo?')) return;
+
+                        try {
+                            const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/freelancers/me/photo?email=${encodeURIComponent(email)}`, {
+                                method: 'DELETE'
+                            });
+                            if (!res.ok) throw new Error('Failed to delete photo');
+
+                            document.getElementById('settings-avatar-upload').value = '';
+                            document.getElementById('settings-avatar-preview').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(document.getElementById('fullName').value || 'User')}&background=random&size=200`;
+                        } catch (err) {
+                            console.error(err);
+                            alert('Failed to delete profile photo. Please try again.');
+                        }
                     });
 
                     // Delete Account Functionality
