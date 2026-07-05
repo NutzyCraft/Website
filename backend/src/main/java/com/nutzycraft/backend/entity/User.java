@@ -22,7 +22,7 @@ public class User {
     private String fullName;
 
     @Column(unique = true)
-    private String providerId; // Neon Auth subject ID (sub claim)
+    private String providerId; // Clerk user ID (sub claim)
 
     @Enumerated(EnumType.STRING)
     private Role role;

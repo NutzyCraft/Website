@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing you in... | Nutzy Craft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="config.js"></script>
+    <script src="clerk-auth.js"></script>
+    <style>
+        .post-auth-status {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .post-auth-status i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .auth-error {
+            background: #fff0f0;
+            color: #d32f2f;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin: 15px auto 0;
+            max-width: 420px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="glass-card auth-card">
+            <div class="post-auth-status">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p id="status-text">Finishing sign-in...</p>
+                <div class="auth-error" id="auth-error"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showError(msg) {
+            document.getElementById('status-text').textContent = 'Something went wrong.';
+            const el = document.getElementById('auth-error');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        (async function completeSignIn() {
+            const params = new URLSearchParams(window.location.search);
+            const portal = params.get('portal'); // 'client' or 'freelancer', if the user came from a branded login page
+
+            try {
+                const session = await window.NeonAuth.getSession();
+                if (!session || !session.user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const syncResult = await window.NeonAuth.syncWithBackend(null);
+
+                if (portal) {
+                    const expectedRole = portal.toUpperCase() === 'CLIENT' ? 'CLIENT' : 'FREELANCER';
+                    if (syncResult.role !== expectedRole && syncResult.role !== 'ADMIN') {
+                        showError('This account is registered as a ' + syncResult.role + '. Please use the correct login portal.');
+                        setTimeout(() => {
+                            window.location.href = expectedRole === 'CLIENT' ? 'freelancer-login.html' : 'client-login.html';
+                        }, 2500);
+                        return;
+                    }
+                }
+
+                localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
+
+                window.location.href = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+
+            } catch (e) {
+                console.error('Post-auth sync failed:', e);
+                showError(e.message || 'Failed to complete sign-in. Please try again.');
+            }
+        })();
+    </script>
+</body>
+
+</html>

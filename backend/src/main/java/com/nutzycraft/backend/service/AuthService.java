@@ -43,10 +43,10 @@ public class AuthService {
     private ClientRepository clientRepository;
 
     /**
-     * Synchronize a Neon Auth identity with the local database.
-     * Called after successful Neon Auth sign-in/sign-up.
+     * Synchronize a Clerk identity with the local database.
+     * Called after successful Clerk sign-in/sign-up.
      *
-     * @param providerId Neon Auth subject ID (from JWT "sub" claim)
+     * @param providerId Clerk user ID (from JWT "sub" claim)
      * @param email      Email from the JWT
      * @param name       Full name from the JWT (may be null)
      * @param roleStr    Requested role — only used for first-time registration

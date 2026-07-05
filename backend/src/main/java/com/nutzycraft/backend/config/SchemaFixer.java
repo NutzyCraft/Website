@@ -22,10 +22,10 @@ public class SchemaFixer implements CommandLineRunner {
             jdbcTemplate.execute("ALTER TABLE clients ADD COLUMN IF NOT EXISTS profile_image TEXT");
             jdbcTemplate.execute("ALTER TABLE clients ADD COLUMN IF NOT EXISTS banner_image TEXT");
 
-            // Drop legacy password column since Neon Auth handles passwords now
+            // Drop legacy password column since Clerk handles passwords now
             jdbcTemplate.execute("ALTER TABLE users DROP COLUMN IF EXISTS password");
 
-            // Drop legacy is_verified column since Neon Auth handles verification now
+            // Drop legacy is_verified column since Clerk handles verification now
             jdbcTemplate.execute("ALTER TABLE users DROP COLUMN IF EXISTS is_verified");
 
             System.out.println("SchemaFixer completed successfully.");

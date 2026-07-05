@@ -6,6 +6,7 @@ import com.nutzycraft.backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -17,31 +18,28 @@ public class AuthController {
     private AuthService authService;
 
     /**
-     * Synchronize a Neon Auth identity with the local database.
+     * Synchronize a Clerk identity with the local database.
      *
-     * This is the ONLY auth endpoint. It requires a valid Neon Auth JWT.
-     * The JWT is validated by Spring Security's OAuth2 Resource Server filter
-     * before this method is invoked.
+     * This is the ONLY auth endpoint. It requires a valid Clerk-issued JWT,
+     * verified by Spring Security's OAuth2 Resource Server filter before this
+     * method is invoked. The session token must include a custom "email" claim
+     * (configured in the Clerk Dashboard under Sessions -> Customize session token).
      *
      * Flow:
-     * 1. Frontend signs in/up via Neon Auth (email/password or Google OAuth)
+     * 1. Frontend signs in/up via Clerk (email/password or Google OAuth)
      * 2. Frontend calls POST /api/auth/sync with the JWT and desired role
      * 3. Backend extracts sub/email/name from the JWT, syncs with local DB
      * 4. Returns the user's local profile (id, email, fullName, role, isNew)
      */
     @PostMapping("/sync")
     public ResponseEntity<?> syncUser(
-            org.springframework.security.core.Authentication authentication,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody(required = false) SyncRequest request) {
         try {
-            @SuppressWarnings("unchecked")
-            Map<String, String> principal = (Map<String, String>) authentication.getPrincipal();
+            String providerId = jwt.getSubject(); // Clerk user ID
+            String email = jwt.getClaimAsString("email");
+            String name = jwt.getClaimAsString("name");
 
-            String providerId = principal.get("providerId"); // Neon Auth user ID
-            String email = principal.get("email");
-            String name = principal.get("name");
-
-            // Fall back to sub if email claim is not present
             if (email == null || email.isBlank()) {
                 throw new RuntimeException("Session does not contain an email.");
             }

@@ -5,23 +5,27 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
-    private final NeonAuthFilter neonAuthFilter;
 
-    public SecurityConfig(CorsConfigurationSource corsConfigurationSource, NeonAuthFilter neonAuthFilter) {
+    public SecurityConfig(CorsConfigurationSource corsConfigurationSource) {
         this.corsConfigurationSource = corsConfigurationSource;
-        this.neonAuthFilter = neonAuthFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
+        jwtAuthConverter.setJwtGrantedAuthoritiesConverter(jwt -> Collections.singletonList(() -> "ROLE_USER"));
+
         http
                 // CORS — use the centralized CorsConfigurationSource from CorsConfig
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
@@ -49,15 +53,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/freelancers/search/**").permitAll()
                         .requestMatchers("/api/contact/**").permitAll()
                         .requestMatchers("/api/portfolio/**").permitAll()
-                        .requestMatchers("/api/auth/latest-session").permitAll()
                         // All other API endpoints require authentication
                         .requestMatchers("/api/**").authenticated()
                         // Everything else (static files served by Spring) is public
                         .anyRequest().permitAll()
                 )
 
-                // Add Custom Neon Auth Introspection Filter
-                .addFilterBefore(neonAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+                // Verify Clerk-issued JWTs via JWKS (configured in application.properties)
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));
 
         return http.build();
     }

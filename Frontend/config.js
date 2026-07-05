@@ -6,8 +6,9 @@ const API_CONFIG = {
       ? 'http://localhost:8080'
       : 'https://nutzy-backend-dev-gefkm.ondigitalocean.app',
 
-  // Neon Auth base URL for authentication
-  NEON_AUTH_URL: 'https://ep-silent-heart-a1y7v8lg.neonauth.ap-southeast-1.aws.neon.tech/neondb/auth'
+  // Clerk Configuration
+  CLERK_PUBLISHABLE_KEY: 'pk_test_Y29ycmVjdC1zbmlwZS02Ny5jbGVyay5hY2NvdW50cy5kZXYk',
+  CLERK_FRONTEND_API_URL: 'https://correct-snipe-67.clerk.accounts.dev'
 };
 
 // Export for use in other files

@@ -96,7 +96,7 @@ public class AdminService {
         // banning differently.
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         // TODO: Add an 'active' boolean field to User entity if user banning is needed.
-        // For now, this is a no-op since isVerified was removed in the Neon Auth migration.
+        // For now, this is a no-op since isVerified was removed (verification is handled by Clerk).
         userRepository.save(user);
     }
 
@@ -109,7 +109,7 @@ public class AdminService {
                 user.getEmail(),
                 user.getRole() != null ? user.getRole().name() : "UNKNOWN",
                 java.time.LocalDateTime.now(), // Placeholder as joinedAt is missing
-                true); // All Neon Auth users are considered active
+                true); // All Clerk-verified users are considered active
     }
 
     private AdminJobDTO convertToJobDTO(Job job) {

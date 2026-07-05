@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleImagePreview('settings-cover-upload', 'settings-cover-preview');
 
     // Protected Route Interception
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', async function (e) {
         // Find the closest anchor tag
         const link = e.target.closest('a');
         if (!link) return;
@@ -174,8 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const href = link.getAttribute('href');
         if (!href) return;
 
-        // List of protected paths that require login
-        // Add more paths here as needed
         // List of protected paths that require login
         // Add more paths here as needed
         const protectedPaths = [
@@ -194,15 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const isProtected = protectedPaths.some(path => href.includes(path));
 
         if (isProtected) {
-            // Check authentication status
-            const isLoggedIn = (localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail')) && (typeof NeonAuth !== 'undefined' ? NeonAuth.isAuthenticated() : true);
+            // Prevent navigation until we've confirmed auth status (async check)
+            e.preventDefault();
 
-            if (!isLoggedIn) {
-                e.preventDefault();
-                // Optional: Add a query param to know where to redirect back after registration/login?
-                // For now, simple redirect to login as requested
-                window.location.href = '/login.html';
-            }
+            const hasStoredEmail = !!(localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail'));
+            const isLoggedIn = hasStoredEmail && (typeof NeonAuth !== 'undefined' ? await NeonAuth.isAuthenticated() : true);
+
+            window.location.href = isLoggedIn ? href : '/login.html';
         }
     });
 
