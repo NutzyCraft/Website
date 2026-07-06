@@ -42,8 +42,8 @@ public class JobController {
     private com.nutzycraft.backend.repository.ProposalRepository proposalRepository;
 
     @GetMapping("/my-jobs")
-    public List<JobWithProposalsDTO> getMyJobs(@RequestParam String email) {
-        List<Job> jobs = jobRepository.findByClient_Email(email);
+    public List<JobWithProposalsDTO> getMyJobs() {
+        List<Job> jobs = jobRepository.findByClient_Email(com.nutzycraft.backend.security.CurrentUser.email());
         return jobs.stream().map(job -> {
             long proposalCount = proposalRepository.countByJobId(job.getId());
             return new JobWithProposalsDTO(job, proposalCount);
@@ -78,13 +78,11 @@ public class JobController {
     }
 
     @PostMapping
-    public Job createJob(@RequestBody Job job, @RequestParam(required = false) String clientEmail) {
+    public Job createJob(@RequestBody Job job) {
         if (job == null) {
             throw new IllegalArgumentException("Job cannot be null");
         }
-        if (clientEmail != null) {
-            userRepository.findByEmail(clientEmail).ifPresent(job::setClient);
-        }
+        userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email()).ifPresent(job::setClient);
         return jobRepository.save(job);
     }
 
@@ -143,11 +141,11 @@ public class JobController {
     @PostMapping("/{id}/review")
     public Job addReview(
             @PathVariable @NonNull Long id,
-            @RequestParam String reviewerEmail,
             @RequestParam Integer rating,
             @RequestParam String reviewText,
             @RequestParam String role // "CLIENT" or "FREELANCER" indicating WHO IS REVIEWING
     ) {
+        String reviewerEmail = com.nutzycraft.backend.security.CurrentUser.email();
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
 
         if (!job.getStatus().equals("COMPLETED")) {

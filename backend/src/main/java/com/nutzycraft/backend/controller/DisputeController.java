@@ -22,9 +22,8 @@ public class DisputeController {
     private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<String> createDispute(@RequestBody AdminDTOs.CreateDisputeDTO request,
-            @RequestParam String clientEmail) {
-        User client = userRepository.findByEmail(clientEmail)
+    public ResponseEntity<String> createDispute(@RequestBody AdminDTOs.CreateDisputeDTO request) {
+        User client = userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("Client not found"));
 
         Long freelancerId = request.getFreelancerId();

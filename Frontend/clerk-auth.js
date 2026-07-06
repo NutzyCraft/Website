@@ -50,23 +50,16 @@
 
     // ─── Token / Session Helpers ─────────────────────────────────────
 
-    let cachedToken = null;
-
     async function getStoredToken() {
         const clerk = await clerkLoading;
         if (!clerk.session) return null;
         try {
-            cachedToken = await clerk.session.getToken();
-            return cachedToken;
+            // Clerk session tokens are short-lived (~60s) and auto-refreshed;
+            // getToken() returns a cached-but-fresh token, refreshing only when needed.
+            return await clerk.session.getToken();
         } catch (e) {
             return null;
         }
-    }
-
-    function getStoredTokenSync() {
-        // Best-effort synchronous accessor for callers that can't await
-        // (e.g. the fetch interceptor). Populated by getStoredToken().
-        return cachedToken;
     }
 
     async function isAuthenticated() {
@@ -141,11 +134,11 @@
      */
     const _originalFetch = window.fetch;
 
-    window.fetch = function (input, init) {
+    window.fetch = async function (input, init) {
         const url = (typeof input === 'string') ? input : (input instanceof Request ? input.url : String(input));
 
         if (url.startsWith(API_BASE_URL) || url.startsWith('/api/')) {
-            const token = getStoredTokenSync();
+            const token = await getStoredToken();
             if (token) {
                 init = init || {};
                 init.headers = init.headers || {};
@@ -170,21 +163,6 @@
         return _originalFetch.call(window, input, init);
     };
 
-    // Keep the cached token fresh so the sync fetch interceptor above has
-    // something to inject without needing to await getStoredToken() itself.
-    clerkLoading.then(async (clerk) => {
-        if (clerk.session) {
-            await getStoredToken();
-        }
-        clerk.addListener(async ({ session }) => {
-            if (session) {
-                await getStoredToken();
-            } else {
-                cachedToken = null;
-            }
-        });
-    });
-
     // ─── Public API ───────────────────────────────────────────────
 
     window.NeonAuth = {
@@ -193,8 +171,7 @@
         signOut,
         isAuthenticated,
         syncWithBackend,
-        getStoredToken,
-        getStoredTokenSync
+        getStoredToken
     };
 
 })();

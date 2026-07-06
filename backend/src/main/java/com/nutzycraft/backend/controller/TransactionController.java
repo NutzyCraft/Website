@@ -20,15 +20,15 @@ public class TransactionController {
     private UserRepository userRepository;
 
     @GetMapping
-    public List<Transaction> getMyTransactions(@RequestParam String email) {
-        return transactionRepository.findByRelatedUser_EmailOrderByDateDesc(email);
+    public List<Transaction> getMyTransactions() {
+        return transactionRepository.findByRelatedUser_EmailOrderByDateDesc(com.nutzycraft.backend.security.CurrentUser.email());
     }
 
     // Add dummy transaction for testing if empty
     @PostMapping("/test-seed")
-    public Transaction seedTestTransaction(@RequestParam String email) {
+    public Transaction seedTestTransaction() {
         Transaction t = new Transaction();
-        t.setRelatedUser(userRepository.findByEmail(email).orElseThrow());
+        t.setRelatedUser(userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email()).orElseThrow());
         t.setDescription("Test Payment");
         t.setAmount(500.0);
         t.setType(Transaction.TransactionType.CREDIT);

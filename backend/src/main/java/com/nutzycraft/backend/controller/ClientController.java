@@ -20,8 +20,9 @@ public class ClientController {
     private com.nutzycraft.backend.repository.TransactionRepository transactionRepository;
 
     @GetMapping("/me")
-    public org.springframework.http.ResponseEntity<?> getMyProfile(@RequestParam String email) {
+    public org.springframework.http.ResponseEntity<?> getMyProfile() {
         try {
+            String email = com.nutzycraft.backend.security.CurrentUser.email();
             System.out.println("Fetching profile for: " + email);
             Client client = clientRepository.findByUser_Email(email)
                     .orElseThrow(() -> new RuntimeException("Client profile not found"));
@@ -56,8 +57,8 @@ public class ClientController {
     }
 
     @PutMapping("/me")
-    public Client updateMyProfile(@RequestParam String email, @RequestBody Client updatedClient) {
-        Client existing = clientRepository.findByUser_Email(email)
+    public Client updateMyProfile(@RequestBody Client updatedClient) {
+        Client existing = clientRepository.findByUser_Email(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("Client profile not found"));
 
         // Update fields

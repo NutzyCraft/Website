@@ -33,7 +33,8 @@ public class DashboardController {
     private UserRepository userRepository;
 
     @GetMapping("/client")
-    public ClientDashboardDTO getClientDashboard(@RequestParam String email) {
+    public ClientDashboardDTO getClientDashboard() {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
         userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Fetch jobs for client with eager loading to prevent N+1 queries
@@ -68,7 +69,8 @@ public class DashboardController {
     }
 
     @GetMapping("/freelancer")
-    public FreelancerStatsDTO getFreelancerStats(@RequestParam String email) {
+    public FreelancerStatsDTO getFreelancerStats() {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
         userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Fetch proposals to calc stats

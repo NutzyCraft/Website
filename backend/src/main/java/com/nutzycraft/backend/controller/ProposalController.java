@@ -31,8 +31,8 @@ public class ProposalController {
     private UserRepository userRepository;
 
     @GetMapping("/my-proposals")
-    public List<Proposal> getMyProposals(@RequestParam String email) {
-        return proposalRepository.findByFreelancerEmail(email);
+    public List<Proposal> getMyProposals() {
+        return proposalRepository.findByFreelancerEmail(com.nutzycraft.backend.security.CurrentUser.email());
     }
 
     @GetMapping("/job/{jobId}")
@@ -48,11 +48,12 @@ public class ProposalController {
 
     @PostMapping
     public Proposal createProposal(@RequestBody ProposalRequest request) {
-        if (request.getEmail() == null || request.getJobId() == null) {
-            throw new IllegalArgumentException("Email and Job ID are required");
+        if (request.getJobId() == null) {
+            throw new IllegalArgumentException("Job ID is required");
         }
 
-        User freelancer = userRepository.findByEmail(request.getEmail())
+        // The proposal is always created for the authenticated user, never a body-supplied email
+        User freelancer = userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // request.getJobId() is checked for null above

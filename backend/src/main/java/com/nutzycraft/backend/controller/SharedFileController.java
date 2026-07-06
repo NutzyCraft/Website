@@ -66,10 +66,10 @@ public class SharedFileController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(
             @RequestParam("jobId") @NonNull Long jobId,
-            @RequestParam("uploaderEmail") String uploaderEmail,
             @RequestParam("file") MultipartFile file) {
 
         try {
+            String uploaderEmail = com.nutzycraft.backend.security.CurrentUser.email();
             // Validate file size (10MB = 10 * 1024 * 1024 bytes for Cloudinary free tier)
             long maxSize = 10 * 1024 * 1024;
             if (file.getSize() > maxSize) {

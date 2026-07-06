@@ -19,19 +19,19 @@ public class MessageController {
 
     // Get all conversations (latest message per user)
     @GetMapping
-    public List<ConversationDTO> getConversations(@RequestParam String email) {
-        return chatService.getConversations(email);
+    public List<ConversationDTO> getConversations() {
+        return chatService.getConversations(com.nutzycraft.backend.security.CurrentUser.email());
     }
 
     // Get chat history with a specific user
     @GetMapping("/{otherUserId}")
-    public List<MessageResponse> getChatHistory(@RequestParam String email, @PathVariable @NonNull Long otherUserId) {
-        return chatService.getChatHistory(email, otherUserId);
+    public List<MessageResponse> getChatHistory(@PathVariable @NonNull Long otherUserId) {
+        return chatService.getChatHistory(com.nutzycraft.backend.security.CurrentUser.email(), otherUserId);
     }
 
-    // Send a message
+    // Send a message (sender is always the authenticated user, never the request body)
     @PostMapping
     public MessageResponse sendMessage(@RequestBody MessageRequest request) {
-        return chatService.sendMessage(request.getSenderEmail(), request.getReceiverId(), request.getContent());
+        return chatService.sendMessage(com.nutzycraft.backend.security.CurrentUser.email(), request.getReceiverId(), request.getContent());
     }
 }

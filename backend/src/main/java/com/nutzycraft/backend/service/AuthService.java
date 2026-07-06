@@ -30,8 +30,10 @@ public class AuthService {
 
     /**
      * The only email permitted to hold the ADMIN role.
+     * Kept in sync with the {@code app.admin.email} used by SecurityConfig to grant ROLE_ADMIN.
      */
-    private static final String ADMIN_EMAIL = "nutzycraft@gmail.com";
+    @org.springframework.beans.factory.annotation.Value("${app.admin.email}")
+    private String ADMIN_EMAIL;
 
     @Autowired
     private UserRepository userRepository;
@@ -42,6 +44,9 @@ public class AuthService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private UserDeletionService userDeletionService;
+
     /**
      * Synchronize a Clerk identity with the local database.
      * Called after successful Clerk sign-in/sign-up.
@@ -49,11 +54,14 @@ public class AuthService {
      * @param providerId Clerk user ID (from JWT "sub" claim)
      * @param email      Email from the JWT
      * @param name       Full name from the JWT (may be null)
+     * @param picture    Profile picture URL from the JWT (may be null) — only applied
+     *                   as a default on first-time account creation, never overwrites
+     *                   a user's own uploaded photo
      * @param roleStr    Requested role — only used for first-time registration
      * @return SyncResponse with user details and isNew flag
      */
     @Transactional
-    public SyncResponse syncUser(String providerId, String email, String name, String roleStr) {
+    public SyncResponse syncUser(String providerId, String email, String name, String picture, String roleStr) {
         SyncResponse response = new SyncResponse();
 
         // 1. Look up by providerId (fastest path for returning users)
@@ -88,14 +96,21 @@ public class AuthService {
         user.setRole(role);
         userRepository.save(user);
 
-        // Create the corresponding role-specific record
+        // Create the corresponding role-specific record, defaulting the profile
+        // picture to the one Clerk provided (e.g. the user's Google avatar)
         if (role == User.Role.FREELANCER) {
             Freelancer freelancer = new Freelancer();
             freelancer.setUser(user);
+            if (picture != null && !picture.isBlank()) {
+                freelancer.setProfileImage(picture);
+            }
             freelancerRepository.save(freelancer);
         } else if (role == User.Role.CLIENT) {
             Client client = new Client();
             client.setUser(user);
+            if (picture != null && !picture.isBlank()) {
+                client.setProfileImage(picture);
+            }
             clientRepository.save(client);
         }
         // ADMIN does not get a Client/Freelancer record
@@ -147,6 +162,27 @@ public class AuthService {
         response.setFullName(user.getFullName());
         response.setRole(user.getRole().name());
         response.setNew(isNew);
+    }
+
+    /**
+     * Handles a Clerk user.deleted webhook event: immediately and permanently
+     * purges the corresponding local user and all associated data.
+     *
+     * Unlike account deletion initiated from within the app (which goes through
+     * a soft-delete grace period), a deletion performed directly in Clerk is
+     * treated as a deliberate admin/dev action and applied right away.
+     *
+     * @param providerId Clerk user ID (from the webhook payload)
+     */
+    @Transactional
+    public void deleteUserByProviderId(String providerId) {
+        Optional<User> userOpt = userRepository.findByProviderIdIncludingDeleted(providerId);
+        if (userOpt.isEmpty()) {
+            return; // Nothing local to clean up
+        }
+
+        String email = userOpt.get().getEmail();
+        userDeletionService.forcePermanentlyDeleteUserAccount(email);
     }
 
     /**

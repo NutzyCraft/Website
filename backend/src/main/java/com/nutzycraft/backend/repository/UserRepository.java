@@ -19,4 +19,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findActiveById(Long id);
 
     Optional<User> findByProviderId(String providerId);
+
+    // Bypasses the @Where(deleted = false) filter so callers can find a user
+    // regardless of soft-delete state (e.g. the Clerk user.deleted webhook).
+    @Query(value = "SELECT * FROM users WHERE provider_id = :providerId", nativeQuery = true)
+    Optional<User> findByProviderIdIncludingDeleted(String providerId);
+
+    // Native query needed because @Where(deleted = false) is applied by Hibernate
+    // to ALL JPQL queries against User, including ones with an explicit
+    // "deleted = true" predicate — making findDeletedByEmail() always empty.
+    @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
+    Optional<User> findByEmailIncludingDeleted(String email);
 }

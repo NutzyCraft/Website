@@ -87,6 +87,11 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.svix</groupId>
+            <artifactId>svix</artifactId>
+            <version>1.68.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -39,6 +39,7 @@ public class AuthController {
             String providerId = jwt.getSubject(); // Clerk user ID
             String email = jwt.getClaimAsString("email");
             String name = jwt.getClaimAsString("name");
+            String picture = jwt.getClaimAsString("picture");
 
             if (email == null || email.isBlank()) {
                 throw new RuntimeException("Session does not contain an email.");
@@ -46,7 +47,7 @@ public class AuthController {
 
             String role = (request != null) ? request.getRole() : null;
 
-            SyncResponse response = authService.syncUser(providerId, email, name, role);
+            SyncResponse response = authService.syncUser(providerId, email, name, picture, role);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();

@@ -102,8 +102,9 @@ public class UserController {
      * Requires password confirmation for security.
      */
     @DeleteMapping("/account")
-    public ResponseEntity<?> deleteAccount(@RequestParam String email) {
+    public ResponseEntity<?> deleteAccount() {
         try {
+            String email = com.nutzycraft.backend.security.CurrentUser.email();
             // Verify the user exists
             com.nutzycraft.backend.entity.User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));

@@ -22,8 +22,8 @@ public class SupportController {
     private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<String> createSupportMessage(@RequestBody AdminDTOs.CreateSupportDTO request, @RequestParam String userEmail) {
-        User sender = userRepository.findByEmail(userEmail)
+    public ResponseEntity<String> createSupportMessage(@RequestBody AdminDTOs.CreateSupportDTO request) {
+        User sender = userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         SupportMessage message = new SupportMessage();

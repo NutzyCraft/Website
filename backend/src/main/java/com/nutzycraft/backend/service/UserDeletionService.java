@@ -61,9 +61,34 @@ public class UserDeletionService {
      */
     @Transactional
     public void permanentlyDeleteUserAccount(String email) {
-        User user = userRepository.findDeletedByEmail(email)
+        User user = userRepository.findByEmailIncludingDeleted(email)
+                .filter(User::isDeleted)
                 .orElseThrow(() -> new RuntimeException("Deleted user not found"));
 
+        purgeUserData(user);
+    }
+
+    /**
+     * Immediately and permanently deletes a user and all associated data,
+     * regardless of whether they've gone through the soft-delete grace period.
+     * Used for deletions initiated directly in Clerk (see ClerkWebhookController),
+     * which are treated as deliberate admin/dev actions rather than user-initiated
+     * account closures.
+     */
+    @Transactional
+    public void forcePermanentlyDeleteUserAccount(String email) {
+        User user = userRepository.findByEmailIncludingDeleted(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        purgeUserData(user);
+    }
+
+    /**
+     * Permanently deletes a user and all their associated data from PostgreSQL, MongoDB, and Cloudinary.
+     * This is a destructive operation and cannot be undone.
+     */
+    private void purgeUserData(User user) {
+        String email = user.getEmail();
         Long userId = user.getId();
         List<String> cloudinaryUrls = new ArrayList<>();
 

@@ -44,14 +44,14 @@ public class FreelancerController {
     }
 
     @GetMapping("/me")
-    public Freelancer getMyProfile(@RequestParam String email) {
-        return freelancerRepository.findByUser_Email(email)
+    public Freelancer getMyProfile() {
+        return freelancerRepository.findByUser_Email(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
     }
 
     @PutMapping("/me")
-    public Freelancer updateMyProfile(@RequestParam String email, @RequestBody Freelancer updatedFreelancer) {
-        Freelancer existing = freelancerRepository.findByUser_Email(email)
+    public Freelancer updateMyProfile(@RequestBody Freelancer updatedFreelancer) {
+        Freelancer existing = freelancerRepository.findByUser_Email(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
 
         if (updatedFreelancer.getTitle() != null)
@@ -83,8 +83,8 @@ public class FreelancerController {
     }
 
     @DeleteMapping("/me/photo")
-    public Freelancer deleteMyPhoto(@RequestParam String email) {
-        Freelancer existing = freelancerRepository.findByUser_Email(email)
+    public Freelancer deleteMyPhoto() {
+        Freelancer existing = freelancerRepository.findByUser_Email(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("Freelancer not found"));
 
         existing.setProfileImage(null);
