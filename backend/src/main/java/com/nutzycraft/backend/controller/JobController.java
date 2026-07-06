@@ -82,22 +82,42 @@ public class JobController {
         if (job == null) {
             throw new IllegalArgumentException("Job cannot be null");
         }
-        userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email()).ifPresent(job::setClient);
+        com.nutzycraft.backend.entity.User caller = userRepository
+                .findByEmail(com.nutzycraft.backend.security.CurrentUser.email())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (caller.getRole() != com.nutzycraft.backend.entity.User.Role.CLIENT) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Only clients can post jobs");
+        }
+        job.setClient(caller);
         return jobRepository.save(job);
     }
 
     @Autowired
     private com.nutzycraft.backend.service.PaymentService paymentService;
 
+    private void requireJobParticipant(Job job) {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
+        boolean isClient = job.getClient() != null && job.getClient().getEmail().equalsIgnoreCase(email);
+        boolean isFreelancer = job.getFreelancer() != null && job.getFreelancer().getEmail().equalsIgnoreCase(email);
+        if (!isClient && !isFreelancer) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not a participant on this job");
+        }
+    }
+
     @PostMapping("/{id}/complete")
     public void completeJob(@PathVariable Long id) {
+        Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        requireJobParticipant(job);
         paymentService.completeJob(id);
     }
 
     @PutMapping("/{id}/step")
     public Job updateJobStep(@PathVariable @NonNull Long id, @RequestParam Integer step) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
-        
+        requireJobParticipant(job);
+
         int maxSteps = 4;
         if (job.getTimelineLabels() != null && !job.getTimelineLabels().trim().isEmpty()) {
             maxSteps = job.getTimelineLabels().split(",").length;
@@ -131,6 +151,7 @@ public class JobController {
     @PutMapping("/{id}/timeline")
     public Job updateTimeline(@PathVariable @NonNull Long id, @RequestBody java.util.Map<String, String> payload) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        requireJobParticipant(job);
         job.setTimelineLabels(payload.get("labels"));
         return jobRepository.save(job);
     }

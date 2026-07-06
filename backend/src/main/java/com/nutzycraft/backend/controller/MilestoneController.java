@@ -31,6 +31,16 @@ public class MilestoneController {
         return milestoneRepository.findByJobId(jobId);
     }
 
+    private void requireJobParticipant(Job job) {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
+        boolean isClient = job.getClient() != null && job.getClient().getEmail().equalsIgnoreCase(email);
+        boolean isFreelancer = job.getFreelancer() != null && job.getFreelancer().getEmail().equalsIgnoreCase(email);
+        if (!isClient && !isFreelancer) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not a participant on this job");
+        }
+    }
+
     @PostMapping
     public Milestone createMilestone(@RequestBody MilestoneRequest request) {
         Long jobId = request.getJobId();
@@ -39,8 +49,10 @@ public class MilestoneController {
         }
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
+        requireJobParticipant(job);
 
-        User creator = userRepository.findByEmail(request.getCreatedByEmail())
+        String creatorEmail = com.nutzycraft.backend.security.CurrentUser.email();
+        User creator = userRepository.findByEmail(creatorEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Milestone milestone = new Milestone();
@@ -51,7 +63,7 @@ public class MilestoneController {
         milestone.setStatus("PENDING");
         milestone.setDueDate(request.getDueDate());
         milestone.setCreatedBy(creator.getFullName());
-        milestone.setCreatedByEmail(request.getCreatedByEmail());
+        milestone.setCreatedByEmail(creatorEmail);
 
         return milestoneRepository.save(milestone);
     }
@@ -60,15 +72,18 @@ public class MilestoneController {
     public Milestone updateStatus(@PathVariable @NonNull Long id, @RequestParam String status) {
         Milestone milestone = milestoneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Milestone not found"));
+        requireJobParticipant(milestone.getJob());
         milestone.setStatus(status);
         return milestoneRepository.save(milestone);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMilestone(@PathVariable @NonNull Long id) {
-        if (!milestoneRepository.existsById(id)) {
+        Milestone milestone = milestoneRepository.findById(id).orElse(null);
+        if (milestone == null) {
             return ResponseEntity.notFound().build();
         }
+        requireJobParticipant(milestone.getJob());
         milestoneRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
@@ -81,6 +96,5 @@ public class MilestoneController {
         private String description;
         private Double amount;
         private java.time.LocalDate dueDate;
-        private String createdByEmail;
     }
 }

@@ -55,6 +55,10 @@ public class ProposalController {
         // The proposal is always created for the authenticated user, never a body-supplied email
         User freelancer = userRepository.findByEmail(com.nutzycraft.backend.security.CurrentUser.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (freelancer.getRole() != User.Role.FREELANCER) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Only freelancers can submit proposals");
+        }
 
         // request.getJobId() is checked for null above
         Long jobId = request.getJobId();
@@ -86,6 +90,11 @@ public class ProposalController {
                 .orElseThrow(() -> new RuntimeException("Proposal not found"));
 
         Job job = proposal.getJob();
+        String callerEmail = com.nutzycraft.backend.security.CurrentUser.email();
+        if (job.getClient() == null || !job.getClient().getEmail().equalsIgnoreCase(callerEmail)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Only the job's client can accept a proposal");
+        }
         if (!"OPEN".equals(job.getStatus())) {
             throw new RuntimeException("Job is not open for assignment");
         }

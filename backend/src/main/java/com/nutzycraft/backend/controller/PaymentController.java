@@ -32,7 +32,7 @@ public class PaymentController {
             }
 
             String description = (String) request.getOrDefault("description", "NutzyCraft Payment");
-            String email = (String) request.getOrDefault("email", "customer@example.com");
+            String email = com.nutzycraft.backend.security.CurrentUser.email();
 
             PaymentIntent paymentIntent = stripeService.createPaymentIntent(amount, description, email);
 

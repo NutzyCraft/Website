@@ -29,6 +29,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     long countByClient_EmailAndFreelancerIsNotNull(String email);
 
+    boolean existsByClient_EmailAndFreelancer_Id(String clientEmail, Long freelancerId);
+
     @org.springframework.data.jpa.repository.Query("SELECT AVG(j.ratingForClient) FROM Job j WHERE j.client.email = :email AND j.ratingForClient IS NOT NULL")
     Double getAverageRatingForClient(@org.springframework.data.repository.query.Param("email") String email);
 

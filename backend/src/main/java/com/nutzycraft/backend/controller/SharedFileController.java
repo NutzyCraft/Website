@@ -37,6 +37,16 @@ public class SharedFileController {
     @Autowired
     private FileUploadService fileUploadService;
 
+    private void requireJobParticipant(Job job) {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
+        boolean isClient = job.getClient() != null && job.getClient().getEmail().equalsIgnoreCase(email);
+        boolean isFreelancer = job.getFreelancer() != null && job.getFreelancer().getEmail().equalsIgnoreCase(email);
+        if (!isClient && !isFreelancer) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You are not a participant on this job");
+        }
+    }
+
     /**
      * Get all shared files for a job
      */
@@ -86,6 +96,7 @@ public class SharedFileController {
 
             Job job = jobRepository.findById(jobId)
                     .orElseThrow(() -> new RuntimeException("Job not found"));
+            requireJobParticipant(job);
 
             User uploader = userRepository.findByEmail(uploaderEmail)
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -132,6 +143,7 @@ public class SharedFileController {
         try {
             SharedFile file = sharedFileRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("File not found"));
+            requireJobParticipant(file.getJob());
 
             // Delete from Cloudinary
             fileUploadService.deleteFile(file.getPublicId());
@@ -157,6 +169,10 @@ public class SharedFileController {
     @Transactional
     public ResponseEntity<?> deleteAllFilesForJob(@PathVariable Long jobId) {
         try {
+            Job job = jobRepository.findById(jobId)
+                    .orElseThrow(() -> new RuntimeException("Job not found"));
+            requireJobParticipant(job);
+
             List<SharedFile> files = sharedFileRepository.findByJobId(jobId);
 
             // Delete each file from Cloudinary

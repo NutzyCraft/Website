@@ -16,16 +16,9 @@ public class NotificationController {
     private NotificationRepository notificationRepository;
 
     @GetMapping
-    public List<NotificationDTO> getNotifications(@RequestParam(required = false) String email,
-            @RequestParam(required = false) Long userId) {
-        List<Notification> notifications;
-        if (email != null) {
-            notifications = notificationRepository.findByRecipientEmailOrderByCreatedAtDesc(email);
-        } else if (userId != null) {
-            notifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(userId);
-        } else {
-            return List.of();
-        }
+    public List<NotificationDTO> getNotifications() {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
+        List<Notification> notifications = notificationRepository.findByRecipientEmailOrderByCreatedAtDesc(email);
 
         return notifications.stream()
                 .map(this::convertToDTO)
@@ -34,21 +27,21 @@ public class NotificationController {
 
     @PostMapping("/{id}/read")
     public void markAsRead(@PathVariable @NonNull Long id) {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
         notificationRepository.findById(id).ifPresent(notification -> {
+            if (!notification.getRecipient().getEmail().equalsIgnoreCase(email)) {
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.FORBIDDEN, "Not your notification");
+            }
             notification.setRead(true);
             notificationRepository.save(notification);
         });
     }
 
     @PostMapping("/mark-all-read")
-    public void markAllAsRead(@RequestParam(required = false) String email,
-            @RequestParam(required = false) Long userId) {
-        List<Notification> unread = List.of();
-        if (email != null) {
-            unread = notificationRepository.findByRecipientEmailAndIsReadFalse(email);
-        } else if (userId != null) {
-            unread = notificationRepository.findByRecipientIdAndIsReadFalse(userId);
-        }
+    public void markAllAsRead() {
+        String email = com.nutzycraft.backend.security.CurrentUser.email();
+        List<Notification> unread = notificationRepository.findByRecipientEmailAndIsReadFalse(email);
 
         unread.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(unread);

@@ -25,6 +25,11 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getUserProfile(@RequestParam String email) {
+        String callerEmail = com.nutzycraft.backend.security.CurrentUser.email();
+        if (!callerEmail.equalsIgnoreCase(email)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "You can only view your own profile");
+        }
         return ResponseEntity.ok(authService.getUserProfile(email));
     }
 
@@ -37,6 +42,11 @@ public class UserController {
             com.nutzycraft.backend.entity.User user = userRepository.findById(id).orElse(null);
             if (user == null) {
                 return ResponseEntity.notFound().build();
+            }
+            String callerEmail = com.nutzycraft.backend.security.CurrentUser.email();
+            if (!callerEmail.equalsIgnoreCase(user.getEmail())) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                        .body("You can only update your own avatar");
             }
 
             String imageUrl = fileUploadService.uploadFile(file);
