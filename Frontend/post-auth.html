@@ -80,7 +80,13 @@
 
                 localStorage.setItem('loggedInEmail', session.user.email || syncResult.email);
 
-                window.location.href = syncResult.role === 'FREELANCER' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+                if (syncResult.role === 'ADMIN') {
+                    window.location.href = 'admin-dashboard.html';
+                } else if (syncResult.role === 'FREELANCER') {
+                    window.location.href = 'freelancer-dashboard.html';
+                } else {
+                    window.location.href = 'client-dashboard.html';
+                }
 
             } catch (e) {
                 console.error('Post-auth sync failed:', e);
