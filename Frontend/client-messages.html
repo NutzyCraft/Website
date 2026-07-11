@@ -230,13 +230,42 @@
                     <img src="${currentChatProfilePic}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                     <div>
                         <div style="font-weight:700;">${userName}</div>
-                        <div style="font-size:0.8rem;color:#22c55e;">Online</div>
+                        <div id="chatPresence" style="font-size:0.8rem;color:#888;">…</div>
                     </div>
                 `;
 
+                refreshPresence();
                 await fetchAndRenderMessages(true);
                 loadConversations();
             }
+
+            // --- Presence (online / last seen) ---
+            function formatLastSeen(secondsAgo) {
+                if (secondsAgo == null) return 'Offline';
+                if (secondsAgo < 3600) return `Last seen ${Math.max(1, Math.floor(secondsAgo / 60))}m ago`;
+                if (secondsAgo < 86400) return `Last seen ${Math.floor(secondsAgo / 3600)}h ago`;
+                return `Last seen ${Math.floor(secondsAgo / 86400)}d ago`;
+            }
+
+            async function refreshPresence() {
+                if (!currentChatUserId) return;
+                const el = document.getElementById('chatPresence');
+                if (!el) return;
+                try {
+                    const res = await fetch(`${API_CONFIG.BASE_URL}/api/users/${currentChatUserId}/presence`);
+                    if (!res.ok) return;
+                    const p = await res.json();
+                    if (p.online) {
+                        el.textContent = 'Online';
+                        el.style.color = '#22c55e';
+                    } else {
+                        el.textContent = formatLastSeen(p.lastSeenSecondsAgo);
+                        el.style.color = '#888';
+                    }
+                } catch (err) { /* leave last known status */ }
+            }
+
+            setInterval(refreshPresence, 30000);
 
             // --- Message fetching ---
             async function fetchAndRenderMessages(fullRender) {
@@ -377,19 +406,11 @@
             const targetUserId = params.get('userId');
             const targetUserName = params.get('name');
 
+            // Start a chat from a deep link (Contact buttons pass userId + name).
+            // Looking a recipient up by email is intentionally not supported: the
+            // /api/users/profile endpoint is self-only, so callers must pass the id.
             if (targetUserId && targetUserName) {
                 openChat(targetUserId, decodeURIComponent(targetUserName));
-            } else {
-                const recipientEmail = params.get('recipientEmail');
-                if (recipientEmail) {
-                    try {
-                        const profileRes = await fetch(`${API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(recipientEmail)}`);
-                        if (profileRes.ok) {
-                            const user = await profileRes.json();
-                            openChat(user.id, user.fullName);
-                        }
-                    } catch (e) { console.error("Error fetching recipient profile:", e); }
-                }
             }
 
             loadConversations();

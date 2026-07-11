@@ -237,14 +237,44 @@
                     <img src="${finalProfilePic}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                     <div>
                         <div style="font-weight:700;">${name}</div>
+                        <div id="chatPresence" style="font-size:0.8rem;color:#888;">…</div>
                     </div>
                 `;
 
+                refreshPresence();
                 await fetchAndRenderMessages(true);
                 loadConversations();
             }
 
             window.loadChatHistory = window.openChat;
+
+            // --- Presence (online / last seen) ---
+            function formatLastSeen(secondsAgo) {
+                if (secondsAgo == null) return 'Offline';
+                if (secondsAgo < 3600) return `Last seen ${Math.max(1, Math.floor(secondsAgo / 60))}m ago`;
+                if (secondsAgo < 86400) return `Last seen ${Math.floor(secondsAgo / 3600)}h ago`;
+                return `Last seen ${Math.floor(secondsAgo / 86400)}d ago`;
+            }
+
+            async function refreshPresence() {
+                if (!currentChatUserId) return;
+                const el = document.getElementById('chatPresence');
+                if (!el) return;
+                try {
+                    const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/${currentChatUserId}/presence`);
+                    if (!res.ok) return;
+                    const p = await res.json();
+                    if (p.online) {
+                        el.textContent = 'Online';
+                        el.style.color = '#22c55e';
+                    } else {
+                        el.textContent = formatLastSeen(p.lastSeenSecondsAgo);
+                        el.style.color = '#888';
+                    }
+                } catch (err) { /* leave last known status */ }
+            }
+
+            setInterval(refreshPresence, 30000);
 
             // --- Message fetching ---
             async function fetchAndRenderMessages(fullRender) {

@@ -160,7 +160,7 @@
                                         }).join('') : '<span style="color: #999; font-size: 0.8rem;">None</span>'}
                                     </td>
                                     <td>
-                                        <button class="btn btn-primary" onclick="window.location.href='client-messages.html?recipientEmail=${encodeURIComponent(p.freelancer.email)}'" style="padding: 4px 12px; font-size: 0.8rem;">Contact</button>
+                                        <button class="btn btn-primary" onclick="window.location.href='client-messages.html?userId=${p.freelancer.id}&name=${encodeURIComponent(freelancerName)}'" style="padding: 4px 12px; font-size: 0.8rem;">Contact</button>
                                         ${p.status === 'ACCEPTED' ?
                                     '<span class="status-badge status-active">Hired</span>' :
                                     (p.status === 'DECLINED' ?

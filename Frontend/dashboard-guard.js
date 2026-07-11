@@ -31,10 +31,25 @@
 
             if (syncResult.role !== requiredRole && syncResult.role !== 'ADMIN') {
                 window.location.href = ROLE_HOME[syncResult.role] || 'login.html';
+                return;
             }
+
+            // Session is valid — open the app-wide presence socket so other users
+            // see this user as "online" while any dashboard page is open. The socket
+            // closing (logout/tab close/network drop) is what marks them offline.
+            loadPresenceSocket();
         } catch (e) {
             console.error('Dashboard guard failed:', e);
             window.location.href = 'login.html';
         }
     })();
+
+    function loadPresenceSocket() {
+        if (window.__presenceSocketLoaded) return;
+        window.__presenceSocketLoaded = true;
+        const s = document.createElement('script');
+        s.src = 'presence-socket.js';
+        s.async = true;
+        document.head.appendChild(s);
+    }
 })();
