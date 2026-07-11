@@ -288,6 +288,13 @@
             }
 
             // --- Message rendering ---
+            function formatMsgTime(ts) {
+                if (!ts) return '';
+                const d = new Date(ts);
+                if (isNaN(d.getTime())) return '';
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
             function buildMessageEl(msg) {
                 const isMe = msg.sender.email === email;
                 const senderPic = profilePicCache[msg.sender.id] || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
@@ -297,6 +304,7 @@
                     ${!isMe ? `<img src="${senderPic}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:10px;">` : ''}
                     <div style="background:${isMe ? 'var(--primary)' : 'white'};color:${isMe ? 'white' : 'black'};padding:12px 18px;border-radius:${isMe ? '20px 0 20px 20px' : '0 20px 20px 20px'};border:1px solid ${isMe ? 'transparent' : '#eee'};max-width:70%;">
                         <p style="font-size:0.95rem;">${msg.content}</p>
+                        <div style="font-size:0.7rem;opacity:0.7;text-align:right;margin-top:4px;">${formatMsgTime(msg.timestamp)}</div>
                     </div>
                 `;
                 return div;
