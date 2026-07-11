@@ -23,4 +23,7 @@ public interface ChatRepository extends MongoRepository<ChatMessage, String> {
     List<ChatMessage> findBySenderIdAndReceiverIdAndDeletedAtIsNullOrSenderIdAndReceiverIdAndDeletedAtIsNullOrderByTimestampAsc(
         Long senderId1, Long receiverId1, Long senderId2, Long receiverId2
     );
+
+    // Unread messages the receiver has not seen yet (for marking a conversation read)
+    List<ChatMessage> findBySenderIdAndReceiverIdAndReadAtIsNullAndDeletedAtIsNull(Long senderId, Long receiverId);
 }

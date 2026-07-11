@@ -157,6 +157,7 @@
             let lastMessageId = null;
             let stompClient = null;
             let stompSubscription = null;
+            let readSubscription = null;
             let fallbackPollInterval = null;
             const profilePicCache = {};
             const renderedMessageIds = new Set();
@@ -236,7 +237,16 @@
 
                 refreshPresence();
                 await fetchAndRenderMessages(true);
+                markRead(userId);
                 loadConversations();
+            }
+
+            // Mark the other user's messages as read; they'll see "Seen" in real time.
+            async function markRead(otherUserId) {
+                if (!otherUserId) return;
+                try {
+                    await fetch(`${API_CONFIG.BASE_URL}/api/messages/${otherUserId}/read`, { method: 'POST' });
+                } catch (err) { /* non-critical */ }
             }
 
             // --- Presence (online / last seen) ---
@@ -295,6 +305,13 @@
                 return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
 
+            // Single check = Sent (delivered, not yet read); blue double check = Seen.
+            function statusIcon(read) {
+                return read
+                    ? '<i class="fa-solid fa-check-double" style="color:#7dd3fc;margin-left:5px;" title="Seen"></i>'
+                    : '<i class="fa-solid fa-check" style="margin-left:5px;" title="Sent"></i>';
+            }
+
             function buildMessageEl(msg) {
                 const isMe = msg.sender.email === email;
                 const senderPic = profilePicCache[msg.sender.id] || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.fullName)}&background=random`;
@@ -304,7 +321,7 @@
                     ${!isMe ? `<img src="${senderPic}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;margin-right:10px;">` : ''}
                     <div style="background:${isMe ? 'var(--primary)' : 'white'};color:${isMe ? 'white' : 'black'};padding:12px 18px;border-radius:${isMe ? '20px 0 20px 20px' : '0 20px 20px 20px'};border:1px solid ${isMe ? 'transparent' : '#eee'};max-width:70%;">
                         <p style="font-size:0.95rem;">${msg.content}</p>
-                        <div style="font-size:0.7rem;opacity:0.7;text-align:right;margin-top:4px;">${formatMsgTime(msg.timestamp)}</div>
+                        <div style="font-size:0.7rem;opacity:0.7;text-align:right;margin-top:4px;">${formatMsgTime(msg.timestamp)}${isMe ? statusIcon(msg.read) : ''}</div>
                     </div>
                 `;
                 return div;
@@ -352,6 +369,14 @@
                         stompSubscription = stompClient.subscribe('/user/queue/messages', (frame) => {
                             handleIncomingMessage(JSON.parse(frame.body));
                         });
+                        // Read receipts: the other party read our messages → flip Sent to Seen.
+                        if (readSubscription) readSubscription.unsubscribe();
+                        readSubscription = stompClient.subscribe('/user/queue/read-receipts', (frame) => {
+                            const r = JSON.parse(frame.body);
+                            if (currentChatUserId && String(r.readerId) === String(currentChatUserId)) {
+                                fetchAndRenderMessages(true);
+                            }
+                        });
                     },
                     onStompError: () => startFallbackPoll(),
                     onDisconnect: () => startFallbackPoll()
@@ -373,6 +398,8 @@
                 const otherPartyId = String(msg.sender.email === email ? msg.receiverId : msg.sender.id);
                 if (currentChatUserId && otherPartyId === String(currentChatUserId)) {
                     appendMessages([msg]);
+                    // If they sent it and we're viewing, mark it seen immediately.
+                    if (msg.sender.email !== email) markRead(currentChatUserId);
                 }
                 loadConversations();
             }

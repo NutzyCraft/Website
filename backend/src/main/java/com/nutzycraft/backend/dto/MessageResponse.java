@@ -12,6 +12,8 @@ public class MessageResponse {
     private LocalDateTime timestamp;
     private UserSummary sender;
     private Long receiverId;
+    // True once the receiver has seen the message ("Seen" vs "Sent").
+    private boolean read;
 
     @Data
     @Builder

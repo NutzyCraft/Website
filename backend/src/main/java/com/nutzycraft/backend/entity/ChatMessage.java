@@ -15,4 +15,6 @@ public class ChatMessage {
     private String content;
     private LocalDateTime timestamp = LocalDateTime.now();
     private LocalDateTime deletedAt;
+    // When the receiver read the message; null means delivered/"Sent" but not yet seen.
+    private LocalDateTime readAt;
 }

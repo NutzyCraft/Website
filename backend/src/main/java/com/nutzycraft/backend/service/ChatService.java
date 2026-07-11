@@ -54,6 +54,7 @@ public class ChatService {
                 .content(saved.getContent())
                 .timestamp(saved.getTimestamp())
                 .receiverId(receiverId)
+                .read(saved.getReadAt() != null)
                 .sender(com.nutzycraft.backend.dto.MessageResponse.UserSummary.builder()
                         .id(sender.getId())
                         .email(sender.getEmail())
@@ -109,6 +110,8 @@ public class ChatService {
                 .id(msg.getId())
                 .content(msg.getContent())
                 .timestamp(msg.getTimestamp())
+                .receiverId(msg.getReceiverId())
+                .read(msg.getReadAt() != null)
                 .sender(com.nutzycraft.backend.dto.MessageResponse.UserSummary.builder()
                     .id(sender.getId())
                     .email(sender.getEmail())
@@ -116,6 +119,33 @@ public class ChatService {
                     .build())
                 .build();
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * Marks every message the other user sent to the current user as read, and
+     * notifies that other user (the original sender) via STOMP so their "Sent"
+     * indicators flip to "Seen" in real time.
+     */
+    public void markConversationRead(String currentUserEmail, @NonNull Long otherUserId) {
+        User currentUser = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User otherUser = userRepository.findById(otherUserId)
+                .orElseThrow(() -> new RuntimeException("Other user not found"));
+
+        List<ChatMessage> unread = chatRepository.findBySenderIdAndReceiverIdAndReadAtIsNullAndDeletedAtIsNull(
+                otherUserId, currentUser.getId());
+        if (unread.isEmpty()) return;
+
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        unread.forEach(msg -> msg.setReadAt(now));
+        chatRepository.saveAll(unread);
+
+        // Tell the sender that this user (currentUser) has read their messages.
+        java.util.Map<String, Object> receipt = new java.util.HashMap<>();
+        receipt.put("type", "READ");
+        receipt.put("readerId", currentUser.getId());
+        messagingTemplate.convertAndSendToUser(otherUser.getEmail(), "/queue/read-receipts", receipt);
     }
 
     public List<ConversationDTO> getConversations(String currentUserEmail) {

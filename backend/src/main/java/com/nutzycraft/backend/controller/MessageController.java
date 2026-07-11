@@ -34,4 +34,10 @@ public class MessageController {
     public MessageResponse sendMessage(@RequestBody MessageRequest request) {
         return chatService.sendMessage(com.nutzycraft.backend.security.CurrentUser.email(), request.getReceiverId(), request.getContent());
     }
+
+    // Mark all messages from the given user to the authenticated user as read ("Seen")
+    @PostMapping("/{otherUserId}/read")
+    public void markRead(@PathVariable @NonNull Long otherUserId) {
+        chatService.markConversationRead(com.nutzycraft.backend.security.CurrentUser.email(), otherUserId);
+    }
 }
