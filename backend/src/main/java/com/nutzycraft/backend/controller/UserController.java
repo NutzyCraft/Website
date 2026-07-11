@@ -23,6 +23,9 @@ public class UserController {
     @Autowired
     private com.nutzycraft.backend.repository.FreelancerRepository freelancerRepository;
 
+    @Autowired
+    private com.nutzycraft.backend.repository.PresenceRepository presenceRepository;
+
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getUserProfile(@RequestParam String email) {
         String callerEmail = com.nutzycraft.backend.security.CurrentUser.email();
@@ -102,6 +105,32 @@ public class UserController {
                     + "&background=random");
         }
         return ResponseEntity.ok(avatar);
+    }
+
+    /**
+     * Presence of a given user: whether they currently hold a live WebSocket
+     * session and, if not, how long ago they were last seen. The online flag is
+     * maintained by {@code PresenceService} from STOMP connect/disconnect events;
+     * time-since is computed server-side so the client never has to reconcile
+     * server vs. browser time zones.
+     */
+    @GetMapping("/{id}/presence")
+    public ResponseEntity<java.util.Map<String, Object>> getPresence(@PathVariable @NonNull Long id) {
+        java.util.Optional<com.nutzycraft.backend.entity.UserPresence> presence = presenceRepository.findById(id);
+        boolean online = presence.map(com.nutzycraft.backend.entity.UserPresence::isOnline).orElse(false);
+        java.time.LocalDateTime lastSeen = presence
+                .map(com.nutzycraft.backend.entity.UserPresence::getLastSeen)
+                .orElse(null);
+
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("online", online);
+        if (online || lastSeen == null) {
+            body.put("lastSeenSecondsAgo", null);
+        } else {
+            long secondsAgo = java.time.Duration.between(lastSeen, java.time.LocalDateTime.now()).getSeconds();
+            body.put("lastSeenSecondsAgo", Math.max(0, secondsAgo));
+        }
+        return ResponseEntity.ok(body);
     }
 
     @Autowired
