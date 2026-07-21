@@ -6,7 +6,7 @@ const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hos
 const API_CONFIG = {
   BASE_URL: IS_LOCAL
       ? 'http://localhost:8080'
-      : 'https://nutzycraft-backend-pynth.ondigitalocean.app',
+      : 'https://nutzycraft-backend-f3be771b347a.herokuapp.com',
 
   // Clerk Configuration
   // Local dev uses the Clerk development instance; production uses the live instance.
