@@ -27,7 +27,7 @@
             script.async = true;
             script.crossOrigin = 'anonymous';
             script.setAttribute('data-clerk-publishable-key', CLERK_PUBLISHABLE_KEY);
-            script.src = `https://${new URL(CLERK_FRONTEND_API_URL).hostname}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+            script.src = `https://${new URL(CLERK_FRONTEND_API_URL).hostname}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`;
 
             script.onload = async () => {
                 try {
