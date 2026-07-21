@@ -1,19 +1,19 @@
 // API Configuration
 // Change this URL when deploying to production
 // Automatically detect development vs production environment
-const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// Set USE_LOCAL_BACKEND to true only if running a local Spring Boot backend on localhost:8080 with dev Clerk keys
+const USE_LOCAL_BACKEND = false;
 
 const API_CONFIG = {
-  BASE_URL: IS_LOCAL
+  BASE_URL: USE_LOCAL_BACKEND
       ? 'http://localhost:8080'
       : 'https://nutzycraft-backend-f3be771b347a.herokuapp.com',
 
   // Clerk Configuration
-  // Local dev uses the Clerk development instance; production uses the live instance.
-  CLERK_PUBLISHABLE_KEY: IS_LOCAL
+  CLERK_PUBLISHABLE_KEY: USE_LOCAL_BACKEND
       ? 'pk_test_Y29ycmVjdC1zbmlwZS02Ny5jbGVyay5hY2NvdW50cy5kZXYk'
       : 'pk_live_Y2xlcmsubnV0enljcmFmdC5jb20k',
-  CLERK_FRONTEND_API_URL: IS_LOCAL
+  CLERK_FRONTEND_API_URL: USE_LOCAL_BACKEND
       ? 'https://correct-snipe-67.clerk.accounts.dev'
       : 'https://clerk.nutzycraft.com'
 };

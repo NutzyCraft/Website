@@ -105,6 +105,8 @@
             const clerk = await window.NeonAuth.clerkLoading;
 
             clerk.mountSignIn(document.getElementById('clerk-sign-in'), {
+                forceRedirectUrl: window.location.origin + '/post-auth.html?portal=client',
+                fallbackRedirectUrl: window.location.origin + '/post-auth.html?portal=client',
                 afterSignInUrl: window.location.origin + '/post-auth.html?portal=client',
                 signUpUrl: 'register.html?role=client'
             });

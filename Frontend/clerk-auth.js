@@ -31,7 +31,9 @@
 
             script.onload = async () => {
                 try {
-                    await window.Clerk.load();
+                    await window.Clerk.load({
+                        publishableKey: CLERK_PUBLISHABLE_KEY
+                    });
                     resolve(window.Clerk);
                 } catch (e) {
                     reject(e);

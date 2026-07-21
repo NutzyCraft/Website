@@ -38,8 +38,26 @@ public class AuthController {
         try {
             String providerId = jwt.getSubject(); // Clerk user ID
             String email = jwt.getClaimAsString("email");
+            if (email == null || email.isBlank()) {
+                email = jwt.getClaimAsString("email_address");
+            }
+            if (email == null || email.isBlank()) {
+                email = jwt.getClaimAsString("primary_email");
+            }
+
             String name = jwt.getClaimAsString("name");
+            if (name == null || name.isBlank()) {
+                String firstName = jwt.getClaimAsString("first_name");
+                String lastName = jwt.getClaimAsString("last_name");
+                if (firstName != null || lastName != null) {
+                    name = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
+                }
+            }
+
             String picture = jwt.getClaimAsString("picture");
+            if (picture == null || picture.isBlank()) {
+                picture = jwt.getClaimAsString("image_url");
+            }
 
             if (email == null || email.isBlank()) {
                 throw new RuntimeException("Session does not contain an email.");
