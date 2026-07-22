@@ -253,8 +253,9 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+        document.addEventListener("DOMContentLoaded", async function () {
+            const session = await window.NeonAuth.getSession();
+            const email = session?.user?.email || localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
 
             if (!email) {
                 // Redirect to login if not logged in

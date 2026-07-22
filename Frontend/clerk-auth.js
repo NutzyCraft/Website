@@ -31,7 +31,9 @@
 
             script.onload = async () => {
                 try {
-                    await window.Clerk.load();
+                    await window.Clerk.load({
+                        publishableKey: CLERK_PUBLISHABLE_KEY
+                    });
                     resolve(window.Clerk);
                 } catch (e) {
                     reject(e);
@@ -71,12 +73,17 @@
         const clerk = await clerkLoading;
         if (!clerk.session || !clerk.user) return null;
         const token = await getStoredToken();
+        const activeEmail = clerk.user.primaryEmailAddress ? clerk.user.primaryEmailAddress.emailAddress : null;
+        if (activeEmail) {
+            localStorage.setItem('loggedInEmail', activeEmail);
+            sessionStorage.setItem('loggedInEmail', activeEmail);
+        }
         return {
             token,
             session: clerk.session,
             user: {
                 id: clerk.user.id,
-                email: clerk.user.primaryEmailAddress ? clerk.user.primaryEmailAddress.emailAddress : null,
+                email: activeEmail,
                 name: clerk.user.fullName
             }
         };

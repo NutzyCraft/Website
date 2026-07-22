@@ -193,11 +193,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+            const session = await window.NeonAuth.getSession();
+            const email = session?.user?.email || localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
             if (email) {
                 try {
                     // Fetch Profile
-                    const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${email}`);
+                    const profileRes = await fetch(`${window.API_CONFIG.BASE_URL}/api/users/profile?email=${encodeURIComponent(email)}`);
                     if (profileRes.ok) {
                         const profile = await profileRes.json();
                         const titleEl = document.querySelector('.dashboard-title');

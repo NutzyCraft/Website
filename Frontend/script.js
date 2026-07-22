@@ -101,8 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Smooth Scroll for Anchor Links (with offset for fixed header)
+    // NOTE: We must NOT intercept clicks inside Clerk's mounted sign-in/sign-up
+    // components, as Clerk uses internal hash-based routing (e.g. #/factor-two).
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            // Skip if this click originates from within a Clerk component
+            if (this.closest('#clerk-sign-in, #clerk-sign-up, .cl-rootBox, .cl-signIn-root, .cl-signUp-root')) {
+                return; // Let Clerk handle its own internal navigation
+            }
+
             e.preventDefault();
             const targetId = this.getAttribute('href');
             if (targetId === '#') return;

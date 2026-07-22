@@ -123,6 +123,8 @@
                 const role = getSelectedRole();
                 clerk.mountSignUp(signUpContainer, {
                     unsafeMetadata: { role },
+                    forceRedirectUrl: window.location.origin + '/post-signup.html',
+                    fallbackRedirectUrl: window.location.origin + '/post-signup.html',
                     afterSignUpUrl: window.location.origin + '/post-signup.html',
                     signInUrl: 'login.html'
                 });
