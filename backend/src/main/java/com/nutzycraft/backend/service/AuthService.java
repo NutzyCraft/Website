@@ -35,17 +35,24 @@ public class AuthService {
     @org.springframework.beans.factory.annotation.Value("${app.admin.email}")
     private String ADMIN_EMAIL;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final FreelancerRepository freelancerRepository;
+    private final ClientRepository clientRepository;
+    private final UserDeletionService userDeletionService;
+    private final EmailNotificationService emailNotificationService;
 
     @Autowired
-    private FreelancerRepository freelancerRepository;
-
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private UserDeletionService userDeletionService;
+    public AuthService(UserRepository userRepository,
+                       FreelancerRepository freelancerRepository,
+                       ClientRepository clientRepository,
+                       UserDeletionService userDeletionService,
+                       EmailNotificationService emailNotificationService) {
+        this.userRepository = userRepository;
+        this.freelancerRepository = freelancerRepository;
+        this.clientRepository = clientRepository;
+        this.userDeletionService = userDeletionService;
+        this.emailNotificationService = emailNotificationService;
+    }
 
     /**
      * Synchronize a Clerk identity with the local database.
@@ -114,6 +121,22 @@ public class AuthService {
             clientRepository.save(client);
         }
         // ADMIN does not get a Client/Freelancer record
+
+        // Send welcome email for new accounts (fire-and-forget — errors are logged, not thrown)
+        String displayName = (name != null && !name.isBlank()) ? name : "there";
+        if (role == User.Role.FREELANCER) {
+            emailNotificationService.sendTemplateEmail(
+                    email,
+                    "account-creation-freelancer",
+                    java.util.Map.of("name", displayName)
+            );
+        } else if (role == User.Role.CLIENT) {
+            emailNotificationService.sendTemplateEmail(
+                    email,
+                    "account-creation-clients",
+                    java.util.Map.of("name", displayName)
+            );
+        }
 
         populateResponse(response, user, true);
         return response;

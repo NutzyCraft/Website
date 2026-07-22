@@ -8,11 +8,13 @@ import com.nutzycraft.backend.repository.ProposalRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import com.nutzycraft.backend.entity.Notification;
 import com.nutzycraft.backend.repository.NotificationRepository;
+import com.nutzycraft.backend.service.EmailNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/proposals")
@@ -29,6 +31,9 @@ public class ProposalController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailNotificationService emailNotificationService;
 
     @GetMapping("/my-proposals")
     public List<Proposal> getMyProposals() {
@@ -81,7 +86,23 @@ public class ProposalController {
             proposal.setAttachments(String.join(",", request.getAttachments()));
         }
 
-        return proposalRepository.save(proposal);
+        Proposal saved = proposalRepository.save(proposal);
+
+        // Notify the client that a new bid has been placed on their job
+        User client = job.getClient();
+        if (client != null) {
+            emailNotificationService.sendTemplateEmail(
+                    client.getEmail(),
+                    "freelancer-give-proposal",
+                    Map.of(
+                            "freelancer_name", freelancer.getFullName() != null ? freelancer.getFullName() : "A freelancer",
+                            "client_name",    client.getFullName()    != null ? client.getFullName()    : "there",
+                            "job_title",      job.getTitle()
+                    )
+            );
+        }
+
+        return saved;
     }
 
     @PostMapping("/{id}/accept")
@@ -124,6 +145,21 @@ public class ProposalController {
                 p.setStatus("DECLINED");
                 proposalRepository.save(p);
             }
+        }
+
+        // Notify the freelancer that their proposal was accepted
+        User freelancer = proposal.getFreelancer();
+        User client = job.getClient();
+        if (freelancer != null && client != null) {
+            emailNotificationService.sendTemplateEmail(
+                    freelancer.getEmail(),
+                    "client-accept-proposal",
+                    Map.of(
+                            "freelancer_name", freelancer.getFullName() != null ? freelancer.getFullName() : "there",
+                            "client_name",     client.getFullName()     != null ? client.getFullName()     : "The client",
+                            "job_title",       job.getTitle()
+                    )
+            );
         }
     }
 

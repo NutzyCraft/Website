@@ -11,20 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private com.nutzycraft.backend.repository.UserRepository userRepository;
-
-    @Autowired
-    private com.nutzycraft.backend.repository.ClientRepository clientRepository;
-
-    @Autowired
-    private com.nutzycraft.backend.repository.FreelancerRepository freelancerRepository;
-
-    @Autowired
-    private com.nutzycraft.backend.repository.PresenceRepository presenceRepository;
+    private final AuthService authService;
+    private final com.nutzycraft.backend.repository.UserRepository userRepository;
+    private final com.nutzycraft.backend.repository.ClientRepository clientRepository;
+    private final com.nutzycraft.backend.repository.FreelancerRepository freelancerRepository;
+    private final com.nutzycraft.backend.repository.PresenceRepository presenceRepository;
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getUserProfile(@RequestParam String email) {
@@ -36,8 +27,25 @@ public class UserController {
         return ResponseEntity.ok(authService.getUserProfile(email));
     }
 
+    private final com.nutzycraft.backend.service.FileUploadService fileUploadService;
+    private final com.nutzycraft.backend.service.UserDeletionService userDeletionService;
+
     @Autowired
-    private com.nutzycraft.backend.service.FileUploadService fileUploadService;
+    public UserController(AuthService authService,
+                          com.nutzycraft.backend.repository.UserRepository userRepository,
+                          com.nutzycraft.backend.repository.ClientRepository clientRepository,
+                          com.nutzycraft.backend.repository.FreelancerRepository freelancerRepository,
+                          com.nutzycraft.backend.repository.PresenceRepository presenceRepository,
+                          com.nutzycraft.backend.service.FileUploadService fileUploadService,
+                          com.nutzycraft.backend.service.UserDeletionService userDeletionService) {
+        this.authService = authService;
+        this.userRepository = userRepository;
+        this.clientRepository = clientRepository;
+        this.freelancerRepository = freelancerRepository;
+        this.presenceRepository = presenceRepository;
+        this.fileUploadService = fileUploadService;
+        this.userDeletionService = userDeletionService;
+    }
 
     @PostMapping("/{id}/avatar")
     public ResponseEntity<String> uploadAvatar(@PathVariable @NonNull Long id, @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
@@ -133,8 +141,7 @@ public class UserController {
         return ResponseEntity.ok(body);
     }
 
-    @Autowired
-    private com.nutzycraft.backend.service.UserDeletionService userDeletionService;
+
 
     /**
      * Delete user account and all associated data.
