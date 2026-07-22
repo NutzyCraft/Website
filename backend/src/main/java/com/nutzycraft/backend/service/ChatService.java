@@ -22,15 +22,18 @@ public class ChatService {
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final EmailNotificationService emailNotificationService;
 
     public ChatService(ChatRepository chatRepository,
                        UserRepository userRepository,
                        NotificationRepository notificationRepository,
-                       @Lazy SimpMessagingTemplate messagingTemplate) {
+                       @Lazy SimpMessagingTemplate messagingTemplate,
+                       EmailNotificationService emailNotificationService) {
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
         this.notificationRepository = notificationRepository;
         this.messagingTemplate = messagingTemplate;
+        this.emailNotificationService = emailNotificationService;
     }
 
     public com.nutzycraft.backend.dto.MessageResponse sendMessage(String senderEmail, Long receiverId, String content) {
@@ -85,6 +88,37 @@ public class ChatService {
              notification.setLink("messages.html");
         }
         notificationRepository.save(notification);
+
+        // Send email notification based on the roles of sender and receiver
+        String preview = (content != null && content.length() > 100)
+                ? content.substring(0, 97) + "..."
+                : content;
+        String senderName   = sender.getFullName()   != null ? sender.getFullName()   : "Someone";
+        String receiverName = receiver.getFullName() != null ? receiver.getFullName() : "there";
+
+        // Freelancer → Client: notify the client
+        if (sender.getRole() == User.Role.FREELANCER && receiver.getRole() == User.Role.CLIENT) {
+            emailNotificationService.sendTemplateEmail(
+                    receiver.getEmail(),
+                    "msg-from-freelancer-to-client",
+                    Map.of(
+                            "freelancer_name",  senderName,
+                            "client_name",      receiverName,
+                            "message_preview",  preview
+                    )
+            );
+        // Client → Freelancer: notify the freelancer
+        } else if (sender.getRole() == User.Role.CLIENT && receiver.getRole() == User.Role.FREELANCER) {
+            emailNotificationService.sendTemplateEmail(
+                    receiver.getEmail(),
+                    "msg-from-client-to-freelancer",
+                    Map.of(
+                            "freelancer_name",  receiverName,
+                            "client_name",      senderName,
+                            "message_preview",  preview
+                    )
+            );
+        }
 
         return response;
     }
