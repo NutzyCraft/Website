@@ -1,12 +1,16 @@
 package com.nutzycraft.backend.service;
 
-import com.resend.Resend;
-import com.resend.services.emails.model.CreateEmailOptions;
-import com.resend.services.emails.model.CreateEmailResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -14,56 +18,56 @@ public class EmailNotificationService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailNotificationService.class);
     private static final String FROM_ADDRESS = "NutzyCraft <info@nutzycraft.com>";
+    private static final String RESEND_API_URL = "https://api.resend.com/emails";
 
-    private final Resend resend;
+    @Value("${resend.api-key}")
+    private String apiKey;
 
-    public EmailNotificationService(Resend resend) {
-        this.resend = resend;
-    }
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Sends a transactional email using a Resend Hosted Template.
+     * Uses the Resend REST API directly since the resend-java SDK does not
+     * yet expose template support in its released versions.
      *
      * @param recipientEmail the recipient's email address
-     * @param templateId     the Resend template ID (e.g., "tpl_xxxxxxxxxxxx")
-     * @param variables      dynamic template variables (e.g., {"username": "John", "jobTitle": "Developer"})
+     * @param templateId     the Resend template alias or ID (e.g., "account-creation-clients")
+     * @param variables      dynamic template variables (e.g., {"name": "John"})
      */
-    public void sendTemplateEmail(String recipientEmail, String templateName, Map<String, Object> variables) {
+    public void sendTemplateEmail(String recipientEmail, String templateId, Map<String, Object> variables) {
         try {
-            String htmlContent = generateHtmlForTemplate(templateName, variables);
-            String subject = generateSubjectForTemplate(templateName);
+            Map<String, Object> body = Map.of(
+                    "from",    FROM_ADDRESS,
+                    "to",      List.of(recipientEmail),
+                    "template", Map.of(
+                            "id",        templateId,
+                            "variables", variables
+                    )
+            );
 
-            CreateEmailOptions params = CreateEmailOptions.builder()
-                    .from(FROM_ADDRESS)
-                    .to(recipientEmail)
-                    .subject(subject)
-                    .html(htmlContent)
+            String json = objectMapper.writeValueAsString(body);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(RESEND_API_URL))
+                    .header("Authorization", "Bearer " + apiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
-            CreateEmailResponse response = resend.emails().send(params);
-            log.info("Email sent successfully to {} using template {}. Resend ID: {}",
-                    recipientEmail, templateName, response.getId());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                log.info("Email sent to {} using template '{}'. Response: {}",
+                        recipientEmail, templateId, response.body());
+            } else {
+                log.error("Resend rejected email to {} using template '{}'. Status: {}, Body: {}",
+                        recipientEmail, templateId, response.statusCode(), response.body());
+            }
 
         } catch (Exception e) {
-            log.error("Failed to send email to {} using template {}: {}",
-                    recipientEmail, templateName, e.getMessage(), e);
+            log.error("Failed to send email to {} using template '{}': {}",
+                    recipientEmail, templateId, e.getMessage(), e);
         }
-    }
-
-    private String generateHtmlForTemplate(String templateName, Map<String, Object> variables) {
-        String name = variables.containsKey("name") ? variables.get("name").toString() : "User";
-        if ("account-creation-freelancer".equals(templateName)) {
-            return "<h1>Welcome to NutzyCraft, " + name + "!</h1><p>We are excited to have you as a freelancer on our platform.</p>";
-        } else if ("account-creation-clients".equals(templateName)) {
-            return "<h1>Welcome to NutzyCraft, " + name + "!</h1><p>We are excited to help you find the best freelancers.</p>";
-        }
-        return "<p>Hello " + name + ", this is a notification from NutzyCraft.</p>";
-    }
-
-    private String generateSubjectForTemplate(String templateName) {
-        if ("account-creation-freelancer".equals(templateName) || "account-creation-clients".equals(templateName)) {
-            return "Welcome to NutzyCraft!";
-        }
-        return "NutzyCraft Notification";
     }
 }
