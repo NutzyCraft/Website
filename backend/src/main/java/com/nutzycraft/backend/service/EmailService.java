@@ -113,7 +113,7 @@ public class EmailService {
                                             </div>
                                             <div class="footer">
                                                 <p>This is an automated email. Please do not reply.</p>
-                                                <p>&copy; 2025 NutzyCraft. All rights reserved.</p>
+                                                <p>&copy; 2026 NutzyCraft. All rights reserved.</p>
                                             </div>
                                         </div>
                                     </body>
