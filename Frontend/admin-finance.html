@@ -27,6 +27,72 @@
             background: rgba(26, 35, 126, 0.1);
             color: #1a237e;
         }
+
+        /* Payout Queue Table */
+        .payout-section {
+            margin-top: 40px;
+        }
+
+        .payout-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .payout-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .payout-badge.processing {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .bank-detail-cell {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .bank-detail-cell strong {
+            display: block;
+            color: #1a237e;
+            font-size: 0.85rem;
+        }
+
+        .mark-paid-btn {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .mark-paid-btn:hover {
+            background: #283593;
+        }
+
+        .mark-paid-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -78,7 +144,7 @@
                 </div>
             </div>
 
-            <!-- Stats Rows -->
+            <!-- Stats Row -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
@@ -87,17 +153,17 @@
                     <div class="stat-info">
                         <h4>Total Revenue</h4>
                         <div class="stat-value" id="total-revenue">...</div>
-                        <div style="font-size: 0.8rem; color: #4caf50;">+5% vs last month</div>
+                        <div style="font-size: 0.8rem; color: #4caf50;">Inbound via PayHere</div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: #E3F2FD; color: #1565C0;">
+                    <div class="stat-icon" style="background: #FFF3E0; color: #E65100;">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                     </div>
                     <div class="stat-info">
                         <h4>Pending Payouts</h4>
                         <div class="stat-value" id="pending-payouts">...</div>
-                        <div style="font-size: 0.8rem; color: #666;">24 Processed Today</div>
+                        <div style="font-size: 0.8rem; color: #e65100;">Awaiting manual transfer</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -105,16 +171,46 @@
                         <i class="fa-solid fa-percent"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Comm. Earnings</h4>
+                        <h4>Net Margin</h4>
                         <div class="stat-value" id="net-profit">...</div>
-                        <div style="font-size: 0.8rem; color: #666;">10% Platform Fee</div>
+                        <div style="font-size: 0.8rem; color: #666;">Agency margin (internal)</div>
                     </div>
                 </div>
             </div>
 
-            <div class="dashboard-table-card">
+            <!-- ─── Pending Payouts Queue ─────────────────────────────────────────── -->
+            <div class="dashboard-table-card payout-section">
+                <div class="payout-section-header">
+                    <div>
+                        <h3 style="margin: 0;">Pending Subcontractor Payouts</h3>
+                        <p style="color: #888; font-size: 0.85rem; margin: 4px 0 0;">
+                            Manually transfer funds via your banking portal, then click "Mark as Paid".
+                        </p>
+                    </div>
+                    <span id="payout-count-badge" class="payout-badge" style="display:none;"><i class="fa-solid fa-clock"></i> <span id="payout-count">0</span> Pending</span>
+                </div>
+                <table class="dashboard-table" style="vertical-align: middle;">
+                    <thead>
+                        <tr style="text-align: left;">
+                            <th style="padding: 15px;">Subcontractor</th>
+                            <th>Bank Details</th>
+                            <th>Amount</th>
+                            <th>For Milestone</th>
+                            <th>Queued On</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payout-queue-body">
+                        <tr><td colspan="7" style="text-align:center; padding: 20px; color: #888;">Loading payouts...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ─── Recent Transactions ───────────────────────────────────────────── -->
+            <div class="dashboard-table-card" style="margin-top: 30px;">
                 <div class="table-header" style="padding-left: 15px;">
-                    <h3>Recent Transactions</h3>
+                    <h3>All Transactions</h3>
                 </div>
                 <table class="dashboard-table" style="vertical-align: middle;">
                     <thead>
@@ -126,7 +222,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="transactions-body">
                         <!-- Loaded via JS -->
                     </tbody>
                 </table>

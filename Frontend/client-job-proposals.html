@@ -191,7 +191,7 @@
                     }
 
                     window.hireFreelancer = async (proposalId) => {
-                        if (!(await notify.confirm('Are you sure you want to hire this freelancer? This will accept their bid and mark the job as In Progress.'))) {
+                        if (!(await notify.confirm('Are you sure you want to accept this proposal? A service contract will be formed with Nutzycraft Pvt Ltd, who will manage delivery of your project using their internal subcontractor network.'))) {
                             return;
                         }
 

@@ -38,4 +38,20 @@ public class Freelancer {
     private String workStyle;
 
     private Double rating = 0.0;
+
+    // ─── Subcontractor Bank Account Details ───────────────────────────────────
+    // These fields are stored securely and only visible to admins when
+    // processing manual bank transfer payouts. Never exposed to clients.
+
+    /** The freelancer's local bank name (e.g., "Commercial Bank of Ceylon") */
+    private String bankName;
+
+    /** Branch code or SWIFT/BIC for the bank branch */
+    private String bankBranchCode;
+
+    /** Full legal account holder name as registered with the bank */
+    private String bankAccountName;
+
+    /** Bank account number for direct bank transfer */
+    private String bankAccountNumber;
 }

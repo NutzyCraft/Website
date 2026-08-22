@@ -4,7 +4,10 @@ import com.nutzycraft.backend.dto.AdminJobDTO;
 import com.nutzycraft.backend.dto.AdminUserDTO;
 import com.nutzycraft.backend.dto.DashboardStatsDTO;
 import com.nutzycraft.backend.entity.Job;
+import com.nutzycraft.backend.entity.Freelancer;
+import com.nutzycraft.backend.entity.Transaction;
 import com.nutzycraft.backend.entity.User;
+import com.nutzycraft.backend.repository.FreelancerRepository;
 import com.nutzycraft.backend.repository.JobRepository;
 import com.nutzycraft.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,9 @@ public class AdminService {
 
     @Autowired
     private com.nutzycraft.backend.repository.NotificationRepository notificationRepository;
+
+    @Autowired
+    private FreelancerRepository freelancerRepository;
     
     @Autowired
     private UserDeletionService userDeletionService;
@@ -132,20 +138,21 @@ public class AdminService {
         Double totalDebits = transactionRepository.calculateTotalDebits();
         double debits = totalDebits != null ? totalDebits : 0.0;
 
-        // Ledger-based Commission: What came in (Revenue) minus what went out (Debits)
-        // This accurately represents the "NutzyCraft Bank Account" surplus
+        // Net Margin: money received from clients minus what we owe subcontractors
         double commission = revenue - debits;
 
         java.util.List<com.nutzycraft.backend.entity.Transaction> transactions = transactionRepository.findAll(
                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "date"));
-        // Limit to 10 for dashboard/recent view if needed, but here we return all
 
         java.util.List<com.nutzycraft.backend.dto.AdminDTOs.AdminTransactionItemDTO> transactionDTOs = transactions
                 .stream()
                 .map(this::convertToTransactionDTO)
                 .collect(java.util.stream.Collectors.toList());
 
-        return new com.nutzycraft.backend.dto.AdminDTOs.AdminFinanceDTO(revenue, pending, commission, transactionDTOs);
+        // Build pending payout queue
+        java.util.List<com.nutzycraft.backend.dto.AdminDTOs.PendingPayoutDTO> payoutQueue = getPendingPayouts();
+
+        return new com.nutzycraft.backend.dto.AdminDTOs.AdminFinanceDTO(revenue, pending, commission, transactionDTOs, payoutQueue);
     }
 
     public java.util.List<com.nutzycraft.backend.dto.AdminDTOs.AdminDisputeDTO> getAllDisputes() {
@@ -225,7 +232,90 @@ public class AdminService {
                 t.getAmount(),
                 t.getStatus().name(),
                 formatDate(t.getDate()),
-                t.getType().name());
+                t.getType().name()); // INBOUND_PAYHERE or OUTBOUND_MANUAL
+    }
+
+    /**
+     * Returns all pending (PENDING or PROCESSING) subcontractor payouts for the admin queue.
+     * Enriches each with the freelancer's bank account details.
+     */
+    public java.util.List<com.nutzycraft.backend.dto.AdminDTOs.PendingPayoutDTO> getPendingPayouts() {
+        // Fetch PENDING payouts
+        java.util.List<com.nutzycraft.backend.entity.Transaction> pending =
+                transactionRepository.findByTypeAndStatusOrderByDateAsc(
+                        com.nutzycraft.backend.entity.Transaction.TransactionType.OUTBOUND_MANUAL,
+                        com.nutzycraft.backend.entity.Transaction.TransactionStatus.PENDING);
+        // Fetch PROCESSING payouts (freelancer requested payout)
+        java.util.List<com.nutzycraft.backend.entity.Transaction> processing =
+                transactionRepository.findByTypeAndStatusOrderByDateAsc(
+                        com.nutzycraft.backend.entity.Transaction.TransactionType.OUTBOUND_MANUAL,
+                        com.nutzycraft.backend.entity.Transaction.TransactionStatus.PROCESSING);
+
+        java.util.List<com.nutzycraft.backend.entity.Transaction> allQueued = new java.util.ArrayList<>();
+        allQueued.addAll(processing); // Show PROCESSING first (freelancer requested)
+        allQueued.addAll(pending);
+
+        return allQueued.stream().map(t -> {
+            Freelancer fl = t.getFreelancerId() != null
+                    ? freelancerRepository.findById(t.getFreelancerId()).orElse(null)
+                    : null;
+
+            String bankName = fl != null && fl.getBankName() != null ? fl.getBankName() : "Not Provided";
+            String branchCode = fl != null && fl.getBankBranchCode() != null ? fl.getBankBranchCode() : "—";
+            String accountName = fl != null && fl.getBankAccountName() != null ? fl.getBankAccountName() : "Not Provided";
+            String accountNumber = fl != null && fl.getBankAccountNumber() != null ? fl.getBankAccountNumber() : "Not Provided";
+
+            String freelancerName = t.getRelatedUser() != null ? t.getRelatedUser().getDisplayName() : "Unknown";
+            String freelancerEmail = t.getRelatedUser() != null ? t.getRelatedUser().getEmail() : "";
+
+            return new com.nutzycraft.backend.dto.AdminDTOs.PendingPayoutDTO(
+                    t.getId(), freelancerName, freelancerEmail,
+                    bankName, branchCode, accountName, accountNumber,
+                    t.getAmount(), "LKR",
+                    t.getDescription(),
+                    formatDate(t.getDate()),
+                    t.getStatus().name());
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Admin marks a manual bank transfer as complete, transitioning the payout
+     * transaction from PENDING/PROCESSING → SETTLED.
+     */
+    @Transactional
+    public void markPayoutSettled(Long transactionId) {
+        if (transactionId == null) throw new IllegalArgumentException("Transaction ID cannot be null");
+        com.nutzycraft.backend.entity.Transaction tx = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found: " + transactionId));
+
+        if (tx.getType() != com.nutzycraft.backend.entity.Transaction.TransactionType.OUTBOUND_MANUAL) {
+            throw new RuntimeException("Only OUTBOUND_MANUAL transactions can be settled");
+        }
+
+        tx.setStatus(com.nutzycraft.backend.entity.Transaction.TransactionStatus.SETTLED);
+        transactionRepository.save(tx);
+    }
+
+    /**
+     * Called when a freelancer clicks "Request Payout" on their earnings page.
+     * Transitions the payout from PENDING → PROCESSING so admin knows action is needed.
+     */
+    @Transactional
+    public void createPayoutRequest(Long transactionId, String freelancerEmail) {
+        com.nutzycraft.backend.entity.Transaction tx = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        if (tx.getStatus() != com.nutzycraft.backend.entity.Transaction.TransactionStatus.PENDING) {
+            throw new RuntimeException("Only PENDING payouts can be requested");
+        }
+
+        // Security: ensure the freelancer requesting payout owns this transaction
+        if (tx.getRelatedUser() == null || !tx.getRelatedUser().getEmail().equals(freelancerEmail)) {
+            throw new RuntimeException("Unauthorized payout request");
+        }
+
+        tx.setStatus(com.nutzycraft.backend.entity.Transaction.TransactionStatus.PROCESSING);
+        transactionRepository.save(tx);
     }
 
     private com.nutzycraft.backend.dto.AdminDTOs.AdminDisputeDTO convertToDisputeDTO(

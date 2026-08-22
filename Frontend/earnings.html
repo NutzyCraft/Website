@@ -16,6 +16,105 @@
     <script src="dashboard-guard.js" data-require-role="FREELANCER"></script>
     <script src="notify.js"></script>
     <script src="script.js" defer></script>
+    <style>
+        .payout-card {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #eee;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            transition: box-shadow 0.2s;
+        }
+
+        .payout-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .payout-status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .payout-status-dot.pending { background: #e0e0e0; }
+        .payout-status-dot.available { background: #4caf50; }
+        .payout-status-dot.processing { background: #ff9800; }
+
+        .payout-info { flex: 1; }
+
+        .payout-info h4 {
+            margin: 0 0 4px;
+            font-size: 0.95rem;
+            color: #1a237e;
+        }
+
+        .payout-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .payout-amount {
+            font-size: 1.1rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .payout-amount.pending { color: #999; }
+        .payout-amount.available { color: #2e7d32; }
+        .payout-amount.processing { color: #e65100; }
+
+        .request-payout-btn {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .request-payout-btn:hover { background: #283593; }
+        .request-payout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .status-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .status-label.pending { background: #f5f5f5; color: #777; }
+        .status-label.processing { background: #fff3e0; color: #e65100; }
+        .status-label.settled { background: #e8f5e9; color: #2e7d32; }
+
+        .payout-legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+    </style>
 </head>
 
 <body>
@@ -73,10 +172,11 @@
 
             <div class="sidebar-user">
                 <img src="https://ui-avatars.com/api/?name=User&background=random&color=fff"
+                    id="sidebar-avatar"
                     style="width: 40px; height: 40px; border-radius: 50%;">
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; font-size: 0.9rem;">Loading...</div>
-                    <div style="font-size: 0.8rem; color: #888;">Freelancer</div>
+                    <div style="font-weight: 700; font-size: 0.9rem;" id="sidebar-name">Loading...</div>
+                    <div style="font-size: 0.8rem; color: #888;">Subcontractor</div>
                 </div>
                 <a href="logout.html" style="color: #888;"><i class="fa-solid fa-sign-out-alt"></i></a>
             </div>
@@ -87,12 +187,8 @@
             <div class="dashboard-topbar">
                 <button class="sidebar-toggle-btn"><i class="fa-solid fa-bars"></i></button>
                 <div>
-                    <h2 style="font-size: 1.5rem;">Earnings</h2>
-                    <p style="color: #666;">View your payments and transaction history.</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-primary"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw
-                        Funds</button>
+                    <h2 style="font-size: 1.5rem;">Earnings & Payouts</h2>
+                    <p style="color: #666;">Your subcontractor payout queue and transaction history.</p>
                 </div>
             </div>
 
@@ -103,17 +199,17 @@
                         <i class="fa-solid fa-sack-dollar"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Total Earnings</h3>
-                        <p class="stat-value">...</p>
+                        <h3>Total Settled</h3>
+                        <p class="stat-value" id="stat-total">...</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;">
-                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <div class="stat-icon" style="background: #e8f5e9; color: #2e7d32;">
+                        <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Available Balance</h3>
-                        <p class="stat-value">...</p>
+                        <h3>Available for Payout</h3>
+                        <p class="stat-value" id="stat-available">...</p>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -121,14 +217,42 @@
                         <i class="fa-solid fa-hourglass-half"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>Pending Clearance</h3>
-                        <p class="stat-value">...</p>
+                        <h3>Pending (Active Jobs)</h3>
+                        <p class="stat-value" id="stat-pending">...</p>
                     </div>
                 </div>
             </div>
 
+            <!-- How Payouts Work Banner -->
+            <div style="background: linear-gradient(135deg, #f0f4ff, #fff8f0); border-radius: 16px; padding: 20px 25px; margin-bottom: 30px; display: flex; align-items: flex-start; gap: 15px;">
+                <i class="fa-solid fa-circle-info" style="color: #1a237e; font-size: 1.3rem; margin-top: 2px;"></i>
+                <div>
+                    <strong style="color: #1a237e;">How Payouts Work</strong>
+                    <p style="margin: 5px 0 0; font-size: 0.88rem; color: #555; line-height: 1.6;">
+                        NutzyCraft pays you via <strong>manual bank transfer</strong> once a milestone is approved by the client.
+                        Funds move through three stages: <strong>Pending</strong> (milestone active) →
+                        <strong>Available</strong> (client approved — click "Request Payout") →
+                        <strong>Processing</strong> (admin is arranging your bank transfer).
+                        Ensure your <a href="settings.html" style="color: var(--primary);">bank details are saved</a> in Settings.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payout Queue -->
+            <h3 style="font-size: 1.15rem; margin-bottom: 10px;">Your Payout Queue</h3>
+
+            <div class="payout-legend">
+                <div class="legend-item"><span class="payout-status-dot pending"></span> Pending – milestone still active</div>
+                <div class="legend-item"><span class="payout-status-dot available"></span> Available – client approved, request your payout</div>
+                <div class="legend-item"><span class="payout-status-dot processing"></span> Processing – admin arranging transfer</div>
+            </div>
+
+            <div id="payout-queue-container">
+                <div style="text-align: center; padding: 30px; color: #888;">Loading your payout queue...</div>
+            </div>
+
             <!-- Transaction History -->
-            <h3 style="font-size: 1.2rem; margin-bottom: 15px;">Transaction History</h3>
+            <h3 style="font-size: 1.2rem; margin: 30px 0 15px;">Transaction History</h3>
             <div class="glass-card table-responsive" style="padding: 0;">
                 <table class="dashboard-table" style="vertical-align: middle;">
                     <thead>
@@ -140,8 +264,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Transactions loaded via JS -->
+                    <tbody id="transactions-body">
                         <tr>
                             <td colspan="5" style="text-align: center; padding: 20px;">Loading transactions...</td>
                         </tr>
@@ -152,75 +275,153 @@
             <script>
                 document.addEventListener('DOMContentLoaded', async () => {
                     const email = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
-                    const tbody = document.querySelector('tbody');
+                    const tbody = document.getElementById('transactions-body');
+                    const payoutContainer = document.getElementById('payout-queue-container');
 
-                    // Stat Elements
-                    const stats = document.querySelectorAll('.stat-value');
+                    if (!email) return;
 
-                    if (email) {
-                        try {
-                            const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/transactions?email=${email}`);
-                            if (res.ok) {
-                                const transactions = await res.json();
+                    try {
+                        const res = await fetch(`${window.API_CONFIG.BASE_URL}/api/transactions`);
+                        if (!res.ok) throw new Error('Failed to load transactions');
+                        const transactions = await res.json();
 
-                                // Calculate Stats
-                                let totalEarnings = 0;
-                                let pending = 0;
-                                let debits = 0;
+                        // ─── Calculate stats ──────────────────────────────────────────────
+                        let totalSettled = 0;
+                        let available = 0; // PENDING OUTBOUND (can request payout)
+                        let pending = 0;   // Not yet in payout system (future - from active milestones)
 
-                                transactions.forEach(t => {
-                                    if (t.type === 'CREDIT') {
-                                        if (t.status === 'PROCESSED' || t.status === 'RECEIVED') {
-                                            totalEarnings += t.amount;
-                                        } else if (t.status === 'PENDING') {
-                                            pending += t.amount;
-                                        }
-                                    } else if (t.type === 'DEBIT' && t.status === 'PROCESSED') {
-                                        debits += t.amount;
-                                    }
-                                });
+                        const payoutItems = [];
 
-                                const available = totalEarnings - debits;
-
-                                if (stats.length >= 3) {
-                                    stats[0].innerText = `Rs ${totalEarnings.toFixed(2)}`;
-                                    stats[1].innerText = `Rs ${available.toFixed(2)}`;
-                                    stats[2].innerText = `Rs ${pending.toFixed(2)}`;
-                                }
-
-                                // Render Table
-                                if (transactions.length === 0) {
-                                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No transactions found.</td></tr>';
-                                } else {
-                                    tbody.innerHTML = transactions.map(t => {
-                                        const isCredit = t.type === 'CREDIT';
-                                        const color = isCredit ? '#16a34a' : '#dc2626';
-                                        const sign = isCredit ? '+' : '-';
-
-                                        let statusClass = 'status-pending'; // default
-                                        if (t.status === 'PROCESSED' || t.status === 'RECEIVED') statusClass = 'status-active';
-
-                                        return `
-                                       <tr style="border-bottom: 1px solid #f0f0f0;">
-                                           <td style="padding: 15px;">${new Date(t.date).toLocaleDateString()}</td>
-                                           <td style="font-weight: 600;">${t.description}</td>
-                                           <td>${t.type === 'CREDIT' ? 'Payment' : 'Withdrawal'}</td>
-                                           <td style="color: ${color}; font-weight: 700;">${sign}Rs ${t.amount.toFixed(2)}</td>
-                                           <td><span class="status-badge ${statusClass}">${t.status}</span></td>
-                                       </tr>
-                                       `;
-                                    }).join('');
+                        transactions.forEach(t => {
+                            if (t.type === 'OUTBOUND_MANUAL') {
+                                if (t.status === 'SETTLED') {
+                                    totalSettled += t.amount;
+                                } else if (t.status === 'PENDING') {
+                                    available += t.amount;
+                                    payoutItems.push({ ...t, stateClass: 'available' });
+                                } else if (t.status === 'PROCESSING') {
+                                    pending += t.amount;
+                                    payoutItems.push({ ...t, stateClass: 'processing' });
                                 }
                             }
-                        } catch (e) {
-                            console.error(e);
+                        });
+
+                        // Stats
+                        document.getElementById('stat-total').textContent = formatCurrency(totalSettled);
+                        document.getElementById('stat-available').textContent = formatCurrency(available);
+                        document.getElementById('stat-pending').textContent = formatCurrency(pending);
+
+                        // ─── Render payout queue ─────────────────────────────────────────
+                        if (payoutItems.length === 0) {
+                            payoutContainer.innerHTML = `
+                                <div style="background: white; border-radius: 14px; border: 1px solid #eee; padding: 30px; text-align: center; color: #888;">
+                                    <i class="fa-solid fa-check-circle" style="color: #4caf50; font-size: 1.5rem; margin-bottom: 10px; display: block;"></i>
+                                    No payouts queued. Complete a milestone to see your earnings here.
+                                </div>`;
+                        } else {
+                            payoutContainer.innerHTML = payoutItems.map(item => {
+                                const isAvailable = item.stateClass === 'available';
+                                const isProcessing = item.stateClass === 'processing';
+
+                                const actionHtml = isAvailable
+                                    ? `<button class="request-payout-btn" id="payout-btn-${item.id}" onclick="requestPayout(${item.id}, this)">
+                                            <i class="fa-solid fa-paper-plane"></i> Request Payout
+                                       </button>`
+                                    : isProcessing
+                                        ? `<span class="status-label processing"><i class="fa-solid fa-clock"></i> Admin Processing</span>`
+                                        : `<span class="status-label pending">Queued</span>`;
+
+                                return `
+                                    <div class="payout-card" id="payout-card-${item.id}">
+                                        <span class="payout-status-dot ${item.stateClass}"></span>
+                                        <div class="payout-info">
+                                            <h4>${escapeHtml(item.description)}</h4>
+                                            <p>${new Date(item.date).toLocaleDateString('en-LK', { year:'numeric', month:'short', day:'numeric' })}</p>
+                                        </div>
+                                        <span class="payout-amount ${item.stateClass}">${formatCurrency(item.amount)}</span>
+                                        ${actionHtml}
+                                    </div>
+                                `;
+                            }).join('');
                         }
+
+                        // ─── Render transaction history ───────────────────────────────────
+                        if (transactions.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No transactions found.</td></tr>';
+                        } else {
+                            tbody.innerHTML = transactions.map(t => {
+                                const isInbound = t.type === 'INBOUND_PAYHERE';
+                                const color = isInbound ? '#16a34a' : '#dc2626';
+                                const sign = isInbound ? '+' : '-';
+                                const typeLabel = isInbound ? 'Payment Received' : 'Payout';
+
+                                const statusMap = {
+                                    'SETTLED': 'status-active',
+                                    'RECEIVED': 'status-active',
+                                    'PROCESSING': 'status-warning',
+                                    'PENDING': 'status-pending',
+                                };
+                                const statusClass = statusMap[t.status] || 'status-pending';
+
+                                return `
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="padding: 15px;">${new Date(t.date).toLocaleDateString()}</td>
+                                        <td style="font-weight: 600;">${escapeHtml(t.description)}</td>
+                                        <td>${typeLabel}</td>
+                                        <td style="color: ${color}; font-weight: 700;">${sign}${formatCurrency(t.amount)}</td>
+                                        <td><span class="status-badge ${statusClass}">${t.status}</span></td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red; padding:20px;">Error loading transactions.</td></tr>';
                     }
+
+                    // ─── Request Payout ───────────────────────────────────────────────────
+                    window.requestPayout = async function(transactionId, btn) {
+                        const confirmed = await notify.confirm(
+                            'Request a payout for this milestone? NutzyCraft admin will arrange a manual bank transfer to your registered account.'
+                        );
+                        if (!confirmed) return;
+
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Requesting...';
+
+                        try {
+                            const res = await fetch(
+                                `${window.API_CONFIG.BASE_URL}/api/transactions/${transactionId}/request-payout`,
+                                { method: 'POST' }
+                            );
+
+                            if (!res.ok) {
+                                const err = await res.json();
+                                throw new Error(err.error || 'Request failed');
+                            }
+
+                            await notify.alert('Payout requested! Admin will process your bank transfer shortly. Check back in 1-3 business days.');
+                            window.location.reload();
+
+                        } catch (err) {
+                            await notify.alert('Error: ' + err.message);
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Request Payout';
+                        }
+                    };
                 });
+
+                function formatCurrency(value) {
+                    return new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(value || 0);
+                }
+
+                function escapeHtml(text) {
+                    if (!text) return '';
+                    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                }
             </script>
-            </table>
-    </div>
-    </main>
+        </main>
     </div>
 
 </body>

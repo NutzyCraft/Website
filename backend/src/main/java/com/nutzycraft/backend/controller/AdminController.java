@@ -109,6 +109,29 @@ public class AdminController {
     }
 
     /**
+     * Returns all pending subcontractor payouts with bank details for admin processing.
+     * Includes both PENDING (queued automatically) and PROCESSING (freelancer requested) entries.
+     */
+    @GetMapping("/finance/payouts")
+    public ResponseEntity<java.util.List<com.nutzycraft.backend.dto.AdminDTOs.PendingPayoutDTO>> getPendingPayouts() {
+        return ResponseEntity.ok(adminService.getPendingPayouts());
+    }
+
+    /**
+     * Admin marks a manual bank transfer as complete (SETTLED).
+     * Call this after confirming the bank transfer in your banking portal.
+     */
+    @PutMapping("/finance/payouts/{id}/settle")
+    public ResponseEntity<?> settlePayoutTransaction(@PathVariable @NonNull Long id) {
+        try {
+            adminService.markPayoutSettled(id);
+            return ResponseEntity.ok(Map.of("message", "Payout marked as settled"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
      * Get all soft-deleted users
      */
     @GetMapping("/users/deleted")

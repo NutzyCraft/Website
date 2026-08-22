@@ -10,6 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -48,29 +49,8 @@
             gap: 10px;
         }
 
-        .payment-methods {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .payment-method {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-
-        .payment-method:hover,
-        .payment-method.active {
-            border-color: #1a237e;
-            background: #e8eaf6;
+        .form-group {
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -86,14 +66,7 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .order-summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            color: #666;
+            box-sizing: border-box;
         }
 
         .total-row {
@@ -121,6 +94,43 @@
             font-weight: 600;
         }
 
+        .agency-notice {
+            margin-top: 20px;
+            background: #FFF5F2;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .payhere-btn {
+            width: 100%;
+            padding: 15px;
+            background: #1a237e;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .payhere-btn:hover {
+            background: #283593;
+        }
+
+        .payhere-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 768px) {
             .checkout-container {
                 grid-template-columns: 1fr;
@@ -131,35 +141,44 @@
 
 <body>
 
-
     <div class="checkout-container">
         <!-- Left: Payment Form -->
         <div class="checkout-card">
             <h2 class="section-title"><i class="fa-solid fa-credit-card"></i> Payment Details</h2>
 
-            <div class="payment-methods">
-                <div class="payment-method active">
-                    <i class="fa-solid fa-credit-card" style="color: #1a237e;"></i> Credit Card
-                </div>
-                <div class="payment-method">
-                    <i class="fa-brands fa-paypal" style="color: #003087;"></i> PayPal
-                </div>
-            </div>
+            <p style="color: #555; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
+                Please confirm your billing details below. Clicking <strong>"Fund Milestone via PayHere"</strong>
+                will redirect you to our secure payment gateway. You are making this payment directly to
+                <strong>Nutzycraft Pvt Ltd</strong>.
+            </p>
 
-            <form id="payment-form">
-                <div id="payment-element">
-                    <!-- Stripe Elements will be inserted here -->
+            <form id="payment-form" onsubmit="initiatePayHere(event)">
+                <div class="form-group">
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" class="form-input" required placeholder="e.g., Kasun">
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" class="form-input" required placeholder="e.g., Perera">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-input" required placeholder="+94 77 000 0000">
                 </div>
 
-                <button type="submit" class="btn btn-primary" id="submit"
-                    style="width: 100%; padding: 15px; background: #1a237e; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: white; border: none; cursor: pointer; margin-top: 20px;">
-                    <div class="spinner hidden" id="spinner"></div>
-                    <span id="button-text">Pay Now $1,260.00</span>
+                <button type="submit" class="payhere-btn" id="submit-btn">
+                    <i class="fa-solid fa-lock"></i>
+                    <span id="btn-text">Fund Milestone via PayHere</span>
                 </button>
-                <div id="payment-message" class="hidden" style="margin-top: 10px; color: #D32F2F;"></div>
+
+                <div id="payment-message" style="display:none; margin-top: 10px; color: #D32F2F; font-size: 0.9rem;"></div>
 
                 <div class="secure-badge">
-                    <i class="fa-solid fa-shield-cat"></i> 256-bit SSL Encrypted Payment
+                    <i class="fa-solid fa-shield-halved"></i> 256-bit SSL · Powered by PayHere
                 </div>
             </form>
         </div>
@@ -168,100 +187,139 @@
         <div class="checkout-card" style="height: fit-content;">
             <h2 class="section-title"><i class="fa-solid fa-cart-shopping"></i> Order Summary</h2>
 
-            <div
+            <div id="order-header"
                 style="display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
-                <img src="https://ui-avatars.com/api/?name=Sayur+Thejan&background=random"
+                <img id="order-avatar" src="https://ui-avatars.com/api/?name=NutzyCraft&background=1a237e&color=fff"
                     style="width: 50px; height: 50px; border-radius: 10px;">
                 <div>
-                    <div style="font-weight: 700;">Full Stack Development</div>
-                    <div style="font-size: 0.9rem; color: #666;">Freelancer: Sayur Thejan</div>
+                    <div id="order-title" style="font-weight: 700;">Loading project...</div>
+                    <div style="font-size: 0.9rem; color: #666;">Managed by Nutzycraft Pvt Ltd</div>
                 </div>
             </div>
 
-            <div class="order-summary-item">
-                <span>Subtotal</span>
-                <span>$1,200.00</span>
-            </div>
-            <div class="order-summary-item">
-                <span>Service Fee (5%)</span>
-                <span>$60.00</span>
-            </div>
-            <div class="order-summary-item" style="color: #2e7d32;">
-                <span>Discount</span>
-                <span>-$0.00</span>
-            </div>
-
             <div class="total-row">
-                <span>Total</span>
-                <span>$1,260.00</span>
+                <span>Milestone Cost</span>
+                <span id="order-amount">LKR —</span>
             </div>
 
-            <div
-                style="margin-top: 20px; background: #FFF9F5; padding: 15px; border-radius: 8px; font-size: 0.85rem; color: #666; line-height: 1.5;">
-                <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Funds will be held in escrow
-                until you approve the work milestones.
+            <div class="agency-notice">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i>
+                Payment is made directly to <strong>Nutzycraft Pvt Ltd</strong>. This milestone will be
+                released to the project upon your approval of the delivered work.
+            </div>
+
+            <div style="margin-top: 20px; padding: 12px; background: #f5f5f5; border-radius: 8px; font-size: 0.8rem; color: #888;">
+                <i class="fa-solid fa-file-contract"></i> Contract Party: <strong>Nutzycraft Pvt Ltd</strong><br>
+                <i class="fa-solid fa-map-marker-alt" style="margin-top: 5px; display:inline-block;"></i> Sri Lanka &bull; info@nutzycraft.com
             </div>
         </div>
     </div>
 
-    <script src="https://js.stripe.com/v3/"></script>
+    <!-- Hidden PayHere form (submitted programmatically) -->
+    <form id="payhere-form" method="post" action="https://sandbox.payhere.lk/pay/checkout" style="display:none;">
+        <input type="hidden" name="merchant_id" id="ph-merchant-id">
+        <input type="hidden" name="return_url" id="ph-return-url">
+        <input type="hidden" name="cancel_url" id="ph-cancel-url">
+        <input type="hidden" name="notify_url" id="ph-notify-url">
+        <input type="hidden" name="order_id" id="ph-order-id">
+        <input type="hidden" name="items" id="ph-items">
+        <input type="hidden" name="amount" id="ph-amount">
+        <input type="hidden" name="currency" id="ph-currency">
+        <input type="hidden" name="hash" id="ph-hash">
+        <input type="hidden" name="first_name" id="ph-first-name">
+        <input type="hidden" name="last_name" id="ph-last-name">
+        <input type="hidden" name="email" id="ph-email">
+        <input type="hidden" name="phone" id="ph-phone">
+        <input type="hidden" name="address" value="N/A">
+        <input type="hidden" name="city" value="Colombo">
+        <input type="hidden" name="country" value="Sri Lanka">
+    </form>
+
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Fetch Publishable Key
-            const { publishableKey } = await fetch('/api/payment/config').then(r => r.json());
-            const stripe = Stripe(publishableKey);
+        // Read URL params for milestone/job context
+        const urlParams = new URLSearchParams(window.location.search);
+        const milestoneId = urlParams.get('milestoneId');
+        const jobId = urlParams.get('jobId');
+        const amountParam = urlParams.get('amount');
+        const titleParam = urlParams.get('title') || 'Project Milestone';
 
-            // 2. Create Payment Intent
-            const { clientSecret } = await fetch('/api/payment/create-payment-intent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: 126000, currency: 'usd' }) // 1260.00 cents
-            }).then(r => r.json());
+        // Populate summary card
+        document.getElementById('order-title').textContent = decodeURIComponent(titleParam);
+        document.getElementById('order-amount').textContent = amountParam
+            ? `LKR ${parseFloat(amountParam).toLocaleString('en-LK', { minimumFractionDigits: 2 })}`
+            : 'LKR —';
 
-            // 3. Mount Stripe Element
-            const elements = stripe.elements({ clientSecret });
-            const paymentElement = elements.create('payment');
-            paymentElement.mount('#payment-element');
+        // Pre-fill email if logged in
+        const storedEmail = localStorage.getItem('loggedInEmail') || sessionStorage.getItem('loggedInEmail');
+        if (storedEmail) {
+            document.getElementById('email').value = storedEmail;
+        }
 
-            // 4. Handle Submit
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                setLoading(true);
+        async function initiatePayHere(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const msgEl = document.getElementById('payment-message');
 
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        // Redirect to track job page after payment
-                        return_url: window.location.origin + '/client-track-job.html',
-                    },
+            btn.disabled = true;
+            btnText.textContent = 'Preparing secure checkout...';
+            msgEl.style.display = 'none';
+
+            try {
+                const body = {
+                    milestoneId: milestoneId,
+                    jobId: jobId,
+                    amount: amountParam,
+                    currency: 'LKR',
+                    itemDescription: decodeURIComponent(titleParam),
+                    firstName: document.getElementById('first-name').value.trim(),
+                    lastName: document.getElementById('last-name').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                };
+
+                const res = await fetch(`${API_CONFIG.BASE_URL}/api/payment/payhere/initiate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
                 });
 
-                if (error.type === "card_error" || error.type === "validation_error") {
-                    showMessage(error.message);
-                } else {
-                    showMessage("An unexpected error occurred.");
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Failed to initiate payment');
                 }
-                setLoading(false);
-            });
 
-            function setLoading(isLoading) {
-                if (isLoading) {
-                    document.querySelector("#submit").disabled = true;
-                    document.querySelector("#button-text").textContent = "Processing...";
-                } else {
-                    document.querySelector("#submit").disabled = false;
-                    document.querySelector("#button-text").textContent = "Pay Now $1,260.00";
+                const data = await res.json();
+
+                // Populate hidden PayHere form and submit
+                document.getElementById('ph-merchant-id').value = data.merchantId;
+                document.getElementById('ph-return-url').value = data.returnUrl;
+                document.getElementById('ph-cancel-url').value = data.cancelUrl;
+                document.getElementById('ph-notify-url').value = data.notifyUrl;
+                document.getElementById('ph-order-id').value = data.orderId;
+                document.getElementById('ph-items').value = data.items;
+                document.getElementById('ph-amount').value = data.amount;
+                document.getElementById('ph-currency').value = data.currency;
+                document.getElementById('ph-hash').value = data.hash;
+                document.getElementById('ph-first-name').value = body.firstName;
+                document.getElementById('ph-last-name').value = body.lastName;
+                document.getElementById('ph-email').value = body.email;
+                document.getElementById('ph-phone').value = body.phone;
+
+                // Switch PayHere endpoint for live vs sandbox based on environment
+                if (data.live) {
+                    document.getElementById('payhere-form').action = 'https://www.payhere.lk/pay/checkout';
                 }
-            }
 
-            function showMessage(messageText) {
-                const messageContainer = document.querySelector("#payment-message");
-                messageContainer.textContent = messageText;
-                messageContainer.classList.remove("hidden");
-                setTimeout(() => messageContainer.classList.add("hidden"), 4000);
+                document.getElementById('payhere-form').submit();
+
+            } catch (err) {
+                msgEl.textContent = err.message;
+                msgEl.style.display = 'block';
+                btn.disabled = false;
+                btnText.textContent = 'Fund Milestone via PayHere';
             }
-        });
+        }
     </script>
 </body>
 

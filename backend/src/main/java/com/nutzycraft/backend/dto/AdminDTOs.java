@@ -15,6 +15,8 @@ public class AdminDTOs {
         private double pendingPayouts;
         private double commissionEarnings;
         private List<AdminTransactionItemDTO> recentTransactions;
+        /** Subcontractor payouts queued for manual bank transfer */
+        private List<PendingPayoutDTO> pendingPayoutQueue;
     }
 
     @Data
@@ -25,9 +27,34 @@ public class AdminDTOs {
         private String description;
         private String userName;
         private Double amount;
-        private String status; // Processed, Pending, etc.
+        private String status;
         private String date;
-        private String type; // CREDIT, DEBIT - useful for frontend coloring
+        /** INBOUND_PAYHERE or OUTBOUND_MANUAL */
+        private String type;
+    }
+
+    /**
+     * Represents a single pending subcontractor payout in the admin queue.
+     * Admins use this to see bank details and mark payouts as settled
+     * after completing the manual bank transfer.
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PendingPayoutDTO {
+        private Long transactionId;
+        private String freelancerName;
+        private String freelancerEmail;
+        // Bank details for manual transfer
+        private String bankName;
+        private String bankBranchCode;
+        private String bankAccountName;
+        private String bankAccountNumber;
+        private Double amount;
+        private String currency;
+        private String milestoneDescription;
+        private String queuedAt;
+        private String status; // PENDING or PROCESSING (freelancer requested payout)
     }
 
     @Data

@@ -12,7 +12,7 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description; // E.g., "Monthly Freelancer Payout"
+    private String description; // E.g., "Milestone Payment: Homepage Design"
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -20,19 +20,39 @@ public class Transaction {
 
     private Double amount;
 
+    /**
+     * INBOUND_PAYHERE  - A client payment received via PayHere (money IN to NutzyCraft)
+     * OUTBOUND_MANUAL  - A manual bank transfer from NutzyCraft to a subcontractor (money OUT)
+     */
     @Enumerated(EnumType.STRING)
-    private TransactionType type; // CREDIT, DEBIT
+    private TransactionType type;
 
+    /**
+     * PENDING   - Payout queued, awaiting admin bank transfer
+     * PROCESSING - Freelancer requested payout, admin action required
+     * SETTLED   - Admin has confirmed the bank transfer is complete
+     * RECEIVED  - Inbound payment confirmed received from PayHere
+     */
     @Enumerated(EnumType.STRING)
-    private TransactionStatus status; // PROCESSED, PENDING, RECEIVED
+    private TransactionStatus status;
 
     private LocalDateTime date;
 
+    /** Links an OUTBOUND_MANUAL payout to its source milestone */
+    private Long milestoneId;
+
+    /** Links an OUTBOUND_MANUAL payout to the specific freelancer subcontractor */
+    private Long freelancerId;
+
     public enum TransactionType {
-        CREDIT, DEBIT
+        INBOUND_PAYHERE,
+        OUTBOUND_MANUAL
     }
 
     public enum TransactionStatus {
-        PROCESSED, PENDING, RECEIVED
+        PENDING,
+        PROCESSING,
+        SETTLED,
+        RECEIVED
     }
 }
